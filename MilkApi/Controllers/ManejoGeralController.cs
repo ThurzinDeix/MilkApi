@@ -1,0 +1,149 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+
+namespace MilkApi.Controllers
+{
+    [ApiController]
+    [Route("[controller]")]
+    public class ManejoGeralController : Controller
+    {
+        private const string ConnectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=BancoTccGado;Integrated Security=True;";
+        private readonly ILogger<ManejoGeralController> _logger;
+
+        public ManejoGeralController(ILogger<ManejoGeralController> logger)
+        {
+            _logger = logger;
+        }
+
+        [HttpGet]
+        public IEnumerable<ManejoGeral> Get()
+        {
+            List<ManejoGeral> lista = new List<ManejoGeral>();
+
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            {
+                string query = "SELECT * FROM ManejoGeral";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                conn.Open();
+
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    ManejoGeral manejo = new ManejoGeral
+                    {
+                        Id = Convert.ToInt32(reader["Id"]),
+                        ID_Gado = Convert.ToInt32(reader["ID_Gado"]),
+                        Tipo_Manejo = reader["Tipo_Manejo"]?.ToString(),
+                        Data_Manejo = Convert.ToDateTime(reader["Data_Manejo"]),
+                        Observacoes = reader["Observacoes"]?.ToString()
+                    };
+                    lista.Add(manejo);
+                }
+                reader.Close();
+            }
+
+            return lista;
+        }
+
+        [HttpGet("{id}")]
+        public ActionResult GetById(int id)
+        {
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            {
+                string query = "SELECT * FROM ManejoGeral WHERE Id = @Id";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Id", id);
+                conn.Open();
+
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    ManejoGeral manejo = new ManejoGeral
+                    {
+                        Id = Convert.ToInt32(reader["Id"]),
+                        ID_Gado = Convert.ToInt32(reader["ID_Gado"]),
+                        Tipo_Manejo = reader["Tipo_Manejo"]?.ToString(),
+                        Data_Manejo = Convert.ToDateTime(reader["Data_Manejo"]),
+                        Observacoes = reader["Observacoes"]?.ToString()
+                    };
+
+                    reader.Close();
+                    return Ok(manejo);
+                }
+
+                reader.Close();
+                return NotFound();
+            }
+        }
+
+        [HttpPost]
+        public ActionResult Create(ManejoGeral manejo)
+        {
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            {
+                string query = @"INSERT INTO ManejoGeral 
+                                (ID_Gado, Tipo_Manejo, Data_Manejo, Observacoes) 
+                                VALUES (@ID_Gado, @Tipo_Manejo, @Data_Manejo, @Observacoes)";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@ID_Gado", manejo.ID_Gado);
+                cmd.Parameters.AddWithValue("@Tipo_Manejo", (object?)manejo.Tipo_Manejo ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Data_Manejo", manejo.Data_Manejo);
+                cmd.Parameters.AddWithValue("@Observacoes", (object?)manejo.Observacoes ?? DBNull.Value);
+
+                conn.Open();
+                int rows = cmd.ExecuteNonQuery();
+
+                if (rows > 0) return Ok();
+            }
+
+            return BadRequest();
+        }
+
+        [HttpPut("{id}")]
+        public ActionResult Update(int id, [FromBody] ManejoGeral manejo)
+        {
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            {
+                string query = @"UPDATE ManejoGeral SET 
+                                    ID_Gado = @ID_Gado,
+                                    Tipo_Manejo = @Tipo_Manejo,
+                                    Data_Manejo = @Data_Manejo,
+                                    Observacoes = @Observacoes
+                                 WHERE Id = @Id";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@ID_Gado", manejo.ID_Gado);
+                cmd.Parameters.AddWithValue("@Tipo_Manejo", (object?)manejo.Tipo_Manejo ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Data_Manejo", manejo.Data_Manejo);
+                cmd.Parameters.AddWithValue("@Observacoes", (object?)manejo.Observacoes ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Id", id);
+
+                conn.Open();
+                int rows = cmd.ExecuteNonQuery();
+
+                if (rows > 0) return Ok();
+            }
+
+            return NotFound();
+        }
+
+        [HttpDelete("{id}")]
+        public ActionResult Delete(int id)
+        {
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            {
+                string query = "DELETE FROM ManejoGeral WHERE Id = @Id";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Id", id);
+
+                conn.Open();
+                int rows = cmd.ExecuteNonQuery();
+
+                if (rows > 0) return Ok();
+            }
+
+            return NotFound();
+        }
+    }
+}
