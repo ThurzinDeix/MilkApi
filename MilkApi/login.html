@@ -1,0 +1,157 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Login e Cadastro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            width: 350px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+            button:hover {
+                background-color: #2980b9;
+            }
+
+        .toggle {
+            text-align: center;
+            margin-top: 15px;
+            color: #3498db;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2 id="formTitle">Login</h2>
+
+        <div id="loginForm">
+            <input type="email" id="loginEmail" placeholder="Email" required>
+            <input type="password" id="loginSenha" placeholder="Senha" required>
+            <button onclick="login()">Entrar</button>
+        </div>
+
+        <div id="cadastroForm" style="display:none;">
+            <input type="text" id="cadNome" placeholder="Nome" required>
+            <input type="email" id="cadEmail" placeholder="Email" required>
+            <input type="password" id="cadSenha" placeholder="Senha" required>
+            <input type="date" id="cadDataNasc" required>
+            <input type="text" id="cadCPF" placeholder="CPF" required>
+            <button onclick="cadastrar()">Cadastrar</button>
+        </div>
+
+        <div class="toggle" onclick="toggleForm()">Não tem conta? Cadastre-se</div>
+    </div>
+
+    <script>
+const apiUrl = "https://localhost:7092/Usuario"; // altere para o endereço real da API
+
+function toggleForm(){
+    const loginForm = document.getElementById("loginForm");
+    const cadastroForm = document.getElementById("cadastroForm");
+    const title = document.getElementById("formTitle");
+    const toggleText = document.querySelector(".toggle");
+
+    if(loginForm.style.display === "none"){
+        loginForm.style.display = "block";
+        cadastroForm.style.display = "none";
+        title.textContent = "Login";
+        toggleText.textContent = "Não tem conta? Cadastre-se";
+    } else {
+        loginForm.style.display = "none";
+        cadastroForm.style.display = "block";
+        title.textContent = "Cadastro";
+        toggleText.textContent = "Já tem conta? Faça login";
+    }
+}
+
+async function login(){
+    const email = document.getElementById("loginEmail").value;
+    const senha = document.getElementById("loginSenha").value;
+
+    try {
+        const res = await fetch(apiUrl);
+        const usuarios = await res.json();
+
+        const user = usuarios.find(u => u.email === email && u.senha === senha);
+        if(user){
+            alert("Login bem-sucedido! Bem-vindo, " + user.nome);
+            localStorage.setItem('authenticated', 'true');
+            window.location.href = 'dashboard.html';
+        } else {
+            alert("Email ou senha incorretos.");
+        }
+    } catch (err) {
+        alert("Erro ao conectar com a API.");
+        console.error(err);
+    }
+}
+
+async function cadastrar(){
+    const usuario = {
+        nome: document.getElementById("cadNome").value,
+        email: document.getElementById("cadEmail").value,
+        senha: document.getElementById("cadSenha").value,
+        data_Nasc: document.getElementById("cadDataNasc").value,
+        cpf: document.getElementById("cadCPF").value
+    };
+
+    try {
+        const res = await fetch(apiUrl, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(usuario)
+        });
+
+        if(res.ok){
+            alert("Usuário cadastrado com sucesso!");
+            toggleForm();
+        } else {
+            alert("Erro ao cadastrar usuário.");
+        }
+    } catch (err) {
+        alert("Erro ao conectar com a API.");
+        console.error(err);
+    }
+}
+    </script>
+
+</body>
+</html>
