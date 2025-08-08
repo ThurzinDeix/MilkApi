@@ -72,6 +72,7 @@
             <input type="text" id="cadNome" placeholder="Nome" required>
             <input type="email" id="cadEmail" placeholder="Email" required>
             <input type="password" id="cadSenha" placeholder="Senha" required>
+            <input type="password" id="cadConfSenha" placeholder="Confirme sua senha" required>
             <input type="date" id="cadDataNasc" required>
             <input type="text" id="cadCPF" placeholder="CPF" required>
             <button onclick="cadastrar()">Cadastrar</button>
@@ -122,7 +123,15 @@ async function login(){
         alert("Erro ao conectar com a API.");
         console.error(err);
     }
-}
+        }
+
+        document.getElementById('cadCPF').addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, ''); // Remove tudo que não for número
+            value = value.replace(/(\d{3})(\d)/, '$1.$2'); // Coloca o primeiro ponto
+            value = value.replace(/(\d{3})(\d)/, '$1.$2'); // Coloca o segundo ponto
+            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2'); // Coloca o hífen
+            e.target.value = value;
+        });
 
 async function cadastrar(){
     const usuario = {
@@ -132,6 +141,15 @@ async function cadastrar(){
         data_Nasc: document.getElementById("cadDataNasc").value,
         cpf: document.getElementById("cadCPF").value
     };
+
+    
+
+    const confSenha = document.getElementById("cadConfSenha").value;
+
+    if (usuario.senha !== confSenha) {
+        alert("As senhas não coincidem.");
+        return;
+    }
 
     try {
         const res = await fetch(apiUrl, {
