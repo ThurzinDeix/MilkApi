@@ -1,0 +1,161 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Gados</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f8f8f8;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #gado-list {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+        }
+
+        .gado-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+        }
+
+            .gado-card p {
+                margin: 5px 0;
+            }
+
+        button {
+            background: #28a745;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background: #218838;
+            }
+    </style>
+</head>
+<body>
+
+    <h1>Lista de Gados</h1>
+    <button onclick="abrirFormulario()">Adicionar Gado</button>
+
+    <div id="gado-list"></div>
+
+    <!-- Formulário oculto -->
+    <div id="form-container" style="display:none; margin-top:20px;">
+        <h2>Novo Gado</h2>
+        <form id="form-gado">
+            <label>Data de Nascimento: <input type="date" id="dataNasc" required></label><br><br>
+            <label>Raça: <input type="text" id="raca"></label><br><br>
+            <label>Peso (kg): <input type="number" step="0.01" id="peso" required></label><br><br>
+            <label>
+                Sexo:
+                <select id="sexo">
+                    <option value="M">Macho</option>
+                    <option value="F">Fêmea</option>
+                </select>
+            </label><br><br>
+            <label>Brinco: <input type="number" id="brinco" required></label><br><br>
+            <label>Observação: <textarea id="observacao"></textarea></label><br><br>
+            <button type="submit">Salvar</button>
+        </form>
+    </div>
+
+    <script>
+        const apiBase = "https://localhost:7092/Gado"; // Troque pela sua URL real
+
+        // Função para buscar e mostrar gados do usuário logado
+        async function carregarGados() {
+            const ID_Usuario = localStorage.getItem("userId");
+            if (!ID_Usuario) {
+                alert("Usuário não autenticado!");
+                return;
+            }
+
+            try {
+                const res = await fetch(`${apiBase}?usuarioId=${ID_Usuario}`);
+                if (!res.ok) throw new Error("Erro ao buscar gados");
+                const gados = await res.json();
+
+                const lista = document.getElementById("gado-list");
+                lista.innerHTML = "";
+
+                gados.forEach(g => {
+                    const card = document.createElement("div");
+                    card.className = "gado-card";
+                    card.innerHTML = `
+                        <p><strong>ID:</strong> ${g.id}</p>
+                        <p><strong>Raça:</strong> ${g.raca || "Não informado"}</p>
+                        <p><strong>Peso:</strong> ${g.peso} kg</p>
+                        <p><strong>Sexo:</strong> ${g.sexo}</p>
+                        <p><strong>Brinco:</strong> ${g.brinco}</p>
+                        <p><strong>Observação:</strong> ${g.observacao || "Nenhuma"}</p>
+                    `;
+                    lista.appendChild(card);
+                });
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        function abrirFormulario() {
+            document.getElementById("form-container").style.display = "block";
+        }
+
+        document.getElementById("form-gado").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const ID_Usuario = localStorage.getItem("userId");
+            if (!ID_Usuario) {
+                alert("ID do usuário não encontrado no localStorage!");
+                return;
+            }
+
+            const novoGado = {
+                id_Usuario: parseInt(ID_Usuario),
+                data_Nasc: document.getElementById("dataNasc").value,
+                raca: document.getElementById("raca").value,
+                peso: parseFloat(document.getElementById("peso").value),
+                sexo: document.getElementById("sexo").value,
+                brinco: parseInt(document.getElementById("brinco").value),
+                observacao: document.getElementById("observacao").value
+            };
+
+            try {
+                const res = await fetch(apiBase, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(novoGado)
+                });
+
+                if (!res.ok) throw new Error("Erro ao adicionar gado!");
+
+                alert("Gado adicionado com sucesso!");
+                carregarGados();
+                document.getElementById("form-container").style.display = "none";
+                document.getElementById("form-gado").reset();
+
+            } catch (error) {
+                alert(error.message);
+            }
+        });
+
+        // Carrega os gados ao carregar a página
+        carregarGados();
+    </script>
+
+    <script src="app.js"></script>
+</body>
+</html>

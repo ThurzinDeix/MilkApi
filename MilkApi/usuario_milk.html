@@ -95,10 +95,10 @@
                 <th>Nome</th>
                 <th>Email</th>
                 <th>Senha</th>
-                
+
                 <th>Data Nascimento</th>
                 <th>CPF</th>
-                
+
                 <th>Ações</th>
             </tr>
         </thead>
@@ -112,7 +112,7 @@
         <label>Nome: <input type="text" id="nome" required></label><br>
         <label>Email: <input type="email" id="email" required></label><br>
         <label>Senha: <input type="password" id="senha" required></label><br>
-       
+
         <label>Data de Nascimento: <input type="date" id="dataNasc" required></label><br>
         <label>CPF: <input type="text" id="cpf" required></label><br>
         <button type="submit">Adicionar</button>
@@ -140,104 +140,105 @@
     </form>
 
     <!-- Adiciona o script de CRUD -->
-        <script>
-            const API_URL = 'https://localhost:7092/usuario';
+    <script>
+        const API_URL = 'https://localhost:7092/usuario';
 
-            function getUsuarios() {
-                fetch(API_URL)
-                    .then(response => response.json())
-                    .then(data => {
-                        const tbody = document.getElementById('usuariosTable').querySelector('tbody');
-                        tbody.innerHTML = '';
+        function getUsuarios() {
+            fetch(API_URL)
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById('usuariosTable').querySelector('tbody');
+                    tbody.innerHTML = '';
 
-                        data.forEach(usuario => {
-                            const row = document.createElement('tr');
+                    data.forEach(usuario => {
+                        const row = document.createElement('tr');
 
-                            row.innerHTML = `
-                            <td>${usuario.id}</td>
-                            <td>${usuario.nome}</td>
-                            <td>${usuario.email}</td>
-                            <td>${usuario.senha}</td>
-                            <td>${new Date(usuario.data_Nasc).toLocaleDateString()}</td>
-                            <td>${usuario.cpf}</td>
-                            <td><button onclick="deleteUsuario(${usuario.id})">Excluir</button></td>
-                        `;
+                        row.innerHTML = `
+                                <td>${usuario.id}</td>
+                                <td>${usuario.nome}</td>
+                                <td>${usuario.email}</td>
+                                <td>${usuario.senha}</td>
+                                <td>${new Date(usuario.data_Nasc).toLocaleDateString()}</td>
+                                <td>${usuario.cpf}</td>
+                                <td><button onclick="deleteUsuario(${usuario.id})">Excluir</button></td>
+                            `;
 
-                            tbody.appendChild(row);
-                        });
+                        tbody.appendChild(row);
                     });
+                });
         }
 
-            function addUsuario(event) {
-                event.preventDefault();
+        function addUsuario(event) {
+            event.preventDefault();
 
             const usuario = {
                 Nome: document.getElementById('nome').value,
-            Email: document.getElementById('email').value,
-            Senha: document.getElementById('senha').value,
-            Data_Nasc: document.getElementById('dataNasc').value,
-            CPF: document.getElementById('cpf').value,
+                Email: document.getElementById('email').value,
+                Senha: document.getElementById('senha').value,
+                Data_Nasc: document.getElementById('dataNasc').value,
+                CPF: document.getElementById('cpf').value,
             };
 
             fetch(API_URL, {
                 method: 'POST',
-            headers: {'Content-Type': 'application/json' },
-            body: JSON.stringify(usuario)
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(usuario)
             }).then(response => {
                 if (response.ok) {
-                document.getElementById('addUsuarioForm').reset();
-            getUsuarios();
+                    document.getElementById('addUsuarioForm').reset();
+                    getUsuarios();
                 }
             });
         }
 
-            function updateUsuario(event) {
-                event.preventDefault();
+        function updateUsuario(event) {
+            event.preventDefault();
 
             const id = parseInt(document.getElementById('updateId').value);
 
             const usuario = {
                 Nome: document.getElementById('updateNome').value,
-            Email: document.getElementById('updateEmail').value,
-            Senha: document.getElementById('updateSenha').value,
-            Data_Nasc: document.getElementById('updateDataNasc').value,
-            CPF: document.getElementById('updateCpf').value,
+                Email: document.getElementById('updateEmail').value,
+                Senha: document.getElementById('updateSenha').value,
+                Data_Nasc: document.getElementById('updateDataNasc').value,
+                CPF: document.getElementById('updateCpf').value,
             };
 
             fetch(`${API_URL}/${id}`, {
                 method: 'PUT',
-            headers: {'Content-Type': 'application/json' },
-            body: JSON.stringify(usuario)
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(usuario)
             }).then(response => {
                 if (response.ok) {
-                document.getElementById('updateUsuarioForm').reset();
-            getUsuarios();
+                    document.getElementById('updateUsuarioForm').reset();
+                    getUsuarios();
                 }
             });
         }
 
-            function deleteUsuario(id) {
-                fetch(`${API_URL}/${id}`, {
-                    method: 'DELETE'
-                }).then(response => {
-                    if (response.ok) {
-                        getUsuarios();
-                    }
-                });
+        function deleteUsuario(id) {
+            fetch(`${API_URL}/${id}`, {
+                method: 'DELETE'
+            }).then(response => {
+                if (response.ok) {
+                    getUsuarios();
+                }
+            });
         }
 
-            // Eventos dos formulários
-            document.getElementById('addUsuarioForm').addEventListener('submit', addUsuario);
-            document.getElementById('updateUsuarioForm').addEventListener('submit', updateUsuario);
+        // Eventos dos formulários
+        document.getElementById('addUsuarioForm').addEventListener('submit', addUsuario);
+        document.getElementById('updateUsuarioForm').addEventListener('submit', updateUsuario);
         document.getElementById('deleteUsuarioForm').addEventListener('submit', event => {
-                event.preventDefault();
+            event.preventDefault();
             const id = parseInt(document.getElementById('deleteId').value);
             deleteUsuario(id);
         });
 
-            getUsuarios();
-    
+        getUsuarios();
+
 
     </script>
+    <script src="app.js"></script>
 </body>
 </html>

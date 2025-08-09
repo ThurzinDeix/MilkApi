@@ -8,7 +8,7 @@ namespace MilkApi.Controllers
     [Route("[controller]")]
     public class GadoController : Controller
     {
-        private const string ConnectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=BancoTccGado;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+        private const string ConnectionString = "Server=milkdatabase.cp64yi8w2sr2.us-east-2.rds.amazonaws.com;Database=BancoTccGado;User Id=Arthur;Password=Arthur-1234;TrustServerCertificate=True;";
         private readonly ILogger<GadoController> _logger;
 
         public GadoController(ILogger<GadoController> logger)
@@ -17,16 +17,27 @@ namespace MilkApi.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Gado> Get()
+        public IEnumerable<Gado> Get([FromQuery] int? usuarioId)
         {
             List<Gado> lista = new List<Gado>();
 
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
                 string query = "SELECT * FROM Gado";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                conn.Open();
 
+                if (usuarioId.HasValue)
+                {
+                    query += " WHERE ID_Usuario = @ID_Usuario";
+                }
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                if (usuarioId.HasValue)
+                {
+                    cmd.Parameters.AddWithValue("@ID_Usuario", usuarioId.Value);
+                }
+
+                conn.Open();
                 SqlDataReader reader = cmd.ExecuteReader();
 
                 while (reader.Read())
@@ -34,12 +45,7 @@ namespace MilkApi.Controllers
                     Gado gado = new Gado
                     {
                         Id = Convert.ToInt32(reader["Id"]),
-                        ID_Fazenda = Convert.ToInt32(reader["ID_Fazenda"]),
-                        ID_Saude = Convert.ToInt32(reader["ID_Saude"]),
-                        ID_Alementacao = Convert.ToInt32(reader["ID_Alementacao"]),
-                        ID_Leite = Convert.ToInt32(reader["ID_Leite"]),
-                        ID_Alerta = Convert.ToInt32(reader["ID_Alerta"]),
-                        ID_Reproducao = Convert.ToInt32(reader["ID_Reproducao"]),
+                        ID_Usuario = Convert.ToInt32(reader["ID_Usuario"]),
                         Data_Nasc = Convert.ToDateTime(reader["Data_Nasc"]),
                         Raca = reader["Raca"]?.ToString(),
                         Peso = Convert.ToSingle(reader["Peso"]),
@@ -54,6 +60,7 @@ namespace MilkApi.Controllers
 
             return lista;
         }
+
 
         [HttpGet("{id}")]
         public ActionResult GetById(int id)
@@ -72,12 +79,7 @@ namespace MilkApi.Controllers
                     Gado gado = new Gado
                     {
                         Id = Convert.ToInt32(reader["Id"]),
-                        ID_Fazenda = Convert.ToInt32(reader["ID_Fazenda"]),
-                        ID_Saude = Convert.ToInt32(reader["ID_Saude"]),
-                        ID_Alementacao = Convert.ToInt32(reader["ID_Alementacao"]),
-                        ID_Leite = Convert.ToInt32(reader["ID_Leite"]),
-                        ID_Alerta = Convert.ToInt32(reader["ID_Alerta"]),
-                        ID_Reproducao = Convert.ToInt32(reader["ID_Reproducao"]),
+                        ID_Usuario = Convert.ToInt32(reader["ID_Usuario"]),
                         Data_Nasc = Convert.ToDateTime(reader["Data_Nasc"]),
                         Raca = reader["Raca"]?.ToString(),
                         Peso = Convert.ToSingle(reader["Peso"]),
@@ -100,15 +102,10 @@ namespace MilkApi.Controllers
         {
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
-                string query = @"INSERT INTO Gado (ID_Fazenda, ID_Saude, ID_Alementacao, ID_Leite, ID_Alerta, ID_Reproducao, Data_Nasc, Raca, Peso, Sexo, Brinco, Observacao)
-                                 VALUES (@ID_Fazenda, @ID_Saude, @ID_Alementacao, @ID_Leite, @ID_Alerta, @ID_Reproducao, @Data_Nasc, @Raca, @Peso, @Sexo, @Brinco, @Observacao)";
+                string query = @"INSERT INTO Gado (ID_Usuario, Data_Nasc, Raca, Peso, Sexo, Brinco, Observacao)
+                                 VALUES (@ID_Usuario, @Data_Nasc, @Raca, @Peso, @Sexo, @Brinco, @Observacao)";
                 SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@ID_Fazenda", gado.ID_Fazenda);
-                cmd.Parameters.AddWithValue("@ID_Saude", gado.ID_Saude);
-                cmd.Parameters.AddWithValue("@ID_Alementacao", gado.ID_Alementacao);
-                cmd.Parameters.AddWithValue("@ID_Leite", gado.ID_Leite);
-                cmd.Parameters.AddWithValue("@ID_Alerta", gado.ID_Alerta);
-                cmd.Parameters.AddWithValue("@ID_Reproducao", gado.ID_Reproducao);
+                cmd.Parameters.AddWithValue("@ID_Usuario", gado.ID_Usuario);
                 cmd.Parameters.AddWithValue("@Data_Nasc", gado.Data_Nasc);
                 cmd.Parameters.AddWithValue("@Raca", gado.Raca ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@Peso", gado.Peso);
@@ -131,12 +128,7 @@ namespace MilkApi.Controllers
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
                 string query = @"UPDATE Gado SET 
-                                    ID_Fazenda = @ID_Fazenda,
-                                    ID_Saude = @ID_Saude,
-                                    ID_Alementacao = @ID_Alementacao,
-                                    ID_Leite = @ID_Leite,
-                                    ID_Alerta = @ID_Alerta,
-                                    ID_Reproducao = @ID_Reproducao,
+                                    ID_Usuario = @ID_Usuario,
                                     Data_Nasc = @Data_Nasc,
                                     Raca = @Raca,
                                     Peso = @Peso,
@@ -145,12 +137,7 @@ namespace MilkApi.Controllers
                                     Observacao = @Observacao
                                  WHERE Id = @Id";
                 SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@ID_Fazenda", gado.ID_Fazenda);
-                cmd.Parameters.AddWithValue("@ID_Saude", gado.ID_Saude);
-                cmd.Parameters.AddWithValue("@ID_Alementacao", gado.ID_Alementacao);
-                cmd.Parameters.AddWithValue("@ID_Leite", gado.ID_Leite);
-                cmd.Parameters.AddWithValue("@ID_Alerta", gado.ID_Alerta);
-                cmd.Parameters.AddWithValue("@ID_Reproducao", gado.ID_Reproducao);
+                cmd.Parameters.AddWithValue("@ID_Usuario", gado.ID_Usuario);
                 cmd.Parameters.AddWithValue("@Data_Nasc", gado.Data_Nasc);
                 cmd.Parameters.AddWithValue("@Raca", gado.Raca ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@Peso", gado.Peso);

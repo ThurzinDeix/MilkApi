@@ -114,6 +114,11 @@ async function login(){
         const user = usuarios.find(u => u.email === email && u.senha === senha);
         if(user){
             alert("Login bem-sucedido! Bem-vindo, " + user.nome);
+            
+            //localStorage.setItem('userId', Usuario.id);
+            localStorage.setItem('userId', user.id);
+
+
             localStorage.setItem('authenticated', 'true');
             window.location.href = 'dashboard.html';
         } else {
@@ -133,43 +138,60 @@ async function login(){
             e.target.value = value;
         });
 
-async function cadastrar(){
-    const usuario = {
-        nome: document.getElementById("cadNome").value,
-        email: document.getElementById("cadEmail").value,
-        senha: document.getElementById("cadSenha").value,
-        data_Nasc: document.getElementById("cadDataNasc").value,
-        cpf: document.getElementById("cadCPF").value
-    };
 
-    
 
-    const confSenha = document.getElementById("cadConfSenha").value;
+        async function cadastrar() {
+            const nome = document.getElementById("cadNome").value;
+            const email = document.getElementById("cadEmail").value;
+            const senha = document.getElementById("cadSenha").value;
+            const confSenha = document.getElementById("cadConfSenha").value; // Novo campo
+            const data_Nasc = document.getElementById("cadDataNasc").value;
+            const cpf = document.getElementById("cadCPF").value;
 
-    if (usuario.senha !== confSenha) {
-        alert("As senhas não coincidem.");
-        return;
-    }
+            // Validação de confirmação de senha
+            if (senha !== confSenha) {
+                alert("As senhas não coincidem.");
+                return; // Para aqui, não segue para cadastro
+            }
 
-    try {
-        const res = await fetch(apiUrl, {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(usuario)
-        });
+            try {
+                // Buscar usuários existentes para verificar se o e-mail já está cadastrado
+                const resGet = await fetch(apiUrl);
+                const usuarios = await resGet.json();
 
-        if(res.ok){
-            alert("Usuário cadastrado com sucesso!");
-            toggleForm();
-        } else {
-            alert("Erro ao cadastrar usuário.");
+                const emailExistente = usuarios.some(u => u.email.toLowerCase() === email.toLowerCase());
+                if (emailExistente) {
+                    alert("Este e-mail já está cadastrado. Tente fazer login ou use outro e-mail.");
+                    return; // Para aqui e não envia o POST
+                }
+
+                // Criar o novo usuário
+                const usuario = { nome, email, senha, data_Nasc, cpf };
+
+                const resPost = await fetch(apiUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(usuario)
+                });
+
+                if (resPost.ok) {
+                    alert("Usuário cadastrado com sucesso!");
+
+                    toggleForm();
+                } else {
+                    alert("Erro ao cadastrar usuário.");
+                }
+
+            } catch (err) {
+                alert("Erro ao conectar com a API.");
+                console.error(err);
+            }
         }
-    } catch (err) {
-        alert("Erro ao conectar com a API.");
-        console.error(err);
-    }
-}
-    </script>
+
+        
+</script>
+
+<script src="app.js"></script>
 
 </body>
 </html>
