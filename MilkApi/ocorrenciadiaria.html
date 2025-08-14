@@ -1,0 +1,247 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestão de Gado</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .card-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #4cafef, #1d8ddc);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            cursor: pointer;
+            width: 220px;
+            text-align: center;
+            font-size: 18px;
+            transition: transform 0.2s ease;
+        }
+
+            .card:hover {
+                transform: scale(1.05);
+            }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            right: 15px;
+            top: 10px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #555;
+            cursor: pointer;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        button {
+            background: #1d8ddc;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background: #0d6fb5;
+            }
+    </style>
+</head>
+<body>
+
+    <h1>Gestão de Gado</h1>
+
+    <div class="card-container">
+        <div class="card" onclick="abrirModal('leite')">Leite</div>
+        <div class="card" onclick="abrirModal('manejo')">Manejo Geral</div>
+        <div class="card" onclick="abrirModal('reproducao')">Reprodução</div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModal()">&times;</span>
+            <h2 id="modal-titulo"></h2>
+            <form id="modal-form">
+                <label>Brinco do Gado:</label>
+                <input type="number" id="brinco" required>
+
+                <div id="campos-especificos"></div>
+
+                <button type="submit">Salvar</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const apiBase = "https://localhost:7092";
+        let tipoAtual = "";
+
+        function abrirModal(tipo) {
+            tipoAtual = tipo;
+            document.getElementById("modal").style.display = "block";
+            document.getElementById("modal-titulo").innerText = tipo.charAt(0).toUpperCase() + tipo.slice(1);
+
+            let camposHTML = "";
+
+            const hoje = new Date().toISOString().split("T")[0];
+
+            if (tipo === "leite") {
+                camposHTML = `
+                    <label>Data:</label>
+                    <input type="date" id="data" value="${hoje}" required>
+                    <label>CCS:</label>
+                    <input type="number" id="ccs" required>
+                    <label>Gordura (%):</label>
+                    <input type="number" id="gordura" step="0.01" required>
+                    <label>Proteína (%):</label>
+                    <input type="number" id="proteina" step="0.01" required>
+                    <label>Litros:</label>
+                    <input type="number" id="litros" step="0.01" required>
+                `;
+            }
+            if (tipo === "manejo") {
+                camposHTML = `
+                    <label>Tipo de Manejo:</label>
+                    <input type="text" id="tipoManejo" required>
+                    <label>Data do Manejo:</label>
+                    <input type="date" id="dataManejo" value="${hoje}" required>
+                    <label>Observações:</label>
+                    <textarea id="observacoes"></textarea>
+                `;
+            }
+            if (tipo === "reproducao") {
+                camposHTML = `
+                    <label>Tipo:</label>
+                     <select id="tipoReproducao">
+                        <option value="">Selecione o tipo</option>
+                        <option value="Monta">Monta</option>
+                        <option value="Inseminação Artificial">Inseminação Artificial</option>
+                    </select>
+                    <label>Data:</label>
+                    <input type="date" id="dataReproducao" value="${hoje}" required>
+                    <label>Observação:</label>
+                    <textarea id="observacaoReproducao"></textarea>
+                `;
+            }
+
+            document.getElementById("campos-especificos").innerHTML = camposHTML;
+        }
+
+        function fecharModal() {
+            document.getElementById("modal").style.display = "none";
+        }
+
+        document.getElementById("modal-form").addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const brinco = document.getElementById("brinco").value;
+            const usuarioId = localStorage.getItem("userId");
+
+            // Buscar ID do gado
+            const res = await fetch(`${apiBase}/gado/por-brinco?brinco=${brinco}&usuarioId=${usuarioId}`);
+            if (!res.ok) {
+                alert("Gado não encontrado!");
+                return;
+            }
+            const gado = await res.json();
+
+            let payload = {};
+            let endpoint = "";
+
+            if (tipoAtual === "leite") {
+                payload = {
+                    ID_Gado: gado.id,
+                    Data: document.getElementById("data").value,
+                    CCS: parseFloat(document.getElementById("ccs").value),
+                    Gordura: parseFloat(document.getElementById("gordura").value),
+                    Proteina: parseFloat(document.getElementById("proteina").value),
+                    Litros: parseFloat(document.getElementById("litros").value)
+                };
+                endpoint = "/leite";
+            }
+            if (tipoAtual === "manejo") {
+                payload = {
+                    ID_Gado: gado.id,
+                    Tipo_Manejo: document.getElementById("tipoManejo").value,
+                    Data_Manejo: document.getElementById("dataManejo").value,
+                    Observacoes: document.getElementById("observacoes").value
+                };
+                endpoint = "/manejo";
+            }
+            if (tipoAtual === "reproducao") {
+                payload = {
+                    ID_Gado: gado.id,
+                    Tipo: document.getElementById("tipoReproducao").value,
+                    Data: document.getElementById("dataReproducao").value,
+                    Observacao: document.getElementById("observacaoReproducao").value
+                };
+                endpoint = "/reproducao";
+            }
+
+            const saveRes = await fetch(`${apiBase}${endpoint}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            if (saveRes.ok) {
+                alert("Registro salvo com sucesso!");
+                fecharModal();
+            } else {
+                alert("Erro ao salvar registro.");
+            }
+        });
+    </script>
+
+</body>
+</html>

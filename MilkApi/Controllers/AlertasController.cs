@@ -7,7 +7,7 @@ namespace MilkApi.Controllers
     [Route("[controller]")]
     public class AlertasController : Controller
     {
-        private const string ConnectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=BancoTccGado;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+        private const string ConnectionString = "Server=milkdatabase.cp64yi8w2sr2.us-east-2.rds.amazonaws.com;Database=BancoTccGado;User Id=Arthur;Password=Arthur-1234;TrustServerCertificate=True;";
         private readonly ILogger<AlertasController> _logger;
 
         public AlertasController(ILogger<AlertasController> logger)

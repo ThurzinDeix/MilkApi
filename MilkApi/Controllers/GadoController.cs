@@ -172,5 +172,51 @@ namespace MilkApi.Controllers
 
             return NotFound();
         }
+
+        [HttpGet("por-brinco")]
+        public ActionResult GetByBrinco([FromQuery] int brinco, [FromQuery] int usuarioId)
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(ConnectionString))
+                {
+                    string query = @"SELECT * FROM Gado 
+                             WHERE Brinco = @Brinco AND ID_Usuario = @UsuarioId";
+
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@Brinco", brinco);
+                    cmd.Parameters.AddWithValue("@UsuarioId", usuarioId);
+
+                    conn.Open();
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        Gado gado = new Gado
+                        {
+                            Id = Convert.ToInt32(reader["Id"]),
+                            ID_Usuario = Convert.ToInt32(reader["ID_Usuario"]),
+                            Data_Nasc = Convert.ToDateTime(reader["Data_Nasc"]),
+                            Raca = reader["Raca"]?.ToString(),
+                            Peso = Convert.ToSingle(reader["Peso"]),
+                            Sexo = reader["Sexo"]?.ToString(),
+                            Brinco = Convert.ToInt32(reader["Brinco"]),
+                            Observacao = reader["Observacao"]?.ToString()
+                        };
+
+                        reader.Close();
+                        return Ok(gado);
+                    }
+
+                    reader.Close();
+                    return NotFound("Gado não encontrado");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
+            }
+        }
+
     }
 }
