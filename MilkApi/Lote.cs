@@ -1,0 +1,9 @@
+﻿namespace MilkApi
+{
+    public class Lote
+    {
+        public int Id { get; set; }
+        public int ID_Leite { get; set; }
+        public int Num { get; set; }
+    }
+}

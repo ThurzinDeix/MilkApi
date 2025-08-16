@@ -1,0 +1,224 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerenciamento Agro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f4f7fa;
+        }
+
+        h2 {
+            margin-top: 40px;
+            color: #2c3e50;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #3498db;
+            color: #fff;
+        }
+
+        tr:hover {
+            background: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+    <h1>Painel de Dados Agro</h1>
+
+    <h2>Gado</h2>
+    <table id="gadoTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ID usuário</th>
+                <th>Data Nasc.</th>
+                <th>Raça</th>
+                <th>Peso</th>
+                <th>Sexo</th>
+                <th>Brinco</th>
+                <th>Observação</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h2>Vacinas</h2>
+    <table id="vacinaTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ID Tipo Vacina</th>
+                <th>Lote</th>
+                <th>Validade</th>
+                <th>Fabricante</th>
+                <th>Observações</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h2>Tipo Vacina</h2>
+    <table id="tipoVacinaTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Descrição</th>
+                <th>Obrigatoriedade</th>
+                <th>Idade Mín.</th>
+                <th>Periodicidade</th>
+                <th>Reforço</th>
+                <th>Intervalo Reforço</th>
+                <th>Função</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h2>Reprodução</h2>
+    <table id="reproducaoTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ID Gado</th>
+                <th>Tipo</th>
+                <th>Data</th>
+                <th>Observação</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h2>Manejo Geral</h2>
+    <table id="manejoTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ID Gado</th>
+                <th>Tipo Manejo</th>
+                <th>Data Manejo</th>
+                <th>Observações</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h2>Leite</h2>
+    <table id="leiteTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ID Gado</th>
+                <th>Data</th>
+                <th>CCS</th>
+                <th>Gordura</th>
+                <th>Proteína</th>
+                <th>Litros</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h2>Histórico Vacinas</h2>
+    <table id="histVacinaTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ID Gado</th>
+                <th>ID Vacina</th>
+                <th>Lote</th>
+                <th>Data Aplicação</th>
+                <th>Próxima Dose</th>
+                <th>Responsável</th>
+                <th>Observações</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h2>Alimentação</h2>
+    <table id="alimentacaoTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ID Gado</th>
+                <th>Data</th>
+                <th>Tipo</th>
+                <th>Quantidade</th>
+                <th>Observação</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h2>Alertas</h2>
+    <table id="alertasTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ID Gado</th>
+                <th>Data Prevista</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+    const apiBase = "https://localhost:7092"; // ajuste para seu backend
+
+    async function carregarDados(endpoint, tabelaId, campos) {
+      try {
+        const res = await fetch(`${apiBase}/${endpoint}`);
+        if (!res.ok) throw new Error("Erro ao buscar " + endpoint);
+        const dados = await res.json();
+
+        const tbody = document.querySelector(`#${tabelaId} tbody`);
+        tbody.innerHTML = "";
+
+        dados.forEach(item => {
+          const tr = document.createElement("tr");
+          campos.forEach(c => {
+            const td = document.createElement("td");
+            td.textContent = item[c] ?? "";
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    window.onload = () => {
+      carregarDados("gado", "gadoTable", ["id","ID_Usuario", "data_Nasc","raca","peso","sexo","brinco","observacao"]);
+      carregarDados("vacina", "vacinaTable", ["id","id_TipoVacina","lote","dataValidade","fabricante","observacoes"]);
+      carregarDados("tipovacina", "tipoVacinaTable", ["id","nome","descricao","obrigatoriedade","idadeMinimaMeses","periodicidadeMeses","requerReforco","intervaloReforcoMeses","funcao"]);
+      carregarDados("reproducao", "reproducaoTable", ["id","ID_Gado","tipo","data","observacao"]);
+      carregarDados("manejo", "manejoTable", ["id","id_Gado","tipo_Manejo","data_Manejo","observacoes"]);
+      carregarDados("Leite", "leiteTable", ["id","ID_Gado","data","ccs","gordura","proteina","litros"]);
+      carregarDados("alimentacao", "alimentacaoTable", ["id","id_Gado","data","tipo","quantidade","observacao"]);
+      carregarDados("alertas", "alertasTable", ["id","id_Gado","data_Prevista","status"]);
+    };
+    </script>
+</body>
+</html>

@@ -5,40 +5,40 @@ namespace MilkApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class LeiteController : Controller
+    public class QualidadeController : Controller
     {
         private const string ConnectionString = "Server=milkdatabase.cp64yi8w2sr2.us-east-2.rds.amazonaws.com;Database=BancoTccGado;User Id=Arthur;Password=Arthur-1234;TrustServerCertificate=True;";
-        private readonly ILogger<LeiteController> _logger;
+        private readonly ILogger<QualidadeController> _logger;
 
-        public LeiteController(ILogger<LeiteController> logger)
+        public QualidadeController(ILogger<QualidadeController> logger)
         {
             _logger = logger;
         }
 
         [HttpGet]
-        public IEnumerable<Leite> Get()
+        public IEnumerable<Qualidade> Get()
         {
-            List<Leite> lista = new List<Leite>();
+            List<Qualidade> lista = new List<Qualidade>();
 
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
-                string query = "SELECT * FROM Leite";
+                string query = "SELECT * FROM Qualidade";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 conn.Open();
 
                 SqlDataReader reader = cmd.ExecuteReader();
-
                 while (reader.Read())
                 {
-                    Leite leite = new Leite
+                    lista.Add(new Qualidade
                     {
                         Id = Convert.ToInt32(reader["Id"]),
-                        ID_Gado = Convert.ToInt32(reader["ID_Gado"]),
-                        Data = Convert.ToDateTime(reader["Data"]),
-                        Litros = Convert.ToDecimal(reader["Litros"])
-                    };
-                    lista.Add(leite);
+                        ID_Lote = Convert.ToInt32(reader["ID_Lote"]),
+                        CCS = Convert.ToInt32(reader["CCS"]),
+                        Gordura = Convert.ToDecimal(reader["Gordura"]),
+                        Proteina = Convert.ToDecimal(reader["Proteina"])
+                    });
                 }
+
                 reader.Close();
             }
 
@@ -50,25 +50,24 @@ namespace MilkApi.Controllers
         {
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
-                string query = "SELECT * FROM Leite WHERE Id = @Id";
+                string query = "SELECT * FROM Qualidade WHERE Id = @Id";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@Id", id);
                 conn.Open();
 
                 SqlDataReader reader = cmd.ExecuteReader();
-
                 if (reader.Read())
                 {
-                    Leite leite = new Leite
+                    var qualidade = new Qualidade
                     {
                         Id = Convert.ToInt32(reader["Id"]),
-                        ID_Gado = Convert.ToInt32(reader["ID_Gado"]),
-                        Data = Convert.ToDateTime(reader["Data"]),
-                        Litros = Convert.ToDecimal(reader["Litros"])
+                        ID_Lote = Convert.ToInt32(reader["ID_Lote"]),
+                        CCS = Convert.ToInt32(reader["CCS"]),
+                        Gordura = Convert.ToDecimal(reader["Gordura"]),
+                        Proteina = Convert.ToDecimal(reader["Proteina"])
                     };
-
                     reader.Close();
-                    return Ok(leite);
+                    return Ok(qualidade);
                 }
 
                 reader.Close();
@@ -77,21 +76,20 @@ namespace MilkApi.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create(Leite leite)
+        public ActionResult Create(Qualidade qualidade)
         {
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
-                string query = @"INSERT INTO Leite 
-                                (ID_Gado, Data, Litros) 
-                                VALUES (@ID_Gado, @Data, @Litros)";
+                string query = @"INSERT INTO Qualidade (ID_Lote, CCS, Gordura, Proteina)
+                                 VALUES (@ID_Lote, @CCS, @Gordura, @Proteina)";
                 SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@ID_Gado", leite.ID_Gado);
-                cmd.Parameters.AddWithValue("@Data", leite.Data);
-                cmd.Parameters.AddWithValue("@Litros", leite.Litros);
+                cmd.Parameters.AddWithValue("@ID_Lote", qualidade.ID_Lote);
+                cmd.Parameters.AddWithValue("@CCS", qualidade.CCS);
+                cmd.Parameters.AddWithValue("@Gordura", qualidade.Gordura);
+                cmd.Parameters.AddWithValue("@Proteina", qualidade.Proteina);
 
                 conn.Open();
                 int rows = cmd.ExecuteNonQuery();
-
                 if (rows > 0) return Ok();
             }
 
@@ -99,24 +97,25 @@ namespace MilkApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public ActionResult Update(int id, [FromBody] Leite leite)
+        public ActionResult Update(int id, [FromBody] Qualidade qualidade)
         {
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
-                string query = @"UPDATE Leite SET 
-                                    ID_Gado = @ID_Gado,
-                                    Data = @Data,
-                                    Litros = @Litros
+                string query = @"UPDATE Qualidade SET 
+                                    ID_Lote = @ID_Lote,
+                                    CCS = @CCS,
+                                    Gordura = @Gordura,
+                                    Proteina = @Proteina
                                  WHERE Id = @Id";
                 SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@ID_Gado", leite.ID_Gado);
-                cmd.Parameters.AddWithValue("@Data", leite.Data);
-                cmd.Parameters.AddWithValue("@Litros", leite.Litros);
+                cmd.Parameters.AddWithValue("@ID_Lote", qualidade.ID_Lote);
+                cmd.Parameters.AddWithValue("@CCS", qualidade.CCS);
+                cmd.Parameters.AddWithValue("@Gordura", qualidade.Gordura);
+                cmd.Parameters.AddWithValue("@Proteina", qualidade.Proteina);
                 cmd.Parameters.AddWithValue("@Id", id);
 
                 conn.Open();
                 int rows = cmd.ExecuteNonQuery();
-
                 if (rows > 0) return Ok();
             }
 
@@ -128,13 +127,12 @@ namespace MilkApi.Controllers
         {
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
-                string query = "DELETE FROM Leite WHERE Id = @Id";
+                string query = "DELETE FROM Qualidade WHERE Id = @Id";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@Id", id);
 
                 conn.Open();
                 int rows = cmd.ExecuteNonQuery();
-
                 if (rows > 0) return Ok();
             }
 

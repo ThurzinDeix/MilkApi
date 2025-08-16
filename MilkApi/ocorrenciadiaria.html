@@ -41,7 +41,6 @@
                 transform: scale(1.05);
             }
 
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -104,6 +103,8 @@
         <div class="card" onclick="abrirModal('leite')">Leite</div>
         <div class="card" onclick="abrirModal('manejo')">Manejo Geral</div>
         <div class="card" onclick="abrirModal('reproducao')">Reprodução</div>
+        <div class="card" onclick="abrirModal('suplemento')">Suplemento</div>
+        <div class="card" onclick="abrirModal('remedio')">Remédio</div>
     </div>
 
     <!-- Modal -->
@@ -114,9 +115,7 @@
             <form id="modal-form">
                 <label>Brinco do Gado:</label>
                 <input type="number" id="brinco" required>
-
                 <div id="campos-especificos"></div>
-
                 <button type="submit">Salvar</button>
             </form>
         </div>
@@ -131,47 +130,68 @@
             document.getElementById("modal").style.display = "block";
             document.getElementById("modal-titulo").innerText = tipo.charAt(0).toUpperCase() + tipo.slice(1);
 
-            let camposHTML = "";
-
             const hoje = new Date().toISOString().split("T")[0];
+            let camposHTML = "";
 
             if (tipo === "leite") {
                 camposHTML = `
-                    <label>Data:</label>
-                    <input type="date" id="data" value="${hoje}" required>
-                    <label>CCS:</label>
-                    <input type="number" id="ccs" required>
-                    <label>Gordura (%):</label>
-                    <input type="number" id="gordura" step="0.01" required>
-                    <label>Proteína (%):</label>
-                    <input type="number" id="proteina" step="0.01" required>
-                    <label>Litros:</label>
-                    <input type="number" id="litros" step="0.01" required>
-                `;
+                        <label>Data:</label>
+                        <input type="date" id="data" value="${hoje}" required>
+                        <label>Lote:</label>
+                        <input type="text" id="lote" required>
+                        <label>Litros:</label>
+                        <input type="number" id="litros" step="0.01" required>
+                    `;
             }
             if (tipo === "manejo") {
                 camposHTML = `
-                    <label>Tipo de Manejo:</label>
-                    <input type="text" id="tipoManejo" required>
-                    <label>Data do Manejo:</label>
-                    <input type="date" id="dataManejo" value="${hoje}" required>
-                    <label>Observações:</label>
-                    <textarea id="observacoes"></textarea>
-                `;
+                        <label>Tipo de Manejo:</label>
+                        <input type="text" id="tipoManejo" required>
+                        <label>Data do Manejo:</label>
+                        <input type="date" id="dataManejo" value="${hoje}" required>
+                        <label>Observações:</label>
+                        <textarea id="observacoes"></textarea>
+                    `;
             }
             if (tipo === "reproducao") {
                 camposHTML = `
-                    <label>Tipo:</label>
-                     <select id="tipoReproducao">
-                        <option value="">Selecione o tipo</option>
-                        <option value="Monta">Monta</option>
-                        <option value="Inseminação Artificial">Inseminação Artificial</option>
-                    </select>
-                    <label>Data:</label>
-                    <input type="date" id="dataReproducao" value="${hoje}" required>
-                    <label>Observação:</label>
-                    <textarea id="observacaoReproducao"></textarea>
-                `;
+                        <label>Tipo:</label>
+                        <select id="tipoReproducao">
+                            <option value="">Selecione o tipo</option>
+                            <option value="Monta">Monta</option>
+                            <option value="Inseminação Artificial">Inseminação Artificial</option>
+                        </select>
+                        <label>Data:</label>
+                        <input type="date" id="dataReproducao" value="${hoje}" required>
+                        <label>Observação:</label>
+                        <textarea id="observacaoReproducao"></textarea>
+                    `;
+            }
+            if (tipo === "suplemento") {
+                camposHTML = `
+                        <label>Tipo:</label>
+                        <input type="text" id="tipoSuplemento">
+                        <label>Nome:</label>
+                        <input type="text" id="nomeSuplemento">
+                        <label>Data:</label>
+                        <input type="date" id="dataSuplemento" value="${hoje}" required>
+                        <label>Intervalo (dias):</label>
+                        <input type="number" id="intervaloSuplemento" required>
+                    `;
+            }
+            if (tipo === "remedio") {
+                camposHTML = `
+                        <label>Nome:</label>
+                        <input type="text" id="nomeRemedio">
+                        <label>Data:</label>
+                        <input type="date" id="dataRemedio" value="${hoje}" required>
+                        <label>Doses:</label>
+                        <input type="number" id="dosesRemedio" required>
+                        <label>Intervalo (dias):</label>
+                        <input type="number" id="intervaloRemedio" required>
+                        <label>Via:</label>
+                        <input type="text" id="viaRemedio">
+                    `;
             }
 
             document.getElementById("campos-especificos").innerHTML = camposHTML;
@@ -183,16 +203,12 @@
 
         document.getElementById("modal-form").addEventListener("submit", async function (e) {
             e.preventDefault();
-
             const brinco = document.getElementById("brinco").value;
             const usuarioId = localStorage.getItem("userId");
 
             // Buscar ID do gado
             const res = await fetch(`${apiBase}/gado/por-brinco?brinco=${brinco}&usuarioId=${usuarioId}`);
-            if (!res.ok) {
-                alert("Gado não encontrado!");
-                return;
-            }
+            if (!res.ok) { alert("Gado não encontrado!"); return; }
             const gado = await res.json();
 
             let payload = {};
@@ -202,9 +218,7 @@
                 payload = {
                     ID_Gado: gado.id,
                     Data: document.getElementById("data").value,
-                    CCS: parseFloat(document.getElementById("ccs").value),
-                    Gordura: parseFloat(document.getElementById("gordura").value),
-                    Proteina: parseFloat(document.getElementById("proteina").value),
+                    Lote: document.getElementById("lote").value,
                     Litros: parseFloat(document.getElementById("litros").value)
                 };
                 endpoint = "/leite";
@@ -226,6 +240,27 @@
                     Observacao: document.getElementById("observacaoReproducao").value
                 };
                 endpoint = "/reproducao";
+            }
+            if (tipoAtual === "suplemento") {
+                payload = {
+                    ID_Gado: gado.id,
+                    Tipo: document.getElementById("tipoSuplemento").value,
+                    Nome: document.getElementById("nomeSuplemento").value,
+                    Date: document.getElementById("dataSuplemento").value,
+                    intervalo: parseInt(document.getElementById("intervaloSuplemento").value)
+                };
+                endpoint = "/suplemento";
+            }
+            if (tipoAtual === "remedio") {
+                payload = {
+                    ID_Gado: gado.id,
+                    Nome: document.getElementById("nomeRemedio").value,
+                    Date: document.getElementById("dataRemedio").value,
+                    Doses: parseInt(document.getElementById("dosesRemedio").value),
+                    intervalo: parseInt(document.getElementById("intervaloRemedio").value),
+                    via: document.getElementById("viaRemedio").value
+                };
+                endpoint = "/remedio";
             }
 
             const saveRes = await fetch(`${apiBase}${endpoint}`, {
