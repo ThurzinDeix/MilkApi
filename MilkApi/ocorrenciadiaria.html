@@ -215,14 +215,52 @@
             let endpoint = "";
 
             if (tipoAtual === "leite") {
-                payload = {
+                const brinco = document.getElementById("brinco").value;
+                const usuarioId = localStorage.getItem("userId");
+
+                // Buscar ID do gado
+                const resGado = await fetch(`${apiBase}/gado/por-brinco?brinco=${brinco}&usuarioId=${usuarioId}`);
+                if (!resGado.ok) {
+                    alert("Gado não encontrado!");
+                    return;
+                }
+                const gado = await resGado.json();
+
+                // Pegar valores do formulário
+                const data = document.getElementById("data").value;
+                const litros = parseFloat(document.getElementById("litros").value);
+                const numLote = parseInt(document.getElementById("lote").value);
+
+                // Validação simples
+                if (isNaN(numLote) || numLote <= 0) {
+                    alert("Informe um número de lote válido!");
+                    return;
+                }
+
+                const payload = {
                     ID_Gado: gado.id,
-                    Data: document.getElementById("data").value,
-                    Lote: document.getElementById("lote").value,
-                    Litros: parseFloat(document.getElementById("litros").value)
+                    Data: data,
+                    Litros: litros,
+                    Num: numLote
                 };
-                endpoint = "/leite";
+
+                // Enviar para o endpoint leite-com-lote
+                const saveRes = await fetch(`${apiBase}/leite/leite-com-lote`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                if (saveRes.ok) {
+                    const result = await saveRes.json();
+                    alert(`Leite e Lote salvos com sucesso! ID Leite: ${result.leiteId}, Lote: ${result.loteNum}`);
+                    fecharModal();
+                } else {
+                    const err = await saveRes.text();
+                    alert("Erro ao salvar leite e lote: " + err);
+                }
             }
+
             if (tipoAtual === "manejo") {
                 payload = {
                     ID_Gado: gado.id,
@@ -269,12 +307,6 @@
                 body: JSON.stringify(payload)
             });
 
-            if (saveRes.ok) {
-                alert("Registro salvo com sucesso!");
-                fecharModal();
-            } else {
-                alert("Erro ao salvar registro.");
-            }
         });
     </script>
 

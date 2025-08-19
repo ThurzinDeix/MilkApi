@@ -44,6 +44,7 @@
 <body>
     <h1>Painel de Dados Agro</h1>
 
+    <!-- Tabelas existentes -->
     <h2>Gado</h2>
     <table id="gadoTable">
         <thead>
@@ -61,15 +62,40 @@
         <tbody></tbody>
     </table>
 
-    <h2>Vacinas</h2>
-    <table id="vacinaTable">
+    <h2>Leite</h2>
+    <table id="leiteTable">
         <thead>
             <tr>
                 <th>ID</th>
-                <th>ID Tipo Vacina</th>
-                <th>Lote</th>
-                <th>Validade</th>
-                <th>Fabricante</th>
+                <th>ID Gado</th>
+                <th>Data</th>
+                <th>Litros</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h2>Lote</h2>
+    <table id="loteTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ID Leite</th>
+                <th>Numero Lote</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+
+    <h2>Manejo Geral</h2>
+    <table id="manejoTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ID Gado</th>
+                <th>Tipo Manejo</th>
+                <th>Data Manejo</th>
                 <th>Observações</th>
             </tr>
         </thead>
@@ -108,31 +134,16 @@
         <tbody></tbody>
     </table>
 
-    <h2>Manejo Geral</h2>
-    <table id="manejoTable">
+    <h2>Vacinas</h2>
+    <table id="vacinaTable">
         <thead>
             <tr>
                 <th>ID</th>
-                <th>ID Gado</th>
-                <th>Tipo Manejo</th>
-                <th>Data Manejo</th>
+                <th>ID Tipo Vacina</th>
+                <th>Lote</th>
+                <th>Validade</th>
+                <th>Fabricante</th>
                 <th>Observações</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-
-    <h2>Leite</h2>
-    <table id="leiteTable">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>ID Gado</th>
-                <th>Data</th>
-                <th>CCS</th>
-                <th>Gordura</th>
-                <th>Proteína</th>
-                <th>Litros</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -183,42 +194,80 @@
         <tbody></tbody>
     </table>
 
+    <!-- Novas tabelas para Suplemento e Remédio -->
+    <h2>Suplementos</h2>
+    <table id="suplementoTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ID Gado</th>
+                <th>Tipo</th>
+                <th>Nome</th>
+                <th>Data</th>
+                <th>Intervalo (dias)</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h2>Remédios</h2>
+    <table id="remedioTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ID Gado</th>
+                <th>Nome</th>
+                <th>Data</th>
+                <th>Doses</th>
+                <th>Intervalo (dias)</th>
+                <th>Via</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
     <script>
-    const apiBase = "https://localhost:7092"; // ajuste para seu backend
+        const apiBase = "https://localhost:7092"; // ajuste para seu backend
 
-    async function carregarDados(endpoint, tabelaId, campos) {
-      try {
-        const res = await fetch(`${apiBase}/${endpoint}`);
-        if (!res.ok) throw new Error("Erro ao buscar " + endpoint);
-        const dados = await res.json();
+        async function carregarDados(endpoint, tabelaId, campos) {
+            try {
+                const res = await fetch(`${apiBase}/${endpoint}`);
+                if (!res.ok) throw new Error("Erro ao buscar " + endpoint);
+                const dados = await res.json();
 
-        const tbody = document.querySelector(`#${tabelaId} tbody`);
-        tbody.innerHTML = "";
+                const tbody = document.querySelector(`#${tabelaId} tbody`);
+                tbody.innerHTML = "";
 
-        dados.forEach(item => {
-          const tr = document.createElement("tr");
-          campos.forEach(c => {
-            const td = document.createElement("td");
-            td.textContent = item[c] ?? "";
-            tr.appendChild(td);
-          });
-          tbody.appendChild(tr);
-        });
-      } catch (err) {
-        console.error(err);
-      }
-    }
+                dados.forEach(item => {
+                    const tr = document.createElement("tr");
+                    campos.forEach(c => {
+                        const td = document.createElement("td");
+                        td.textContent = item[c] ?? "";
+                        tr.appendChild(td);
+                    });
+                    tbody.appendChild(tr);
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        }
 
-    window.onload = () => {
-      carregarDados("gado", "gadoTable", ["id","ID_Usuario", "data_Nasc","raca","peso","sexo","brinco","observacao"]);
-      carregarDados("vacina", "vacinaTable", ["id","id_TipoVacina","lote","dataValidade","fabricante","observacoes"]);
-      carregarDados("tipovacina", "tipoVacinaTable", ["id","nome","descricao","obrigatoriedade","idadeMinimaMeses","periodicidadeMeses","requerReforco","intervaloReforcoMeses","funcao"]);
-      carregarDados("reproducao", "reproducaoTable", ["id","ID_Gado","tipo","data","observacao"]);
-      carregarDados("manejo", "manejoTable", ["id","id_Gado","tipo_Manejo","data_Manejo","observacoes"]);
-      carregarDados("Leite", "leiteTable", ["id","ID_Gado","data","ccs","gordura","proteina","litros"]);
-      carregarDados("alimentacao", "alimentacaoTable", ["id","id_Gado","data","tipo","quantidade","observacao"]);
-      carregarDados("alertas", "alertasTable", ["id","id_Gado","data_Prevista","status"]);
-    };
+        window.onload = () => {
+            // Tabelas existentes
+            carregarDados("gado", "gadoTable", ["id", "ID_Usuario", "data_Nasc", "raca", "peso", "sexo", "brinco", "observacao"]);
+            carregarDados("leite", "leiteTable", ["id", "ID_Gado", "data", "litros", "lote"]);
+            carregarDados("manejo", "manejoTable", ["id", "ID_Gado", "tipo_Manejo", "data_Manejo", "observacoes"]);
+            carregarDados("reproducao", "reproducaoTable", ["id", "ID_Gado", "tipo", "data", "observacao"]);
+            carregarDados("vacina", "vacinaTable", ["id", "id_TipoVacina", "lote", "dataValidade", "fabricante", "observacoes"]);
+            carregarDados("tipovacina", "tipoVacinaTable", ["id", "nome", "descricao", "obrigatoriedade", "idadeMinimaMeses", "periodicidadeMeses", "requerReforco", "intervaloReforcoMeses", "funcao"]);
+            carregarDados("alimentacao", "alimentacaoTable", ["id", "id_Gado", "data", "tipo", "quantidade", "observacao"]);
+            carregarDados("alertas", "alertasTable", ["id", "id_Gado", "data_Prevista", "status"]);
+
+            // Novas tabelas
+            carregarDados("suplemento", "suplementoTable", ["id", "ID_Gado", "Tipo", "Nome", "Date", "intervalo"]);
+            carregarDados("remedio", "remedioTable", ["id", "ID_Gado", "Nome", "Date", "Doses", "intervalo", "via"]);
+            carregarDados("lote", "loteTable", ["id", "ID_Leite", "num"]);
+        };
     </script>
 </body>
 </html>

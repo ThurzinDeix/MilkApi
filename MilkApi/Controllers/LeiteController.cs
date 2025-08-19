@@ -140,5 +140,47 @@ namespace MilkApi.Controllers
 
             return NotFound();
         }
+
+        [HttpPost("leite-com-lote")]
+        public IActionResult CriarLeiteComLote([FromBody] LeiteComLoteDTO dto)
+        {
+            string connectionString = ConnectionString;
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                SqlTransaction transaction = conn.BeginTransaction();
+
+                try
+                {
+                    // 1) Inserir Leite
+                    string insertLeite = "INSERT INTO Leite (ID_Gado, Data, Litros) OUTPUT INSERTED.Id VALUES (@ID_Gado, @Data, @Litros)";
+                    SqlCommand cmdLeite = new SqlCommand(insertLeite, conn, transaction);
+                    cmdLeite.Parameters.AddWithValue("@ID_Gado", dto.ID_Gado);
+                    cmdLeite.Parameters.AddWithValue("@Data", dto.Data);
+                    cmdLeite.Parameters.AddWithValue("@Litros", dto.Litros);
+
+                    int leiteId = (int)cmdLeite.ExecuteScalar();
+
+                    // 2) Inserir Lote vinculado ao Leite
+                    string insertLote = "INSERT INTO Lote (ID_Leite, Num) VALUES (@ID_Leite, @Num)";
+                    SqlCommand cmdLote = new SqlCommand(insertLote, conn, transaction);
+                    cmdLote.Parameters.AddWithValue("@ID_Leite", leiteId);
+                    cmdLote.Parameters.AddWithValue("@Num", dto.Num);
+
+                    cmdLote.ExecuteNonQuery();
+
+                    transaction.Commit();
+
+                    return Ok(new { leiteId = leiteId, loteNum = dto.Num });
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    return StatusCode(500, $"Erro ao criar Leite e Lote: {ex.Message}");
+                }
+            }
+        }
+
     }
 }
