@@ -1,0 +1,197 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adicionar Qualidade do Leite</title>
+    <style>
+        body {
+            font-family: Arial;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+
+        .card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 700px;
+            margin: auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        input, button {
+            padding: 8px;
+            margin: 4px 0;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+
+            button:hover {
+                background: #1d4ed8;
+            }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 6px;
+            text-align: center;
+        }
+
+        th {
+            background: #eee;
+        }
+
+        .msg {
+            margin-top: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Adicionar Qualidade do Leite</h2>
+        <label>Número do Lote</label>
+        <input type="number" id="numLote" placeholder="Ex.: 123">
+        <button id="btnBuscar">Buscar Lotes</button>
+        <div class="msg" id="msg"></div>
+
+        <table id="tabelaLotes" style="display:none;">
+            <thead>
+                <tr>
+                    <th>ID Lote</th>
+                    <th>ID Leite</th>
+                    <th>Data</th>
+                    <th>Litros</th>
+                    <th>CCS</th>
+                    <th>Gordura (%)</th>
+                    <th>Proteína (%)</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody id="corpoTabela"></tbody>
+        </table>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:7092'; // Altere conforme sua API
+
+        document.getElementById('btnBuscar').addEventListener('click', async () => {
+            const num = Number(document.getElementById('numLote').value);
+            const msg = document.getElementById('msg');
+            const tabela = document.getElementById('tabelaLotes');
+            const corpo = document.getElementById('corpoTabela');
+
+            // Reset UI
+            corpo.innerHTML = '';
+            tabela.style.display = 'none';
+            msg.textContent = '';
+
+            if (!num) {
+                alert('Informe o número do lote');
+                return;
+            }
+
+            try {
+                // 🔄 Busca direta usando o novo endpoint
+                const resLotes = await fetch(`${API_BASE}/Lote/por-numero/${num}`);
+                if (!resLotes.ok) {
+                    if (resLotes.status === 404) {
+                        msg.textContent = 'Nenhum lote encontrado com esse número.';
+                        return;
+                    }
+                    throw new Error('Erro ao buscar lotes');
+                }
+
+                const lotesFiltrados = await resLotes.json();
+
+                // 🔁 Para cada lote, busca o leite relacionado
+                for (const lote of lotesFiltrados) {
+                    let leite = { Litros: '-', Data: '-' };
+
+                    try {
+                        const resLeite = await fetch(`${API_BASE}/Leite/${lote.ID_Leite}`);
+                        if (resLeite.ok) {
+                            leite = await resLeite.json();
+                        }
+                    } catch (err) {
+                        console.warn(`Erro ao buscar leite do lote ${lote.Id}`, err);
+                    }
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${lote.Id}</td>
+                        <td>${lote.ID_Leite}</td>
+                        <td>${new Date(leite.Data).toLocaleDateString()}</td>
+                        <td>${leite.Litros}</td>
+                        <td><input type="number" id="ccs_${lote.Id}" placeholder="CCS"></td>
+                        <td><input type="number" step="0.01" id="gordura_${lote.Id}" placeholder="Gordura"></td>
+                        <td><input type="number" step="0.01" id="proteina_${lote.Id}" placeholder="Proteína"></td>
+                        <td><button onclick="salvarQualidade(${lote.Id}, this)">Salvar</button></td>
+                    `;
+                    corpo.appendChild(tr);
+                }
+
+                tabela.style.display = 'table';
+                msg.textContent = `${lotesFiltrados.length} lote(s) encontrado(s).`;
+
+            } catch (err) {
+                console.error(err);
+                msg.textContent = 'Erro ao buscar lotes.';
+            }
+        });
+
+        // ✅ Função para salvar qualidade do leite
+        async function salvarQualidade(idLote, btn) {
+            const ccs = Number(document.getElementById(`ccs_${idLote}`).value);
+            const gordura = parseFloat(document.getElementById(`gordura_${idLote}`).value);
+            const proteina = parseFloat(document.getElementById(`proteina_${idLote}`).value);
+
+            if (isNaN(ccs) || isNaN(gordura) || isNaN(proteina)) {
+                alert('Preencha todos os campos de qualidade corretamente.');
+                return;
+            }
+
+            const payload = {
+                ID_Lote: idLote,
+                CCS: ccs,
+                Gordura: gordura,
+                Proteina: proteina
+            };
+
+            try {
+                btn.disabled = true;
+                const res = await fetch(`${API_BASE}/Qualidade`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!res.ok) throw new Error('Erro ao salvar qualidade');
+
+                alert(`Qualidade do Lote ${idLote} salva com sucesso!`);
+            } catch (err) {
+                console.error(err);
+                alert('Erro ao salvar qualidade.');
+            } finally {
+                btn.disabled = false;
+            }
+        }
+    </script>
+
+
+</body>
+</html>

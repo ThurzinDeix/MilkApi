@@ -82,6 +82,7 @@
                 <th>ID</th>
                 <th>ID Leite</th>
                 <th>Numero Lote</th>
+                <th>ID Usuario</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -254,19 +255,19 @@
 
         window.onload = () => {
             // Tabelas existentes
-            carregarDados("gado", "gadoTable", ["id", "ID_Usuario", "data_Nasc", "raca", "peso", "sexo", "brinco", "observacao"]);
-            carregarDados("leite", "leiteTable", ["id", "ID_Gado", "data", "litros", "lote"]);
-            carregarDados("manejo", "manejoTable", ["id", "ID_Gado", "tipo_Manejo", "data_Manejo", "observacoes"]);
-            carregarDados("reproducao", "reproducaoTable", ["id", "ID_Gado", "tipo", "data", "observacao"]);
-            carregarDados("vacina", "vacinaTable", ["id", "id_TipoVacina", "lote", "dataValidade", "fabricante", "observacoes"]);
+            carregarDados("gado", "gadoTable", ["id", "iD_Usuario", "data_Nasc", "raca", "peso", "sexo", "brinco", "observacao"]);
+            carregarDados("leite", "leiteTable", ["id", "iD_Gado", "data", "litros"]);
+            carregarDados("manejo", "manejoTable", ["id", "iD_Gado", "tipo_Manejo", "data_Manejo", "observacoes"]);
+            carregarDados("reproducao", "reproducaoTable", ["id", "iD_Gado", "tipo", "data", "observacao"]);
+            carregarDados("vacina", "vacinaTable", ["id", "iD_TipoVacina", "lote", "dataValidade", "fabricante", "observacoes"]);
             carregarDados("tipovacina", "tipoVacinaTable", ["id", "nome", "descricao", "obrigatoriedade", "idadeMinimaMeses", "periodicidadeMeses", "requerReforco", "intervaloReforcoMeses", "funcao"]);
-            carregarDados("alimentacao", "alimentacaoTable", ["id", "id_Gado", "data", "tipo", "quantidade", "observacao"]);
-            carregarDados("alertas", "alertasTable", ["id", "id_Gado", "data_Prevista", "status"]);
+            carregarDados("alimentacao", "alimentacaoTable", ["id", "iD_Gado", "data", "tipo", "quantidade", "observacao"]);
+            carregarDados("alertas", "alertasTable", ["id", "iD_Gado", "data_Prevista", "status"]);
 
             // Novas tabelas
-            carregarDados("suplemento", "suplementoTable", ["id", "ID_Gado", "Tipo", "Nome", "Date", "intervalo"]);
-            carregarDados("remedio", "remedioTable", ["id", "ID_Gado", "Nome", "Date", "Doses", "intervalo", "via"]);
-            carregarDados("lote", "loteTable", ["id", "ID_Leite", "num"]);
+            carregarDados("suplemento", "suplementoTable", ["id", "iD_Gado", "Tipo", "Nome", "Date", "intervalo"]);
+            carregarDados("remedio", "remedioTable", ["id", "iD_Gado", "Nome", "Date", "Doses", "intervalo", "via"]);
+            carregarDados("lote", "loteTable", ["id", "iD_Leite", "num", "iD_Usuario"]);
         };
     </script>
 </body>

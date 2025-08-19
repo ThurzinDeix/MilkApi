@@ -163,10 +163,11 @@ namespace MilkApi.Controllers
                     int leiteId = (int)cmdLeite.ExecuteScalar();
 
                     // 2) Inserir Lote vinculado ao Leite
-                    string insertLote = "INSERT INTO Lote (ID_Leite, Num) VALUES (@ID_Leite, @Num)";
+                    string insertLote = "INSERT INTO Lote (ID_Leite, Num, ID_Usuario) VALUES (@ID_Leite, @Num, @ID_Usuario)";
                     SqlCommand cmdLote = new SqlCommand(insertLote, conn, transaction);
                     cmdLote.Parameters.AddWithValue("@ID_Leite", leiteId);
                     cmdLote.Parameters.AddWithValue("@Num", dto.Num);
+                    cmdLote.Parameters.AddWithValue("@ID_Usuario", dto.ID_Usuario);
 
                     cmdLote.ExecuteNonQuery();
 

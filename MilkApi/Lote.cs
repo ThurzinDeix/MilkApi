@@ -5,5 +5,7 @@
         public int Id { get; set; }
         public int ID_Leite { get; set; }
         public int Num { get; set; }
+        public int ID_Usuario { get; set; }
+
     }
 }

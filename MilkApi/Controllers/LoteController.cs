@@ -33,7 +33,8 @@ namespace MilkApi.Controllers
                     {
                         Id = Convert.ToInt32(reader["Id"]),
                         ID_Leite = Convert.ToInt32(reader["ID_Leite"]),
-                        Num = Convert.ToInt32(reader["Num"])
+                        Num = Convert.ToInt32(reader["Num"]),
+                        ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
                     });
                 }
 
@@ -60,7 +61,8 @@ namespace MilkApi.Controllers
                     {
                         Id = Convert.ToInt32(reader["Id"]),
                         ID_Leite = Convert.ToInt32(reader["ID_Leite"]),
-                        Num = Convert.ToInt32(reader["Num"])
+                        Num = Convert.ToInt32(reader["Num"]),
+                        ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
                     };
                     reader.Close();
                     return Ok(lote);
@@ -76,11 +78,12 @@ namespace MilkApi.Controllers
         {
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
-                string query = @"INSERT INTO Lote (ID_Leite, Num)
-                                 VALUES (@ID_Leite, @Num)";
+                string query = @"INSERT INTO Lote (ID_Leite, Num, ID_Usuario)
+                                 VALUES (@ID_Leite, @Num, @ID_Usuario)";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@ID_Leite", lote.ID_Leite);
                 cmd.Parameters.AddWithValue("@Num", lote.Num);
+                cmd.Parameters.AddWithValue("@ID_Usuario", lote.ID_Usuario);
 
                 conn.Open();
                 int rows = cmd.ExecuteNonQuery();
@@ -97,11 +100,13 @@ namespace MilkApi.Controllers
             {
                 string query = @"UPDATE Lote SET 
                                     ID_Leite = @ID_Leite,
-                                    Num = @Num
+                                    Num = @Num,
+                                    ID_Usuario = @ID_Usuario
                                  WHERE Id = @Id";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@ID_Leite", lote.ID_Leite);
                 cmd.Parameters.AddWithValue("@Num", lote.Num);
+                cmd.Parameters.AddWithValue("@ID_Usuario", lote.ID_Usuario);
                 cmd.Parameters.AddWithValue("@Id", id);
 
                 conn.Open();
@@ -129,8 +134,38 @@ namespace MilkApi.Controllers
             return NotFound();
         }
 
+        [HttpGet("por-numero/{num}")]
+        public ActionResult<IEnumerable<Lote>> GetByNumero(int num)
+        {
+            List<Lote> lista = new List<Lote>();
+
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            {
+                string query = "SELECT * FROM Lote WHERE Num = @Num";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Num", num);
+
+                conn.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    lista.Add(new Lote
+                    {
+                        Id = Convert.ToInt32(reader["Id"]),
+                        ID_Leite = Convert.ToInt32(reader["ID_Leite"]),
+                        Num = Convert.ToInt32(reader["Num"]),
+                        ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
+                    });
+                }
+
+                reader.Close();
+            }
+
+            if (lista.Count == 0)
+                return NotFound();
+
+            return Ok(lista);
+        }
 
     }
 }
-
-
