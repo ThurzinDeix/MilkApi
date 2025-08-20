@@ -32,7 +32,6 @@ namespace MilkApi.Controllers
                     lista.Add(new Lote
                     {
                         Id = Convert.ToInt32(reader["Id"]),
-                        ID_Leite = Convert.ToInt32(reader["ID_Leite"]),
                         Num = Convert.ToInt32(reader["Num"]),
                         ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
                     });
@@ -60,7 +59,6 @@ namespace MilkApi.Controllers
                     var lote = new Lote
                     {
                         Id = Convert.ToInt32(reader["Id"]),
-                        ID_Leite = Convert.ToInt32(reader["ID_Leite"]),
                         Num = Convert.ToInt32(reader["Num"]),
                         ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
                     };
@@ -78,10 +76,9 @@ namespace MilkApi.Controllers
         {
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
-                string query = @"INSERT INTO Lote (ID_Leite, Num, ID_Usuario)
-                                 VALUES (@ID_Leite, @Num, @ID_Usuario)";
+                string query = @"INSERT INTO Lote (INum, ID_Usuario)
+                                 VALUES (@Num, @ID_Usuario)";
                 SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@ID_Leite", lote.ID_Leite);
                 cmd.Parameters.AddWithValue("@Num", lote.Num);
                 cmd.Parameters.AddWithValue("@ID_Usuario", lote.ID_Usuario);
 
@@ -99,12 +96,10 @@ namespace MilkApi.Controllers
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
                 string query = @"UPDATE Lote SET 
-                                    ID_Leite = @ID_Leite,
                                     Num = @Num,
                                     ID_Usuario = @ID_Usuario
                                  WHERE Id = @Id";
                 SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@ID_Leite", lote.ID_Leite);
                 cmd.Parameters.AddWithValue("@Num", lote.Num);
                 cmd.Parameters.AddWithValue("@ID_Usuario", lote.ID_Usuario);
                 cmd.Parameters.AddWithValue("@Id", id);
@@ -166,6 +161,47 @@ namespace MilkApi.Controllers
 
             return Ok(lista);
         }
+
+        [HttpPost("criar-com-leites")]
+        public async Task<IActionResult> CriarLoteComLeites([FromBody] LoteComLeitesDTO dto)
+        {
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            {
+                await conn.OpenAsync();
+                using (var tran = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        // 1) Criar lote
+                        string insertLote = "INSERT INTO Lote (Num, ID_Usuario) OUTPUT INSERTED.Id VALUES (@Num, @ID_Usuario)";
+                        SqlCommand cmdLote = new SqlCommand(insertLote, conn, tran);
+                        cmdLote.Parameters.AddWithValue("@Num", dto.Num);
+                        cmdLote.Parameters.AddWithValue("@ID_Usuario", dto.ID_Usuario);
+
+                        int loteId = (int)await cmdLote.ExecuteScalarAsync();
+
+                        // 2) Criar relações na tabela LoteLeite
+                        foreach (var idLeite in dto.IDsLeite)
+                        {
+                            string insertLoteLeite = "INSERT INTO LoteLeite (ID_Lote, ID_Leite) VALUES (@ID_Lote, @ID_Leite)";
+                            SqlCommand cmdLoteLeite = new SqlCommand(insertLoteLeite, conn, tran);
+                            cmdLoteLeite.Parameters.AddWithValue("@ID_Lote", loteId);
+                            cmdLoteLeite.Parameters.AddWithValue("@ID_Leite", idLeite);
+                            await cmdLoteLeite.ExecuteNonQueryAsync();
+                        }
+
+                        tran.Commit();
+                        return Ok(new { loteId = loteId });
+                    }
+                    catch (Exception ex)
+                    {
+                        tran.Rollback();
+                        return StatusCode(500, $"Erro ao criar lote: {ex.Message}");
+                    }
+                }
+            }
+        }
+
 
     }
 }

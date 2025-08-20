@@ -15,7 +15,7 @@
             text-align: center;
         }
 
-        .card {
+        .card, .lote-card {
             background: white;
             border-radius: 12px;
             padding: 20px;
@@ -27,7 +27,7 @@
             transition: transform 0.2s ease;
         }
 
-            .card:hover {
+            .card:hover, .lote-card:hover {
                 transform: scale(1.05);
             }
 
@@ -59,34 +59,36 @@
                 background: #45a049;
             }
 
-        .lote-card {
-            background: #fff;
-            padding: 15px;
-            margin: 10px auto;
-            border-radius: 10px;
-            width: 300px;
-            box-shadow: 0px 1px 5px rgba(0,0,0,0.2);
-            cursor: pointer;
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
         }
 
-        .input-qualidade {
-            margin-top: 10px;
-            display: flex;
-            gap: 10px;
+        .modal-content {
+            background: white;
+            margin: 10% auto;
+            padding: 20px;
+            width: 300px;
+            border-radius: 12px;
+            text-align: center;
         }
     </style>
 </head>
 <body>
     <h1>Gestão de Lotes de Leite</h1>
 
-    <!-- Tela inicial -->
     <div id="telaInicial">
         <div class="card" onclick="abrirSelecaoLeite()">Criar Lote</div>
         <h2>Lotes Criados</h2>
         <div id="listaLotes"></div>
     </div>
 
-    <!-- Tela de seleção de Leite -->
     <div id="telaLeite" class="hidden">
         <h2>Selecione os Leites</h2>
         <div id="listaLeites"></div>
@@ -94,21 +96,39 @@
         <button onclick="voltarInicio()">Voltar</button>
     </div>
 
-    <script>
-        // Simulação de dados de Leite
-        const leites = [
-            { id: 1, ID_Gado: "B123", data: "2025-08-18", litros: 20 },
-            { id: 2, ID_Gado: "B456", data: "2025-08-19", litros: 15 },
-            { id: 3, ID_Gado: "B789", data: "2025-08-20", litros: 18 },
-        ];
+    <div id="modalQualidade" class="modal">
+        <div class="modal-content">
+            <h3>Adicionar Qualidade</h3>
+            <label>CCS: <input type="number" id="inputCCS"></label><br><br>
+            <label>Gordura: <input type="number" step="0.01" id="inputGordura"></label><br><br>
+            <label>Proteína: <input type="number" step="0.01" id="inputProteina"></label><br><br>
+            <button onclick="salvarQualidade()">Salvar</button>
+            <button onclick="fecharModal()">Cancelar</button>
+        </div>
+    </div>
 
+    <script>
+        const apiBase = "https://localhost:7092/";
+        const idusuario = localStorage.getItem("userId");
+        let leites = [];
         let lotes = [];
         let loteSelecionado = [];
+        let loteAtualQualidade = null;
 
         function abrirSelecaoLeite() {
             document.getElementById("telaInicial").classList.add("hidden");
             document.getElementById("telaLeite").classList.remove("hidden");
-            renderLeites();
+            carregarLeites();
+        }
+
+        async function carregarLeites() {
+            try {
+                const res = await fetch(`${apiBase}leite`);
+                leites = await res.json();
+                renderLeites();
+            } catch (err) {
+                alert("Erro ao carregar leites: " + err);
+            }
         }
 
         function renderLeites() {
@@ -118,71 +138,130 @@
                 const div = document.createElement("div");
                 div.classList.add("leite-item");
                 div.innerHTML = `
-              <div>
-                <strong>Brinco:</strong> ${leite.ID_Gado} <br>
-                <strong>Data:</strong> ${leite.data} <br>
-                <strong>Litros:</strong> ${leite.litros}
-              </div>
-              <button onclick="adicionarLeite(${leite.id})">Adicionar</button>
-            `;
+                        <div>
+                            <strong>Brinco:</strong> ${leite.iD_Gado} <br>
+                            <strong>Data:</strong> ${new Date(leite.data).toLocaleDateString()} <br>
+                            <strong>Litros:</strong> ${leite.litros}
+                        </div>
+                        <button onclick="adicionarLeite(${leite.Id})">Adicionar</button>
+                    `;
                 container.appendChild(div);
             });
         }
 
         function adicionarLeite(id) {
-            const leite = leites.find(l => l.id === id);
+            const leite = leites.find(l => l.Id === id);
             if (!loteSelecionado.includes(leite)) {
                 loteSelecionado.push(leite);
                 alert("Leite adicionado ao lote!");
             }
         }
 
-        function concluirLote() {
+        async function concluirLote() {
             if (loteSelecionado.length === 0) {
                 alert("Selecione pelo menos um leite!");
                 return;
             }
-            const novoLote = {
-                id: lotes.length + 1,
-                leites: [...loteSelecionado],
-                qualidade: null
-            };
-            lotes.push(novoLote);
-            loteSelecionado = [];
-            voltarInicio();
-            renderLotes();
+            try {
+                // Pegar os IDs corretamente (note que no seu objeto é 'Id', com I maiúsculo)
+                const idsLeite = loteSelecionado.map(l => l.Id);
+
+                const res = await fetch(`${apiBase}lote/criar-com-leites`, { // <--- endpoint correto
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        Num: lotes.length + 1,
+                        ID_Usuario: 1,
+                        IDsLeite: idsLeite // <--- precisa bater com o DTO
+                    })
+                });
+
+                if (res.ok) {
+                    let novoLote = null;
+                    const text = await res.text();
+                    if (text) {
+                        novoLote = JSON.parse(text);
+                    }
+                    loteSelecionado = [];
+                    voltarInicio();
+                    carregarLotes();
+                } else {
+                    const erro = await res.json();
+                    alert("Erro ao criar lote: " + JSON.stringify(erro));
+                }
+            } catch (err) {
+                alert("Erro ao criar lote: " + err);
+            }
         }
+
 
         function voltarInicio() {
             document.getElementById("telaLeite").classList.add("hidden");
             document.getElementById("telaInicial").classList.remove("hidden");
         }
 
+        async function carregarLotes() {
+            try {
+                const res = await fetch(`${apiBase}lote`);
+                lotes = await res.json();
+                renderLotes();
+            } catch (err) {
+                alert("Erro ao carregar lotes: " + err);
+            }
+        }
+
         function renderLotes() {
             const container = document.getElementById("listaLotes");
             container.innerHTML = "";
             lotes.forEach(lote => {
+                const totalLitros = lote.Leites.reduce((sum, l) => sum + l.Litros, 0);
                 const div = document.createElement("div");
                 div.classList.add("lote-card");
                 div.innerHTML = `
-              <strong>Lote #${lote.id}</strong><br>
-              Quantidade de Leites: ${lote.leites.length} <br>
-              Qualidade: ${lote.qualidade ? lote.qualidade : "Não definida"}
-              <div class="input-qualidade">
-                <input type="text" placeholder="Qualidade" id="qualidade-${lote.id}">
-                <button onclick="definirQualidade(${lote.id})">Salvar</button>
-              </div>
-            `;
+                        <strong>Lote #${lote.Id}</strong><br>
+                        Quantidade de Leites: ${lote.Leites.length} <br>
+                        Total Litros: ${totalLitros.toFixed(2)} <br>
+                        Qualidade: ${lote.Qualidade ? 'Definida' : 'Não definida'} <br>
+                        <button onclick="abrirModalQualidade(${lote.Id})">Adicionar Qualidade</button>
+                    `;
                 container.appendChild(div);
             });
         }
 
-        function definirQualidade(loteId) {
-            const input = document.getElementById(`qualidade-${loteId}`);
-            const lote = lotes.find(l => l.id === loteId);
-            lote.qualidade = input.value;
-            renderLotes();
+        function abrirModalQualidade(loteId) {
+            loteAtualQualidade = loteId;
+            document.getElementById("modalQualidade").style.display = "block";
         }
+
+        function fecharModal() {
+            document.getElementById("modalQualidade").style.display = "none";
+            loteAtualQualidade = null;
+        }
+
+        async function salvarQualidade() {
+            const ccs = parseInt(document.getElementById("inputCCS").value);
+            const gordura = parseFloat(document.getElementById("inputGordura").value);
+            const proteina = parseFloat(document.getElementById("inputProteina").value);
+            try {
+                await fetch(`${apiBase}qualidade`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        ID_Lote: loteAtualQualidade,
+                        CCS: ccs,
+                        Gordura: gordura,
+                        Proteina: proteina
+                    })
+                });
+                fecharModal();
+                carregarLotes();
+            } catch (err) {
+                alert("Erro ao salvar qualidade: " + err);
+            }
+        }
+
+        // Carrega lotes ao iniciar
+        carregarLotes();
     </script>
 </body>
 </html>
