@@ -137,8 +137,7 @@
                 camposHTML = `
                         <label>Data:</label>
                         <input type="date" id="data" value="${hoje}" required>
-                        <label>Lote:</label>
-                        <input type="text" id="lote" required>
+                       
                         <label>Litros:</label>
                         <input type="number" id="litros" step="0.01" required>
                     `;
@@ -215,51 +214,16 @@
             let endpoint = "";
 
             if (tipoAtual === "leite") {
-                const brinco = document.getElementById("brinco").value;
-                const usuarioId = localStorage.getItem("userId");
-
-                // Buscar ID do gado
-                const resGado = await fetch(`${apiBase}/gado/por-brinco?brinco=${brinco}&usuarioId=${usuarioId}`);
-                if (!resGado.ok) {
-                    alert("Gado não encontrado!");
-                    return;
-                }
-                const gado = await resGado.json();
-
-                // Pegar valores do formulário
                 const data = document.getElementById("data").value;
                 const litros = parseFloat(document.getElementById("litros").value);
-                const numLote = parseInt(document.getElementById("lote").value);
 
-                // Validação simples
-                if (isNaN(numLote) || numLote <= 0) {
-                    alert("Informe um número de lote válido!");
-                    return;
-                }
-
-                const payload = {
+                payload = {
                     ID_Gado: gado.id,
                     Data: data,
                     Litros: litros,
-                    Num: numLote,
                     ID_Usuario: usuarioId
                 };
-
-                // Enviar para o endpoint leite-com-lote
-                const saveRes = await fetch(`${apiBase}/leite/leite-com-lote`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
-
-                if (saveRes.ok) {
-                    const result = await saveRes.json();
-                    alert(`Leite e Lote salvos com sucesso! ID Leite: ${result.leiteId}, Lote: ${result.loteNum}`);
-                    fecharModal();
-                } else {
-                    const err = await saveRes.text();
-                    alert("Erro ao salvar leite e lote: " + err);
-                }
+                endpoint = "/leite";
             }
 
             if (tipoAtual === "manejo") {
@@ -302,11 +266,36 @@
                 endpoint = "/remedio";
             }
 
-            const saveRes = await fetch(`${apiBase}${endpoint}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
+
+
+            try {
+                const saveRes = await fetch(`${apiBase}${endpoint}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                if (saveRes.ok) {
+                    let result;
+                    const contentType = saveRes.headers.get("content-type");
+
+                    if (contentType && contentType.includes("application/json")) {
+                        result = await saveRes.json();
+                    } else {
+                        result = await saveRes.text(); // fallback se o backend não retornar JSON
+                    }
+
+                    alert(`${tipoAtual.charAt(0).toUpperCase() + tipoAtual.slice(1)} salvo com sucesso! ${result.id ? "ID: " + result.id : ""}`);
+                    fecharModal();
+                } else {
+                    const err = await saveRes.text();
+                    alert("Erro ao salvar " + tipoAtual + ": " + err);
+                }
+            } catch (ex) {
+                alert("Erro de conexão com o servidor: " + ex.message);
+            }
+
+            
 
         });
     </script>
