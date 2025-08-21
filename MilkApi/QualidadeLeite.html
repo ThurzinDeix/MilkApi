@@ -113,145 +113,157 @@
     </div>
 
     <script>
-        const API_BASE = 'https://localhost:7092'; // Substitua pela URL da sua API
+    const API_BASE = 'https://localhost:7092'; // Substitua pela URL da sua API
 
-        const lotesContainer = document.getElementById("lotes");
-        const leitesContainer = document.getElementById("leites");
-        const leiteSelection = document.getElementById("leiteSelection");
-        const novoLoteBtn = document.getElementById("novoLoteBtn");
-        const criarLoteBtn = document.getElementById("criarLoteBtn");
-        const qualidadeModal = document.getElementById("qualidadeModal");
-        const salvarQualidadeBtn = document.getElementById("salvarQualidadeBtn");
-        const ccsInput = document.getElementById("ccsInput");
-        const proteinaInput = document.getElementById("proteinaInput");
-        const gorduraInput = document.getElementById("gorduraInput");
-        const numLoteInput = document.getElementById("numLoteInput");
+    const lotesContainer = document.getElementById("lotes");
+    const leitesContainer = document.getElementById("leites");
+    const leiteSelection = document.getElementById("leiteSelection");
+    const novoLoteBtn = document.getElementById("novoLoteBtn");
+    const criarLoteBtn = document.getElementById("criarLoteBtn");
+    const qualidadeModal = document.getElementById("qualidadeModal");
+    const salvarQualidadeBtn = document.getElementById("salvarQualidadeBtn");
+    const ccsInput = document.getElementById("ccsInput");
+    const proteinaInput = document.getElementById("proteinaInput");
+    const gorduraInput = document.getElementById("gorduraInput");
+    const numLoteInput = document.getElementById("numLoteInput");
 
-        let leites = [];
-        let lotes = [];
-        let selecionados = [];
-        let loteSelecionadoParaQualidade = null;
 
-        // Buscar lotes
-        async function buscarLotes() {
-            try {
-                const res = await fetch(`${API_BASE}/lote`);
-                if (!res.ok) throw new Error(`Erro ${res.status}: ${res.statusText}`);
-                lotes = await res.json();
-                renderLotes();
-            } catch (err) {
-                console.error("Erro ao buscar lotes:", err);
-                alert(`Erro ao buscar lotes: ${err.message}`);
-            }
+
+    let leites = [];
+    let lotes = [];
+    let selecionados = [];
+    let loteSelecionadoParaQualidade = null;
+
+    // Buscar lotes
+    async function buscarLotes() {
+        try {
+            const res = await fetch(`${API_BASE}/lote`);
+            if (!res.ok) throw new Error(`Erro ${res.status}: ${res.statusText}`);
+            lotes = await res.json();
+            renderLotes();
+        } catch (err) {
+            console.error("Erro ao buscar lotes:", err);
+            alert(`Erro ao buscar lotes: ${err.message}`);
         }
+    }
 
-        // Buscar leites
-        async function buscarLeites() {
-            try {
-                const res = await fetch(`${API_BASE}/leite`);
-                if (!res.ok) throw new Error(`Erro ${res.status}: ${res.statusText}`);
-                leites = await res.json();
-                renderLeites();
-            } catch (err) {
-                console.error("Erro ao buscar leites:", err);
-                alert(`Erro ao buscar leites: ${err.message}`);
-            }
+    // Buscar leites
+    async function buscarLeites() {
+        try {
+            const res = await fetch(`${API_BASE}/leite`);
+            if (!res.ok) throw new Error(`Erro ${res.status}: ${res.statusText}`);
+            leites = await res.json();
+            renderLeites();
+        } catch (err) {
+            console.error("Erro ao buscar leites:", err);
+            alert(`Erro ao buscar leites: ${err.message}`);
         }
+    }
 
-        // Criar lote com leites
-        async function criarLoteAPI(leitesSelecionados, numLote) {
-            const userId = localStorage.getItem("userId");
-            const body = {
-                Num: numLote,
-                ID_Usuario: userId,
-                IDsLeite: leitesSelecionados.map(l => l.id)
-            };
-            try {
-                const res = await fetch(`${API_BASE}/lote/criar-com-leites`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body)
-                });
+    // Criar lote com leites
+    async function criarLoteAPI(leitesSelecionados, numLote) {
+        const userId = localStorage.getItem("userId");
+        const body = {
+            Num: numLote,
+            ID_Usuario: userId,
+            IDsLeite: leitesSelecionados.map(l => l.id) // aqui fica exatamente como você já tinha
+        };
+        try {
+            const res = await fetch(`${API_BASE}/lote/criar-com-leites`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
 
-                if (!res.ok) {
-                    const text = await res.text();
-                    console.error("Erro ao criar lote:", text);
-                    alert(`Erro ao criar lote!\nStatus: ${res.status}\nMensagem: ${text}`);
-                    return;
-                }
-
-                const data = await res.json();
-                console.log("Lote criado:", data);
-                alert(`Lote criado com sucesso! ID: ${data.loteId}`);
-            } catch (err) {
-                console.error("Erro ao criar lote:", err);
-                alert(`Erro ao criar lote: ${err.message}`);
+            if (!res.ok) {
+                const text = await res.text();
+                console.error("Erro ao criar lote:", text);
+                alert(`Erro ao criar lote!\nStatus: ${res.status}\nMensagem: ${text}`);
+                return;
             }
-        }
 
-        // Salvar qualidade
-        async function salvarQualidadeAPI(loteId, qualidade) {
-            try {
-                const res = await fetch(`${API_BASE}/lote/${loteId}/qualidade`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(qualidade)
-                });
-                if (!res.ok) {
-                    const text = await res.text();
-                    console.error("Erro ao salvar qualidade:", text);
-                    alert(`Erro ao salvar qualidade!\nStatus: ${res.status}\nMensagem: ${text}`);
+            const data = await res.json();
+            console.log("Lote criado:", data);
+            alert(`Lote criado com sucesso! ID: ${data.loteId}`);
+        } catch (err) {
+            console.error("Erro ao criar lote:", err);
+            alert(`Erro ao criar lote: ${err.message}`);
+        }
+    }
+
+    // Salvar qualidade
+    async function salvarQualidadeAPI(loteId, qualidade) {
+        try {
+            const res = await fetch(`${API_BASE}/lote/${loteId}/qualidade`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(qualidade)
+            });
+            if (!res.ok) {
+                const text = await res.text();
+                console.error("Erro ao salvar qualidade:", text);
+                alert(`Erro ao salvar qualidade!\nStatus: ${res.status}\nMensagem: ${text}`);
+            } else {
+                alert("Qualidade salva com sucesso!");
+            }
+        } catch (err) {
+            console.error("Erro ao salvar qualidade:", err);
+            alert(`Erro ao salvar qualidade: ${err.message}`);
+        }
+    }
+
+    // Render lotes
+    function renderLotes() {
+        lotesContainer.innerHTML = '';
+        lotes.forEach(lote => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `<strong>Lote ${lote.num}</strong>
+                              <p>Leites: ${lote.leites?.map(l => l.id).join(", ") || ''}</p>
+                              ${lote.qualidade ? `<p>CCS: ${lote.qualidade.ccs}, Prot: ${lote.qualidade.proteina}, Gord: ${lote.qualidade.gordura}</p>` : ''}
+                              <button onclick="abrirModalQualidade(${lote.id})">Adicionar Qualidade</button>`; 
+            lotesContainer.appendChild(card);
+        });
+    }
+
+    // Render leites
+    function renderLeites() {
+        leitesContainer.innerHTML = '';
+        leites.forEach(leite => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            const jaSelecionado = lotes.some(l => l.leites?.some(ll => ll.id === leite.id));
+            if (selecionados.includes(leite.id) || jaSelecionado) card.classList.add('opaco');
+            card.innerHTML = `<strong>Leite ID: ${leite.id}</strong>
+                              <p>Gado ID: ${leite.iD_Gado}</p>
+                              <p>Litros: ${leite.litros}</p>`;
+            card.addEventListener('click', () => {
+                if (!selecionados.includes(leite.id)) {
+                    selecionados.push(leite.id);
+                    card.classList.add('opaco');
                 } else {
-                    alert("Qualidade salva com sucesso!");
+                    selecionados = selecionados.filter(id => id !== leite.id);
+                    if (!jaSelecionado) card.classList.remove('opaco');
                 }
-            } catch (err) {
-                console.error("Erro ao salvar qualidade:", err);
-                alert(`Erro ao salvar qualidade: ${err.message}`);
-            }
-        }
-
-        // Render lotes
-        function renderLotes() {
-            lotesContainer.innerHTML = '';
-            lotes.forEach(lote => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `<strong>Lote ${lote.num}</strong>
-                                      <p>Leites: ${lote.leites?.map(l => l.id).join(", ") || ''}</p>
-                                      ${lote.qualidade ? `<p>CCS: ${lote.qualidade.ccs}, Prot: ${lote.qualidade.proteina}, Gord: ${lote.qualidade.gordura}</p>` : ''}
-                                      <button onclick="abrirModalQualidade(${lote.id})">Adicionar Qualidade</button>`;
-                lotesContainer.appendChild(card);
             });
-        }
-
-        // Render leites
-        function renderLeites() {
-            leitesContainer.innerHTML = '';
-            leites.forEach(leite => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                const jaSelecionado = lotes.some(l => l.leites?.some(ll => ll.id === leite.id));
-                if (selecionados.includes(leite.id) || jaSelecionado) card.classList.add('opaco');
-                card.innerHTML = `<strong>Leite ID: ${leite.id}</strong>
-                                      <p>Gado ID: ${leite.iD_Gado}</p>
-                                      <p>Litros: ${leite.litros}</p>`;
-                card.addEventListener('click', () => {
-                    if (!selecionados.includes(leite.id)) {
-                        selecionados.push(leite.id);
-                        card.classList.add('opaco');
-                    } else {
-                        selecionados = selecionados.filter(id => id !== leite.id);
-                        if (!jaSelecionado) card.classList.remove('opaco');
-                    }
-                });
-                leitesContainer.appendChild(card);
-            });
-        }
+            leitesContainer.appendChild(card);
+        });
+    }
 
         function abrirModalQualidade(loteId) {
+            alert("abrirModalQualidade chamado com loteId: " + loteId);
+
             loteSelecionadoParaQualidade = loteId;
+            alert("loteSelecionadoParaQualidade agora é: " + loteSelecionadoParaQualidade);
+
             const lote = lotes.find(l => l.id === loteId);
-            if (lote.qualidade) {
+            if (lote) {
+                alert("Lote encontrado: " + JSON.stringify(lote));
+            } else {
+                alert("Nenhum lote encontrado para esse ID!");
+            }
+
+            if (lote && lote.qualidade) {
                 ccsInput.value = lote.qualidade.ccs;
                 proteinaInput.value = lote.qualidade.proteina;
                 gorduraInput.value = lote.qualidade.gordura;
@@ -263,54 +275,95 @@
             qualidadeModal.style.display = 'flex';
         }
 
-        // Eventos
-        novoLoteBtn.addEventListener('click', async () => {
-            leiteSelection.style.display = 'block';
-            selecionados = [];
-            numLoteInput.value = '';
-            await buscarLeites();
-        });
+    // Eventos
+    novoLoteBtn.addEventListener('click', async () => {
+        leiteSelection.style.display = 'block';
+        selecionados = [];
+        numLoteInput.value = '';
+        await buscarLeites();
+    });
 
-        criarLoteBtn.addEventListener('click', async () => {
-            const numLote = parseInt(numLoteInput.value);
-            if (isNaN(numLote) || numLote <= 0) {
-                alert("Digite um número de lote válido!");
-                return;
-            }
+    criarLoteBtn.addEventListener('click', async () => {
+        const numLote = parseInt(numLoteInput.value);
+        if (isNaN(numLote) || numLote <= 0) {
+            alert("Digite um número de lote válido!");
+            return;
+        }
 
-            if (selecionados.length === 0) {
-                alert("Selecione pelo menos um leite!");
-                return;
-            }
+        if (selecionados.length === 0) {
+            alert("Selecione pelo menos um leite!");
+            return;
+        }
 
-            const leitesParaLote = leites.filter(l => selecionados.includes(l.id));
-            await criarLoteAPI(leitesParaLote, numLote);
-            leiteSelection.style.display = 'none';
-            selecionados = [];
-            numLoteInput.value = '';
-            await buscarLotes();
-        });
+        const leitesParaLote = leites.filter(l => selecionados.includes(l.id));
+        await criarLoteAPI(leitesParaLote, numLote);
+        leiteSelection.style.display = 'none';
+        selecionados = [];
+        numLoteInput.value = '';
+        await buscarLotes();
+    });
+
+
 
         salvarQualidadeBtn.addEventListener('click', async () => {
-            if (loteSelecionadoParaQualidade) {
-                const qualidade = {
-                    ccs: parseFloat(ccsInput.value),
-                    proteina: parseFloat(proteinaInput.value),
-                    gordura: parseFloat(gorduraInput.value)
-                };
-                await salvarQualidadeAPI(loteSelecionadoParaQualidade, qualidade);
-                qualidadeModal.style.display = 'none';
-                await buscarLotes();
+            if (!loteSelecionadoParaQualidade) {
+                alert("Nenhum lote selecionado!");
+                return;
+            }
+
+            // Cria o objeto qualidade
+            let qualidade = {
+                ID_Lote: loteSelecionadoParaQualidade,
+                CCS: parseInt(ccsInput.value),
+                Proteina: parseFloat(proteinaInput.value),
+                Gordura: parseFloat(gorduraInput.value)
+            };
+
+            // Verifica se já existe qualidade no lote
+            let qualidadeExistente = lotes.find(l => l.id === loteSelecionadoParaQualidade)?.qualidade;
+
+            let url, metodo;
+            if (qualidadeExistente) {
+                // Atualizar
+                url = `${API_BASE}/Qualidade/${qualidadeExistente.Id}`;
+                metodo = 'PUT';
+            } else {
+                // Criar
+                url = `${API_BASE}/Qualidade`;
+                metodo = 'POST';
+            }
+
+            try {
+                const res = await fetch(url, {
+                    method: metodo,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(qualidade)
+                });
+
+                if (!res.ok) {
+                    const text = await res.text();
+                    alert(`Erro ao salvar qualidade!\nStatus: ${res.status}\nMensagem: ${text}`);
+                    console.error("Erro ao salvar qualidade:", text);
+                } else {
+                    alert("Qualidade salva com sucesso!");
+                    qualidadeModal.style.display = 'none';
+                    await buscarLotes();
+                }
+            } catch (err) {
+                alert(`Erro ao salvar qualidade: ${err.message}`);
+                console.error("Erro ao salvar qualidade:", err);
             }
         });
 
-        qualidadeModal.addEventListener('click', (e) => {
-            if (e.target === qualidadeModal) qualidadeModal.style.display = 'none';
-        });
 
-        // Inicial
-        buscarLotes();
-    </script>
+    qualidadeModal.addEventListener('click', (e) => {
+        if (e.target === qualidadeModal) qualidadeModal.style.display = 'none';
+    });
+
+    // Inicial
+    buscarLotes();
+</script>
+
 
 </body>
 </html>
