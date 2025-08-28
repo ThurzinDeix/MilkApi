@@ -1,197 +1,208 @@
 ﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Login e Cadastro</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f8;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+  <meta charset="UTF-8" />
+  <title>Login e Cadastro</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #F5EBE0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            width: 350px;
-        }
+    .container {
+      background: #f8f2ec;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      width: 350px;
+    }
 
-        h2 {
-            text-align: center;
-            color: #333;
-        }
+    h2 {
+      text-align: center;
+      color: #563c29;
+    }
 
-        input {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
+    .tabs {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
+      background-color: #81593e;
+      border: #81593e, 5px solid;
+      border-radius: 50px;
+      color: #F5EBE0;
+    }
 
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
+    .tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      font-weight: bold;
+      transition: 0.3s;
+    }
 
-            button:hover {
-                background-color: #2980b9;
-            }
+    .tab.active {
+    background-color: #563c29;
+      border-radius: 50px;
+    }
 
-        .toggle {
-            text-align: center;
-            margin-top: 15px;
-            color: #3498db;
-            cursor: pointer;
-        }
-    </style>
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 4px;
+      max-width: 94%;
+      background-color: #F5EBE0;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #563c29;
+      color: #F5EBE0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: 0.4s;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #81593e;
+    }
+  </style>
 </head>
 <body>
 
-    <div class="container">
-        <h2 id="formTitle">Login</h2>
+  <div class="container">
+    <h2 id="formTitle">Login</h2>
 
-        <div id="loginForm">
-            <input type="email" id="loginEmail" placeholder="Email" required>
-            <input type="password" id="loginSenha" placeholder="Senha" required>
-            <button onclick="login()">Entrar</button>
-        </div>
-
-        <div id="cadastroForm" style="display:none;">
-            <input type="text" id="cadNome" placeholder="Nome" required>
-            <input type="email" id="cadEmail" placeholder="Email" required>
-            <input type="password" id="cadSenha" placeholder="Senha" required>
-            <input type="password" id="cadConfSenha" placeholder="Confirme sua senha" required>
-            <input type="date" id="cadDataNasc" required>
-            <input type="text" id="cadCPF" placeholder="CPF" required>
-            <button onclick="cadastrar()">Cadastrar</button>
-        </div>
-
-        <div class="toggle" onclick="toggleForm()">Não tem conta? Cadastre-se</div>
+    <div class="tabs">
+      <div class="tab active" onclick="mostrarAba('login')">Entrar</div>
+      <div class="tab" onclick="mostrarAba('cadastro')">Cadastrar</div>
     </div>
 
-    <script>
-const apiUrl = "https://localhost:7092/Usuario"; // altere para o endereço real da API
+    <div id="loginForm">
+      <input type="email" id="loginEmail" placeholder="Email" required>
+      <input type="password" id="loginSenha" placeholder="Senha" required>
+      <button onclick="login()">Entrar</button>
+    </div>
 
-function toggleForm(){
-    const loginForm = document.getElementById("loginForm");
-    const cadastroForm = document.getElementById("cadastroForm");
-    const title = document.getElementById("formTitle");
-    const toggleText = document.querySelector(".toggle");
+    <div id="cadastroForm" style="display: none;">
+      <input type="text" id="cadNome" placeholder="Nome" required>
+      <input type="email" id="cadEmail" placeholder="Email" required>
+      <input type="password" id="cadSenha" placeholder="Senha" required>
+      <input type="password" id="cadConfSenha" placeholder="Confirme sua senha" required>
+      <input type="date" id="cadDataNasc" required>
+      <input type="text" id="cadCPF" placeholder="CPF" required>
+      <button onclick="cadastrar()">Cadastrar</button>
+    </div>
+  </div>
 
-    if(loginForm.style.display === "none"){
+  <script>
+    const apiUrl = "https://localhost:7092/Usuario"; // Altere se necessário
+
+    function mostrarAba(aba) {
+      const loginForm = document.getElementById("loginForm");
+      const cadastroForm = document.getElementById("cadastroForm");
+      const formTitle = document.getElementById("formTitle");
+      const tabs = document.querySelectorAll(".tab");
+
+      tabs.forEach(tab => tab.classList.remove("active"));
+
+      if (aba === "login") {
         loginForm.style.display = "block";
         cadastroForm.style.display = "none";
-        title.textContent = "Login";
-        toggleText.textContent = "Não tem conta? Cadastre-se";
-    } else {
+        formTitle.textContent = "Login";
+        tabs[0].classList.add("active");
+      } else {
         loginForm.style.display = "none";
         cadastroForm.style.display = "block";
-        title.textContent = "Cadastro";
-        toggleText.textContent = "Já tem conta? Faça login";
+        formTitle.textContent = "Cadastro";
+        tabs[1].classList.add("active");
+      }
     }
-}
 
-async function login(){
-    const email = document.getElementById("loginEmail").value;
-    const senha = document.getElementById("loginSenha").value;
+    async function login() {
+      const email = document.getElementById("loginEmail").value;
+      const senha = document.getElementById("loginSenha").value;
 
-    try {
+      try {
         const res = await fetch(apiUrl);
         const usuarios = await res.json();
 
         const user = usuarios.find(u => u.email === email && u.senha === senha);
-        if(user){
-            alert("Login bem-sucedido! Bem-vindo, " + user.nome);
-            
-            //localStorage.setItem('userId', Usuario.id);
-            localStorage.setItem('userId', user.id);
-
-
-            localStorage.setItem('authenticated', 'true');
-            window.location.href = 'dashboard.html';
+        if (user) {
+          alert("Login bem-sucedido! Bem-vindo, " + user.nome);
+          localStorage.setItem('userId', user.id);
+          localStorage.setItem('authenticated', 'true');
+          window.location.href = 'dashboard.html';
         } else {
-            alert("Email ou senha incorretos.");
+          alert("Email ou senha incorretos.");
         }
-    } catch (err) {
+      } catch (err) {
         alert("Erro ao conectar com a API.");
         console.error(err);
+      }
     }
+
+    document.getElementById('cadCPF').addEventListener('input', function (e) {
+      let value = e.target.value.replace(/\D/g, '');
+      value = value.replace(/(\d{3})(\d)/, '$1.$2');
+      value = value.replace(/(\d{3})(\d)/, '$1.$2');
+      value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+      e.target.value = value;
+    });
+
+    async function cadastrar() {
+      const nome = document.getElementById("cadNome").value;
+      const email = document.getElementById("cadEmail").value;
+      const senha = document.getElementById("cadSenha").value;
+      const confSenha = document.getElementById("cadConfSenha").value;
+      const data_Nasc = document.getElementById("cadDataNasc").value;
+      const cpf = document.getElementById("cadCPF").value;
+
+      if (senha !== confSenha) {
+        alert("As senhas não coincidem.");
+        return;
+      }
+
+      try {
+        const resGet = await fetch(apiUrl);
+        const usuarios = await resGet.json();
+
+        const emailExistente = usuarios.some(u => u.email.toLowerCase() === email.toLowerCase());
+        if (emailExistente) {
+          alert("Este e-mail já está cadastrado.");
+          return;
         }
 
-        document.getElementById('cadCPF').addEventListener('input', function (e) {
-            let value = e.target.value.replace(/\D/g, ''); // Remove tudo que não for número
-            value = value.replace(/(\d{3})(\d)/, '$1.$2'); // Coloca o primeiro ponto
-            value = value.replace(/(\d{3})(\d)/, '$1.$2'); // Coloca o segundo ponto
-            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2'); // Coloca o hífen
-            e.target.value = value;
+        const usuario = { nome, email, senha, data_Nasc, cpf };
+
+        const resPost = await fetch(apiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(usuario)
         });
 
-
-
-        async function cadastrar() {
-            const nome = document.getElementById("cadNome").value;
-            const email = document.getElementById("cadEmail").value;
-            const senha = document.getElementById("cadSenha").value;
-            const confSenha = document.getElementById("cadConfSenha").value; // Novo campo
-            const data_Nasc = document.getElementById("cadDataNasc").value;
-            const cpf = document.getElementById("cadCPF").value;
-
-            // Validação de confirmação de senha
-            if (senha !== confSenha) {
-                alert("As senhas não coincidem.");
-                return; // Para aqui, não segue para cadastro
-            }
-
-            try {
-                // Buscar usuários existentes para verificar se o e-mail já está cadastrado
-                const resGet = await fetch(apiUrl);
-                const usuarios = await resGet.json();
-
-                const emailExistente = usuarios.some(u => u.email.toLowerCase() === email.toLowerCase());
-                if (emailExistente) {
-                    alert("Este e-mail já está cadastrado. Tente fazer login ou use outro e-mail.");
-                    return; // Para aqui e não envia o POST
-                }
-
-                // Criar o novo usuário
-                const usuario = { nome, email, senha, data_Nasc, cpf };
-
-                const resPost = await fetch(apiUrl, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(usuario)
-                });
-
-                if (resPost.ok) {
-                    alert("Usuário cadastrado com sucesso!");
-
-                    toggleForm();
-                } else {
-                    alert("Erro ao cadastrar usuário.");
-                }
-
-            } catch (err) {
-                alert("Erro ao conectar com a API.");
-                console.error(err);
-            }
+        if (resPost.ok) {
+          alert("Usuário cadastrado com sucesso!");
+          mostrarAba("login");
+        } else {
+          alert("Erro ao cadastrar usuário.");
         }
 
-        
-</script>
-
-<script src="app.js"></script>
-
+      } catch (err) {
+        alert("Erro ao conectar com a API.");
+        console.error(err);
+      }
+    }
+  </script>
 </body>
 </html>
