@@ -251,17 +251,11 @@
     }
 
         function abrirModalQualidade(loteId) {
-            alert("abrirModalQualidade chamado com loteId: " + loteId);
 
             loteSelecionadoParaQualidade = loteId;
-            alert("loteSelecionadoParaQualidade agora é: " + loteSelecionadoParaQualidade);
-
+            
             const lote = lotes.find(l => l.id === loteId);
-            if (lote) {
-                alert("Lote encontrado: " + JSON.stringify(lote));
-            } else {
-                alert("Nenhum lote encontrado para esse ID!");
-            }
+           
 
             if (lote && lote.qualidade) {
                 ccsInput.value = lote.qualidade.ccs;

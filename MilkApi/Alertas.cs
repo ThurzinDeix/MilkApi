@@ -9,5 +9,6 @@ namespace MilkApi
         public DateTime Data_Prevista {get; set; }  
 
         public string? Status { get; set; }
+        public int ID_Usuario { get; set; }
     }
 }

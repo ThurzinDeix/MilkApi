@@ -40,7 +40,8 @@ namespace MilkApi.Controllers
                         DataAplicacao = Convert.ToDateTime(reader["DataAplicacao"]),
                         ProximaDose = Convert.ToDateTime(reader["ProximaDose"]),
                         ResponsavelAplicacao = reader["ResponsavelAplicacao"]?.ToString(),
-                        Observacoes = reader["Observacoes"]?.ToString()
+                        Observacoes = reader["Observacoes"]?.ToString(),
+                        ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
                     };
                     lista.Add(historico);
                 }
@@ -73,7 +74,8 @@ namespace MilkApi.Controllers
                         DataAplicacao = Convert.ToDateTime(reader["DataAplicacao"]),
                         ProximaDose = Convert.ToDateTime(reader["ProximaDose"]),
                         ResponsavelAplicacao = reader["ResponsavelAplicacao"]?.ToString(),
-                        Observacoes = reader["Observacoes"]?.ToString()
+                        Observacoes = reader["Observacoes"]?.ToString(),
+                        ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
                     };
 
                     reader.Close();
@@ -91,8 +93,8 @@ namespace MilkApi.Controllers
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
                 string query = @"INSERT INTO HistoricoVacina 
-                                (ID_Gado, ID_Vacina, Lote, DataAplicacao, ProximaDose, ResponsavelAplicacao, Observacoes) 
-                                 VALUES (@ID_Gado, @ID_Vacina, @Lote, @DataAplicacao, @ProximaDose, @ResponsavelAplicacao, @Observacoes)";
+                                (ID_Gado, ID_Vacina, Lote, DataAplicacao, ProximaDose, ResponsavelAplicacao, Observacoes, ID_Usuario) 
+                                 VALUES (@ID_Gado, @ID_Vacina, @Lote, @DataAplicacao, @ProximaDose, @ResponsavelAplicacao, @Observacoes, @ID_Usuario)";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@ID_Gado", historico.ID_Gado);
                 cmd.Parameters.AddWithValue("@ID_Vacina", historico.ID_Vacina);
@@ -101,6 +103,7 @@ namespace MilkApi.Controllers
                 cmd.Parameters.AddWithValue("@ProximaDose", historico.ProximaDose);
                 cmd.Parameters.AddWithValue("@ResponsavelAplicacao", (object?)historico.ResponsavelAplicacao ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@Observacoes", (object?)historico.Observacoes ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@ID_Usuario", historico.ID_Usuario);
 
                 conn.Open();
                 int rows = cmd.ExecuteNonQuery();
@@ -123,7 +126,8 @@ namespace MilkApi.Controllers
                                     DataAplicacao = @DataAplicacao,
                                     ProximaDose = @ProximaDose,
                                     ResponsavelAplicacao = @ResponsavelAplicacao,
-                                    Observacoes = @Observacoes
+                                    Observacoes = @Observacoes,
+                                    ID_Usuario = @ID_Usuario
                                  WHERE Id = @Id";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@ID_Gado", historico.ID_Gado);
@@ -133,6 +137,7 @@ namespace MilkApi.Controllers
                 cmd.Parameters.AddWithValue("@ProximaDose", historico.ProximaDose);
                 cmd.Parameters.AddWithValue("@ResponsavelAplicacao", (object?)historico.ResponsavelAplicacao ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@Observacoes", (object?)historico.Observacoes ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@ID_Usuario", historico.ID_Usuario);
                 cmd.Parameters.AddWithValue("@Id", id);
 
                 conn.Open();
@@ -161,5 +166,19 @@ namespace MilkApi.Controllers
 
             return NotFound();
         }
+    }
+
+    // Modelo usado pelo controller
+    public class HistoricoVacina
+    {
+        public int Id { get; set; }
+        public int ID_Gado { get; set; }
+        public int ID_Vacina { get; set; }
+        public string? Lote { get; set; }
+        public DateTime DataAplicacao { get; set; }
+        public DateTime ProximaDose { get; set; }
+        public string? ResponsavelAplicacao { get; set; }
+        public string? Observacoes { get; set; }
+        public int ID_Usuario { get; set; }
     }
 }

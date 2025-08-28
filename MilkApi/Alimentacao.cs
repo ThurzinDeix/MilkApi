@@ -13,5 +13,7 @@ namespace MilkApi
         public float Quantidade { get; set; }
 
         public string? Observacao { get; set; }
+
+        public int ID_Usuario { get; set; }
     }
 }

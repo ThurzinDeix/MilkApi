@@ -10,6 +10,7 @@ namespace MilkApi
         public string? Fabricante { get; set; }
 
         public string? Observacoes { get; set; }
+        public int ID_Usuario { get; set; }
 
     }
 }

@@ -7,5 +7,7 @@
         public int CCS { get; set; }
         public decimal Gordura { get; set; }
         public decimal Proteina { get; set; }
+
+        public int ID_Usuario { get; set; }
     }
 }

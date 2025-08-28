@@ -35,7 +35,8 @@ namespace MilkApi.Controllers
                         Id = Convert.ToInt32(reader["Id"]),
                         ID_Gado = Convert.ToInt32(reader["ID_Gado"]),
                         Data_Prevista = Convert.ToDateTime(reader["Data_Prevista"]),
-                        Status = reader["Status"]?.ToString()
+                        Status = reader["Status"]?.ToString(),
+                        ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
                     };
                     lista.Add(alerta);
                 }
@@ -64,7 +65,8 @@ namespace MilkApi.Controllers
                         Id = Convert.ToInt32(reader["Id"]),
                         ID_Gado = Convert.ToInt32(reader["ID_Gado"]),
                         Data_Prevista = Convert.ToDateTime(reader["Data_Prevista"]),
-                        Status = reader["Status"]?.ToString()
+                        Status = reader["Status"]?.ToString(),
+                        ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
                     };
 
                     reader.Close();
@@ -81,12 +83,13 @@ namespace MilkApi.Controllers
         {
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
-                string query = @"INSERT INTO Alertas (ID_Gado, Data_Prevista, Status) 
-                                 VALUES (@ID_Gado, @Data_Prevista, @Status)";
+                string query = @"INSERT INTO Alertas (ID_Gado, Data_Prevista, Status, ID_Usuario) 
+                                 VALUES (@ID_Gado, @Data_Prevista, @Status, @ID_Usuario)";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@ID_Gado", alerta.ID_Gado);
                 cmd.Parameters.AddWithValue("@Data_Prevista", alerta.Data_Prevista);
                 cmd.Parameters.AddWithValue("@Status", alerta.Status ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@ID_Usuario", alerta.ID_Usuario);
 
                 conn.Open();
                 int rows = cmd.ExecuteNonQuery();
@@ -105,12 +108,14 @@ namespace MilkApi.Controllers
                 string query = @"UPDATE Alertas SET 
                                     ID_Gado = @ID_Gado,
                                     Data_Prevista = @Data_Prevista,
-                                    Status = @Status
+                                    Status = @Status,
+                                    ID_Usuario = @ID_Usuario
                                  WHERE Id = @Id";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@ID_Gado", alerta.ID_Gado);
                 cmd.Parameters.AddWithValue("@Data_Prevista", alerta.Data_Prevista);
                 cmd.Parameters.AddWithValue("@Status", alerta.Status ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@ID_Usuario", alerta.ID_Usuario);
                 cmd.Parameters.AddWithValue("@Id", id);
 
                 conn.Open();

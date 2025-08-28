@@ -10,7 +10,9 @@ namespace MilkApi
 
         public DateTime Data {get; set; }
 
-        public string? Observacao { get; set; }  
+        public string? Observacao { get; set; }
+
+        public int ID_Usuario { get; set; }
 
     }
 }

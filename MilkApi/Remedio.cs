@@ -9,5 +9,7 @@
         public int Doses { get; set; }
         public int intervalo { get; set; }
         public string? via { get; set; }
+
+        public int ID_Usuario { get; set; }
     }
 }

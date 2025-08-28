@@ -39,7 +39,8 @@ namespace MilkApi.Controllers
                         Date = Convert.ToDateTime(reader["Date"]),
                         Doses = Convert.ToInt32(reader["Doses"]),
                         intervalo = Convert.ToInt32(reader["intervalo"]),
-                        via = reader["via"]?.ToString()
+                        via = reader["via"]?.ToString(),
+                        ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
                     };
                     lista.Add(r);
                 }
@@ -71,7 +72,8 @@ namespace MilkApi.Controllers
                         Date = Convert.ToDateTime(reader["Date"]),
                         Doses = Convert.ToInt32(reader["Doses"]),
                         intervalo = Convert.ToInt32(reader["intervalo"]),
-                        via = reader["via"]?.ToString()
+                        via = reader["via"]?.ToString(),
+                        ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
                     };
 
                     reader.Close();
@@ -88,8 +90,8 @@ namespace MilkApi.Controllers
         {
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
-                string query = @"INSERT INTO Remedio (ID_Gado, Nome, Date, Doses, intervalo, via)
-                                 VALUES (@ID_Gado, @Nome, @Date, @Doses, @intervalo, @via)";
+                string query = @"INSERT INTO Remedio (ID_Gado, Nome, Date, Doses, intervalo, via, ID_Usuario)
+                                 VALUES (@ID_Gado, @Nome, @Date, @Doses, @intervalo, @via, @ID_Usuario)";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@ID_Gado", r.ID_Gado);
                 cmd.Parameters.AddWithValue("@Nome", r.Nome ?? (object)DBNull.Value);
@@ -97,6 +99,7 @@ namespace MilkApi.Controllers
                 cmd.Parameters.AddWithValue("@Doses", r.Doses);
                 cmd.Parameters.AddWithValue("@intervalo", r.intervalo);
                 cmd.Parameters.AddWithValue("@via", r.via ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@ID_Usuario", r.ID_Usuario);
 
                 conn.Open();
                 int rows = cmd.ExecuteNonQuery();
@@ -118,7 +121,8 @@ namespace MilkApi.Controllers
                                     Date = @Date,
                                     Doses = @Doses,
                                     intervalo = @intervalo,
-                                    via = @via
+                                    via = @via,
+                                    ID_Usuario = @ID_Usuario
                                  WHERE Id = @Id";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@ID_Gado", r.ID_Gado);
@@ -127,6 +131,7 @@ namespace MilkApi.Controllers
                 cmd.Parameters.AddWithValue("@Doses", r.Doses);
                 cmd.Parameters.AddWithValue("@intervalo", r.intervalo);
                 cmd.Parameters.AddWithValue("@via", r.via ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@ID_Usuario", r.ID_Usuario);
                 cmd.Parameters.AddWithValue("@Id", id);
 
                 conn.Open();
@@ -156,4 +161,5 @@ namespace MilkApi.Controllers
             return NotFound();
         }
     }
-}
+
+   }

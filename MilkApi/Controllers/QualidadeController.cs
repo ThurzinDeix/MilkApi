@@ -35,7 +35,8 @@ namespace MilkApi.Controllers
                         ID_Lote = Convert.ToInt32(reader["ID_Lote"]),
                         CCS = Convert.ToInt32(reader["CCS"]),
                         Gordura = Convert.ToDecimal(reader["Gordura"]),
-                        Proteina = Convert.ToDecimal(reader["Proteina"])
+                        Proteina = Convert.ToDecimal(reader["Proteina"]),
+                        ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
                     });
                 }
 
@@ -64,7 +65,8 @@ namespace MilkApi.Controllers
                         ID_Lote = Convert.ToInt32(reader["ID_Lote"]),
                         CCS = Convert.ToInt32(reader["CCS"]),
                         Gordura = Convert.ToDecimal(reader["Gordura"]),
-                        Proteina = Convert.ToDecimal(reader["Proteina"])
+                        Proteina = Convert.ToDecimal(reader["Proteina"]),
+                        ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
                     };
                     reader.Close();
                     return Ok(qualidade);
@@ -80,13 +82,14 @@ namespace MilkApi.Controllers
         {
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
-                string query = @"INSERT INTO Qualidade (ID_Lote, CCS, Gordura, Proteina)
-                                 VALUES (@ID_Lote, @CCS, @Gordura, @Proteina)";
+                string query = @"INSERT INTO Qualidade (ID_Lote, CCS, Gordura, Proteina, ID_Usuario)
+                                 VALUES (@ID_Lote, @CCS, @Gordura, @Proteina, @ID_Usuario)";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@ID_Lote", qualidade.ID_Lote);
                 cmd.Parameters.AddWithValue("@CCS", qualidade.CCS);
                 cmd.Parameters.AddWithValue("@Gordura", qualidade.Gordura);
                 cmd.Parameters.AddWithValue("@Proteina", qualidade.Proteina);
+                cmd.Parameters.AddWithValue("@ID_Usuario", qualidade.ID_Usuario);
 
                 conn.Open();
                 int rows = cmd.ExecuteNonQuery();
@@ -105,13 +108,15 @@ namespace MilkApi.Controllers
                                     ID_Lote = @ID_Lote,
                                     CCS = @CCS,
                                     Gordura = @Gordura,
-                                    Proteina = @Proteina
+                                    Proteina = @Proteina,
+                                    ID_Usuario = @ID_Usuario
                                  WHERE Id = @Id";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@ID_Lote", qualidade.ID_Lote);
                 cmd.Parameters.AddWithValue("@CCS", qualidade.CCS);
                 cmd.Parameters.AddWithValue("@Gordura", qualidade.Gordura);
                 cmd.Parameters.AddWithValue("@Proteina", qualidade.Proteina);
+                cmd.Parameters.AddWithValue("@ID_Usuario", qualidade.ID_Usuario);
                 cmd.Parameters.AddWithValue("@Id", id);
 
                 conn.Open();

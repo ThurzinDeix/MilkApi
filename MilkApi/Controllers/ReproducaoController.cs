@@ -36,7 +36,8 @@ namespace MilkApi.Controllers
                         ID_Gado = Convert.ToInt32(reader["ID_Gado"]),
                         Tipo = reader["Tipo"]?.ToString(),
                         Data = Convert.ToDateTime(reader["Data"]),
-                        Observacao = reader["Observacao"]?.ToString()
+                        Observacao = reader["Observacao"]?.ToString(),
+                        ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
                     };
                     lista.Add(repro);
                 }
@@ -66,7 +67,8 @@ namespace MilkApi.Controllers
                         ID_Gado = Convert.ToInt32(reader["ID_Gado"]),
                         Tipo = reader["Tipo"]?.ToString(),
                         Data = Convert.ToDateTime(reader["Data"]),
-                        Observacao = reader["Observacao"]?.ToString()
+                        Observacao = reader["Observacao"]?.ToString(),
+                        ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
                     };
 
                     reader.Close();
@@ -84,13 +86,14 @@ namespace MilkApi.Controllers
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
                 string query = @"INSERT INTO Reproducao 
-                                (ID_Gado, Tipo, Data, Observacao) 
-                                VALUES (@ID_Gado, @Tipo, @Data, @Observacao)";
+                                (ID_Gado, Tipo, Data, Observacao, ID_Usuario) 
+                                VALUES (@ID_Gado, @Tipo, @Data, @Observacao, @ID_Usuario)";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@ID_Gado", repro.ID_Gado);
                 cmd.Parameters.AddWithValue("@Tipo", (object?)repro.Tipo ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@Data", repro.Data);
                 cmd.Parameters.AddWithValue("@Observacao", (object?)repro.Observacao ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@ID_Usuario", repro.ID_Usuario);
 
                 conn.Open();
                 int rows = cmd.ExecuteNonQuery();
@@ -110,13 +113,15 @@ namespace MilkApi.Controllers
                                     ID_Gado = @ID_Gado,
                                     Tipo = @Tipo,
                                     Data = @Data,
-                                    Observacao = @Observacao
+                                    Observacao = @Observacao,
+                                    ID_Usuario = @ID_Usuario
                                  WHERE Id = @Id";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@ID_Gado", repro.ID_Gado);
                 cmd.Parameters.AddWithValue("@Tipo", (object?)repro.Tipo ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@Data", repro.Data);
                 cmd.Parameters.AddWithValue("@Observacao", (object?)repro.Observacao ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@ID_Usuario", repro.ID_Usuario);
                 cmd.Parameters.AddWithValue("@Id", id);
 
                 conn.Open();
@@ -146,4 +151,6 @@ namespace MilkApi.Controllers
             return NotFound();
         }
     }
+
+    // Modelo usado pelo controller
 }

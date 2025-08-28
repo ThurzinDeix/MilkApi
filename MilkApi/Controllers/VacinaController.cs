@@ -7,8 +7,7 @@ namespace MilkApi.Controllers
     [Route("[controller]")]
     public class VacinaController : Controller
     {
-
-        private const string ConnectionString = "Server=milkdatabase.cp64yi8w2sr2.us-east-2.rds.amazonaws.com;Database=BancoTccGado;User Id=Arthur;Password=Arthur-1234;TrustServerCertificate=True;"; 
+        private const string ConnectionString = "Server=milkdatabase.cp64yi8w2sr2.us-east-2.rds.amazonaws.com;Database=BancoTccGado;User Id=Arthur;Password=Arthur-1234;TrustServerCertificate=True;";
         private readonly ILogger<VacinaController> _logger;
 
         public VacinaController(ILogger<VacinaController> logger)
@@ -31,16 +30,16 @@ namespace MilkApi.Controllers
 
                 while (reader.Read())
                 {
-                    Vacina v = new Vacina
+                    lista.Add(new Vacina
                     {
                         Id = Convert.ToInt32(reader["Id"]),
                         ID_TipoVacina = Convert.ToInt32(reader["ID_TipoVacina"]),
                         Lote = reader["Lote"]?.ToString(),
                         DataValidade = Convert.ToDateTime(reader["DataValidade"]),
                         Fabricante = reader["Fabricante"]?.ToString(),
-                        Observacoes = reader["Observacoes"]?.ToString()
-                    };
-                    lista.Add(v);
+                        Observacoes = reader["Observacoes"]?.ToString(),
+                        ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
+                    });
                 }
                 reader.Close();
             }
@@ -62,17 +61,18 @@ namespace MilkApi.Controllers
 
                 if (reader.Read())
                 {
-                    Vacina v = new Vacina
+                    var vacina = new Vacina
                     {
                         Id = Convert.ToInt32(reader["Id"]),
                         ID_TipoVacina = Convert.ToInt32(reader["ID_TipoVacina"]),
                         Lote = reader["Lote"]?.ToString(),
                         DataValidade = Convert.ToDateTime(reader["DataValidade"]),
                         Fabricante = reader["Fabricante"]?.ToString(),
-                        Observacoes = reader["Observacoes"]?.ToString()
+                        Observacoes = reader["Observacoes"]?.ToString(),
+                        ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
                     };
                     reader.Close();
-                    return Ok(v);
+                    return Ok(vacina);
                 }
 
                 reader.Close();
@@ -85,14 +85,15 @@ namespace MilkApi.Controllers
         {
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
-                string query = @"INSERT INTO Vacina (ID_TipoVacina, Lote, DataValidade, Fabricante, Observacoes)
-                                 VALUES (@ID_TipoVacina, @Lote, @DataValidade, @Fabricante, @Observacoes)";
+                string query = @"INSERT INTO Vacina (ID_TipoVacina, Lote, DataValidade, Fabricante, Observacoes, ID_Usuario)
+                                 VALUES (@ID_TipoVacina, @Lote, @DataValidade, @Fabricante, @Observacoes, @ID_Usuario)";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@ID_TipoVacina", v.ID_TipoVacina);
                 cmd.Parameters.AddWithValue("@Lote", v.Lote ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@DataValidade", v.DataValidade);
                 cmd.Parameters.AddWithValue("@Fabricante", v.Fabricante ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@Observacoes", v.Observacoes ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@ID_Usuario", v.ID_Usuario);
 
                 conn.Open();
                 int rows = cmd.ExecuteNonQuery();
@@ -113,7 +114,8 @@ namespace MilkApi.Controllers
                                     Lote = @Lote,
                                     DataValidade = @DataValidade,
                                     Fabricante = @Fabricante,
-                                    Observacoes = @Observacoes
+                                    Observacoes = @Observacoes,
+                                    ID_Usuario = @ID_Usuario
                                  WHERE Id = @Id";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@ID_TipoVacina", v.ID_TipoVacina);
@@ -121,6 +123,7 @@ namespace MilkApi.Controllers
                 cmd.Parameters.AddWithValue("@DataValidade", v.DataValidade);
                 cmd.Parameters.AddWithValue("@Fabricante", v.Fabricante ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@Observacoes", v.Observacoes ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@ID_Usuario", v.ID_Usuario);
                 cmd.Parameters.AddWithValue("@Id", id);
 
                 conn.Open();
@@ -159,5 +162,6 @@ namespace MilkApi.Controllers
         public DateTime DataValidade { get; set; }
         public string? Fabricante { get; set; }
         public string? Observacoes { get; set; }
+        public int ID_Usuario { get; set; }
     }
 }

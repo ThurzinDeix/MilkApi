@@ -35,7 +35,8 @@ namespace MilkApi.Controllers
                         Id = Convert.ToInt32(reader["Id"]),
                         ID_Gado = Convert.ToInt32(reader["ID_Gado"]),
                         Data = Convert.ToDateTime(reader["Data"]),
-                        Litros = Convert.ToDecimal(reader["Litros"])
+                        Litros = Convert.ToDecimal(reader["Litros"]),
+                        ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
                     };
                     lista.Add(leite);
                 }
@@ -64,7 +65,8 @@ namespace MilkApi.Controllers
                         Id = Convert.ToInt32(reader["Id"]),
                         ID_Gado = Convert.ToInt32(reader["ID_Gado"]),
                         Data = Convert.ToDateTime(reader["Data"]),
-                        Litros = Convert.ToDecimal(reader["Litros"])
+                        Litros = Convert.ToDecimal(reader["Litros"]),
+                        ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
                     };
 
                     reader.Close();
@@ -81,13 +83,13 @@ namespace MilkApi.Controllers
         {
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
-                string query = @"INSERT INTO Leite 
-                                (ID_Gado, Data, Litros) 
-                                VALUES (@ID_Gado, @Data, @Litros)";
+                string query = @"INSERT INTO Leite (ID_Gado, Data, Litros, ID_Usuario) 
+                                 VALUES (@ID_Gado, @Data, @Litros, @ID_Usuario)";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@ID_Gado", leite.ID_Gado);
                 cmd.Parameters.AddWithValue("@Data", leite.Data);
                 cmd.Parameters.AddWithValue("@Litros", leite.Litros);
+                cmd.Parameters.AddWithValue("@ID_Usuario", leite.ID_Usuario);
 
                 conn.Open();
                 int rows = cmd.ExecuteNonQuery();
@@ -106,12 +108,14 @@ namespace MilkApi.Controllers
                 string query = @"UPDATE Leite SET 
                                     ID_Gado = @ID_Gado,
                                     Data = @Data,
-                                    Litros = @Litros
+                                    Litros = @Litros,
+                                    ID_Usuario = @ID_Usuario
                                  WHERE Id = @Id";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@ID_Gado", leite.ID_Gado);
                 cmd.Parameters.AddWithValue("@Data", leite.Data);
                 cmd.Parameters.AddWithValue("@Litros", leite.Litros);
+                cmd.Parameters.AddWithValue("@ID_Usuario", leite.ID_Usuario);
                 cmd.Parameters.AddWithValue("@Id", id);
 
                 conn.Open();
@@ -144,9 +148,7 @@ namespace MilkApi.Controllers
         [HttpPost("leite-com-lote")]
         public IActionResult CriarLeiteComLote([FromBody] LeiteComLoteDTO dto)
         {
-            string connectionString = ConnectionString;
-
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
                 conn.Open();
                 SqlTransaction transaction = conn.BeginTransaction();
@@ -154,11 +156,12 @@ namespace MilkApi.Controllers
                 try
                 {
                     // 1) Inserir Leite
-                    string insertLeite = "INSERT INTO Leite (ID_Gado, Data, Litros) OUTPUT INSERTED.Id VALUES (@ID_Gado, @Data, @Litros)";
+                    string insertLeite = "INSERT INTO Leite (ID_Gado, Data, Litros, ID_Usuario) OUTPUT INSERTED.Id VALUES (@ID_Gado, @Data, @Litros, @ID_Usuario)";
                     SqlCommand cmdLeite = new SqlCommand(insertLeite, conn, transaction);
                     cmdLeite.Parameters.AddWithValue("@ID_Gado", dto.ID_Gado);
                     cmdLeite.Parameters.AddWithValue("@Data", dto.Data);
                     cmdLeite.Parameters.AddWithValue("@Litros", dto.Litros);
+                    cmdLeite.Parameters.AddWithValue("@ID_Usuario", dto.ID_Usuario);
 
                     int leiteId = (int)cmdLeite.ExecuteScalar();
 

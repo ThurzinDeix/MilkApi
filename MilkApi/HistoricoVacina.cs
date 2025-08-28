@@ -15,7 +15,9 @@ namespace MilkApi
 
         public string? ResponsavelAplicacao { get; set; }
 
-        public string? Observacoes { get; set; }  
+        public string? Observacoes { get; set; }
+
+        public int ID_Usuario { get; set; }
 
     }
 }

@@ -18,6 +18,7 @@ namespace MilkApi
         public int IntervaloReforcoMeses { get; set; }
 
         public string? Funcao { get; set; }
+        public int ID_Usuario { get; set; }
 
     }
 }

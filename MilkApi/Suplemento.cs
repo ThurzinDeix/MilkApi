@@ -8,5 +8,6 @@
         public string? Nome { get; set; }
         public DateTime Date { get; set; }
         public int intervalo { get; set; }
+        public int ID_Usuario { get; set; }
     }
 }

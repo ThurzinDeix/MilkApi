@@ -7,6 +7,7 @@ namespace MilkApi
         public DateTime Data {get; set; }
         public decimal Litros { get; set; }
 
+        public int ID_Usuario { get; set; }
 
     }
 }

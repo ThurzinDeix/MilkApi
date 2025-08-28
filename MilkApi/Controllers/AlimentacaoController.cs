@@ -8,7 +8,7 @@ namespace MilkApi.Controllers
     public class AlimentacaoController : Controller
     {
 
-        private const string ConnectionString = "Server=milkdatabase.cp64yi8w2sr2.us-east-2.rds.amazonaws.com;Database=BancoTccGado;User Id=Arthur;Password=Arthur-1234;TrustServerCertificate=True;"; 
+        private const string ConnectionString = "Server=milkdatabase.cp64yi8w2sr2.us-east-2.rds.amazonaws.com;Database=BancoTccGado;User Id=Arthur;Password=Arthur-1234;TrustServerCertificate=True;";
         private readonly ILogger<AlimentacaoController> _logger;
 
         public AlimentacaoController(ILogger<AlimentacaoController> logger)
@@ -38,7 +38,8 @@ namespace MilkApi.Controllers
                         Data = Convert.ToDateTime(reader["Data"]),
                         Tipo = reader["Tipo"]?.ToString(),
                         Quantidade = Convert.ToSingle(reader["Quantidade"]),
-                        Observacao = reader["Observacao"]?.ToString()
+                        Observacao = reader["Observacao"]?.ToString(),
+                        ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
                     };
                     lista.Add(item);
                 }
@@ -70,7 +71,8 @@ namespace MilkApi.Controllers
                         Data = Convert.ToDateTime(reader["Data"]),
                         Tipo = reader["Tipo"]?.ToString(),
                         Quantidade = Convert.ToSingle(reader["Quantidade"]),
-                        Observacao = reader["Observacao"]?.ToString()
+                        Observacao = reader["Observacao"]?.ToString(),
+                        ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
                     };
 
                     reader.Close();
@@ -87,14 +89,15 @@ namespace MilkApi.Controllers
         {
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
-                string query = @"INSERT INTO Alimentacao (ID_Gado, Data, Tipo, Quantidade, Observacao) 
-                                 VALUES (@ID_Gado, @Data, @Tipo, @Quantidade, @Observacao)";
+                string query = @"INSERT INTO Alimentacao (ID_Gado, Data, Tipo, Quantidade, Observacao, ID_Usuario) 
+                                 VALUES (@ID_Gado, @Data, @Tipo, @Quantidade, @Observacao, @ID_Usuario)";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@ID_Gado", item.ID_Gado);
                 cmd.Parameters.AddWithValue("@Data", item.Data);
                 cmd.Parameters.AddWithValue("@Tipo", item.Tipo ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@Quantidade", item.Quantidade);
                 cmd.Parameters.AddWithValue("@Observacao", item.Observacao ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@ID_Usuario", item.ID_Usuario);
 
                 conn.Open();
                 int rows = cmd.ExecuteNonQuery();
@@ -115,7 +118,8 @@ namespace MilkApi.Controllers
                                     Data = @Data,
                                     Tipo = @Tipo,
                                     Quantidade = @Quantidade,
-                                    Observacao = @Observacao
+                                    Observacao = @Observacao,
+                                    ID_Usuario = @ID_Usuario
                                  WHERE Id = @Id";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@ID_Gado", item.ID_Gado);
@@ -123,6 +127,7 @@ namespace MilkApi.Controllers
                 cmd.Parameters.AddWithValue("@Tipo", item.Tipo ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@Quantidade", item.Quantidade);
                 cmd.Parameters.AddWithValue("@Observacao", item.Observacao ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@ID_Usuario", item.ID_Usuario);
                 cmd.Parameters.AddWithValue("@Id", id);
 
                 conn.Open();
@@ -162,5 +167,6 @@ namespace MilkApi.Controllers
         public string? Tipo { get; set; }
         public float Quantidade { get; set; }
         public string? Observacao { get; set; }
+        public int ID_Usuario { get; set; }
     }
 }
