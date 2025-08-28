@@ -1,0 +1,240 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestão de Leite</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .card-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #4cafef, #1d8ddc);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            cursor: pointer;
+            width: 220px;
+            text-align: center;
+            font-size: 18px;
+            transition: transform 0.2s ease;
+        }
+
+            .card:hover {
+                transform: scale(1.05);
+            }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            right: 15px;
+            top: 10px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #555;
+            cursor: pointer;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        button {
+            background: #1d8ddc;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background: #0d6fb5;
+            }
+
+        #listaLeite {
+            max-width: 600px;
+            margin: 20px auto;
+        }
+
+        .registro {
+            background: #fff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Gestão de Leite</h1>
+
+    <div class="card-container">
+        <div class="card" onclick="abrirModal('leite')">Leite</div>
+    </div>
+
+    <div id="listaLeite"></div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModal()">&times;</span>
+            <h2 id="modal-titulo"></h2>
+            <form id="modal-form">
+                <label>Brinco do Gado:</label>
+                <input type="number" id="brinco" required>
+                <div id="campos-especificos"></div>
+                <button type="submit">Salvar</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const apiBase = "https://localhost:7092";
+        let tipoAtual = "";
+
+        function abrirModal(tipo) {
+            tipoAtual = tipo;
+            document.getElementById("modal").style.display = "block";
+            document.getElementById("modal-titulo").innerText = "Registro de " + tipo.charAt(0).toUpperCase() + tipo.slice(1);
+
+            const hoje = new Date().toISOString().split("T")[0];
+            let camposHTML = "";
+
+            if (tipo === "leite") {
+                camposHTML = `
+
+                        <label>Data:</label>
+                        <input type="date" id="data" value="${hoje}" required>
+                        <label>Litros:</label>
+                        <input type="number" id="litros" step="0.01" required>
+                    `;
+            }
+
+            document.getElementById("campos-especificos").innerHTML = camposHTML;
+        }
+
+        function fecharModal() {
+            document.getElementById("modal").style.display = "none";
+        }
+
+        async function carregarLeite() {
+            const usuarioId = localStorage.getItem("userId");
+            if (!usuarioId) return;
+
+            const lista = document.getElementById("listaLeite");
+            lista.innerHTML = "<p>Carregando...</p>";
+
+            try {
+                const resp = await fetch(`${apiBase}/leite`);
+                if (!resp.ok) throw new Error("Erro ao buscar leite");
+                const dados = await resp.json();
+
+                lista.innerHTML = "";
+                dados.forEach(l => {
+                    const div = document.createElement("div");
+                    div.className = "registro";
+                    div.innerHTML = `   
+                                        <strong>Data:</strong> ${new Date(l.data).toLocaleDateString("pt-BR")} <br>
+                                         <strong>Litros:</strong> ${l.litros}`;
+                    lista.appendChild(div);
+                });
+            } catch (err) {
+                lista.innerHTML = "<p>Erro ao carregar registros.</p>";
+                console.error(err);
+            }
+        }
+
+        document.getElementById("modal-form").addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const brinco = document.getElementById("brinco").value;
+            const usuarioId = localStorage.getItem("userId");
+
+            try {
+                // Buscar gado pelo brinco
+                const resGado = await fetch(`${apiBase}/gado/por-brinco?brinco=${brinco}&usuarioId=${usuarioId}`);
+                if (!resGado.ok) { alert("Gado não encontrado"); return; }
+                const gado = await resGado.json();
+
+                if (tipoAtual === "leite") {
+                    const data = document.getElementById("data").value;
+                    const litros = parseFloat(document.getElementById("litros").value);
+
+                    const payload = {
+                        ID_Gado: gado.id,
+                        Data: data,
+                        Litros: litros,
+                        ID_Usuario: usuarioId
+                    };
+
+                    const saveRes = await fetch(`${apiBase}/leite`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (saveRes.ok) {
+                        alert("Registro de leite salvo com sucesso!");
+                        fecharModal();
+                        carregarLeite();
+                    } else {
+                        const err = await saveRes.text();
+                        alert("Erro ao salvar: " + err);
+                    }
+                }
+
+            } catch (err) {
+                alert("Erro de conexão: " + err.message);
+                console.error(err);
+            }
+        });
+
+        // Carregar registros na abertura
+        carregarLeite();
+    </script>
+</body>
+</html>
