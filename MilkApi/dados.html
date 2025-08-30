@@ -10,6 +10,12 @@
             background: #f4f7fa;
         }
 
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+
         h2 {
             margin-top: 40px;
             color: #2c3e50;
@@ -44,13 +50,13 @@
 <body>
     <h1>Painel de Dados Agro</h1>
 
-    <!-- Tabelas existentes -->
+    <!-- Gado -->
     <h2>Gado</h2>
     <table id="gadoTable">
         <thead>
             <tr>
                 <th>ID</th>
-                <th>ID usuário</th>
+                <th>ID Usuário</th>
                 <th>Data Nasc.</th>
                 <th>Raça</th>
                 <th>Peso</th>
@@ -62,6 +68,7 @@
         <tbody></tbody>
     </table>
 
+    <!-- Leite -->
     <h2>Leite</h2>
     <table id="leiteTable">
         <thead>
@@ -70,24 +77,27 @@
                 <th>ID Gado</th>
                 <th>Data</th>
                 <th>Litros</th>
+                <th>ID Usuário</th>
             </tr>
         </thead>
         <tbody></tbody>
     </table>
 
+    <!-- Lote -->
     <h2>Lote</h2>
     <table id="loteTable">
         <thead>
             <tr>
                 <th>ID</th>
                 <th>ID Leite</th>
-                <th>Numero Lote</th>
-                <th>ID Usuario</th>
+                <th>Número Lote</th>
+                <th>ID Usuário</th>
             </tr>
         </thead>
         <tbody></tbody>
     </table>
 
+    <!-- Qualidade -->
     <h2>Qualidade</h2>
     <table id="qualidadeTable">
         <thead>
@@ -97,13 +107,13 @@
                 <th>CCS</th>
                 <th>Gordura</th>
                 <th>Proteína</th>
+                <th>ID Usuário</th>
             </tr>
         </thead>
         <tbody></tbody>
     </table>
 
-
-
+    <!-- Manejo -->
     <h2>Manejo Geral</h2>
     <table id="manejoTable">
         <thead>
@@ -113,11 +123,13 @@
                 <th>Tipo Manejo</th>
                 <th>Data Manejo</th>
                 <th>Observações</th>
+                <th>ID Usuário</th>
             </tr>
         </thead>
         <tbody></tbody>
     </table>
 
+    <!-- Tipo Vacina -->
     <h2>Tipo Vacina</h2>
     <table id="tipoVacinaTable">
         <thead>
@@ -131,11 +143,13 @@
                 <th>Reforço</th>
                 <th>Intervalo Reforço</th>
                 <th>Função</th>
+                <th>ID Usuário</th>
             </tr>
         </thead>
         <tbody></tbody>
     </table>
 
+    <!-- Reprodução -->
     <h2>Reprodução</h2>
     <table id="reproducaoTable">
         <thead>
@@ -145,11 +159,13 @@
                 <th>Tipo</th>
                 <th>Data</th>
                 <th>Observação</th>
+                <th>ID Usuário</th>
             </tr>
         </thead>
         <tbody></tbody>
     </table>
 
+    <!-- Vacinas -->
     <h2>Vacinas</h2>
     <table id="vacinaTable">
         <thead>
@@ -160,11 +176,13 @@
                 <th>Validade</th>
                 <th>Fabricante</th>
                 <th>Observações</th>
+                <th>ID Usuário</th>
             </tr>
         </thead>
         <tbody></tbody>
     </table>
 
+    <!-- Histórico Vacinas -->
     <h2>Histórico Vacinas</h2>
     <table id="histVacinaTable">
         <thead>
@@ -177,11 +195,13 @@
                 <th>Próxima Dose</th>
                 <th>Responsável</th>
                 <th>Observações</th>
+                <th>ID Usuário</th>
             </tr>
         </thead>
         <tbody></tbody>
     </table>
 
+    <!-- Alimentação -->
     <h2>Alimentação</h2>
     <table id="alimentacaoTable">
         <thead>
@@ -192,11 +212,13 @@
                 <th>Tipo</th>
                 <th>Quantidade</th>
                 <th>Observação</th>
+                <th>ID Usuário</th>
             </tr>
         </thead>
         <tbody></tbody>
     </table>
 
+    <!-- Alertas -->
     <h2>Alertas</h2>
     <table id="alertasTable">
         <thead>
@@ -205,12 +227,13 @@
                 <th>ID Gado</th>
                 <th>Data Prevista</th>
                 <th>Status</th>
+                <th>ID Usuário</th>
             </tr>
         </thead>
         <tbody></tbody>
     </table>
 
-    <!-- Novas tabelas para Suplemento e Remédio -->
+    <!-- Suplementos -->
     <h2>Suplementos</h2>
     <table id="suplementoTable">
         <thead>
@@ -221,11 +244,13 @@
                 <th>Nome</th>
                 <th>Data</th>
                 <th>Intervalo (dias)</th>
+                <th>ID Usuário</th>
             </tr>
         </thead>
         <tbody></tbody>
     </table>
 
+    <!-- Remédios -->
     <h2>Remédios</h2>
     <table id="remedioTable">
         <thead>
@@ -237,13 +262,14 @@
                 <th>Doses</th>
                 <th>Intervalo (dias)</th>
                 <th>Via</th>
+                <th>ID Usuário</th>
             </tr>
         </thead>
         <tbody></tbody>
     </table>
 
     <script>
-        const apiBase = "https://localhost:7092"; // ajuste para seu backend
+        const apiBase = "https://localhost:7092";
 
         async function carregarDados(endpoint, tabelaId, campos) {
             try {
@@ -269,22 +295,19 @@
         }
 
         window.onload = () => {
-            // Tabelas existentes
             carregarDados("gado", "gadoTable", ["id", "iD_Usuario", "data_Nasc", "raca", "peso", "sexo", "brinco", "observacao"]);
-            carregarDados("leite", "leiteTable", ["id", "iD_Gado", "data", "litros"]);
-            carregarDados("manejo", "manejoTable", ["id", "iD_Gado", "tipo_Manejo", "data_Manejo", "observacoes"]);
-            carregarDados("reproducao", "reproducaoTable", ["id", "iD_Gado", "tipo", "data", "observacao"]);
-            carregarDados("vacina", "vacinaTable", ["id", "iD_TipoVacina", "lote", "dataValidade", "fabricante", "observacoes"]);
-            carregarDados("tipovacina", "tipoVacinaTable", ["id", "nome", "descricao", "obrigatoriedade", "idadeMinimaMeses", "periodicidadeMeses", "requerReforco", "intervaloReforcoMeses", "funcao"]);
-            carregarDados("alimentacao", "alimentacaoTable", ["id", "iD_Gado", "data", "tipo", "quantidade", "observacao"]);
-            carregarDados("alertas", "alertasTable", ["id", "iD_Gado", "data_Prevista", "status"]);
-
-            // Novas tabelas
-            carregarDados("suplemento", "suplementoTable", ["id", "iD_Gado", "Tipo", "Nome", "Date", "intervalo"]);
-            carregarDados("remedio", "remedioTable", ["id", "iD_Gado", "Nome", "Date", "Doses", "intervalo", "via"]);
+            carregarDados("leite", "leiteTable", ["id", "iD_Gado", "data", "litros", "iD_Usuario"]);
             carregarDados("lote", "loteTable", ["id", "iD_Leite", "num", "iD_Usuario"]);
-            carregarDados("qualidade", "qualidadeTable", ["id", "iD_Lote", "ccs", "gordura", "proteina"]);
-
+            carregarDados("qualidade", "qualidadeTable", ["id", "iD_Lote", "ccs", "gordura", "proteina", "iD_Usuario"]);
+            carregarDados("manejo", "manejoTable", ["id", "iD_Gado", "tipo_Manejo", "data_Manejo", "observacoes", "iD_Usuario"]);
+            carregarDados("tipovacina", "tipoVacinaTable", ["id", "nome", "descricao", "obrigatoriedade", "idadeMinimaMeses", "periodicidadeMeses", "requerReforco", "intervaloReforcoMeses", "funcao", "iD_Usuario"]);
+            carregarDados("reproducao", "reproducaoTable", ["id", "iD_Gado", "tipo", "data", "observacao", "iD_Usuario"]);
+            carregarDados("vacina", "vacinaTable", ["id", "iD_TipoVacina", "lote", "dataValidade", "fabricante", "observacoes", "iD_Usuario"]);
+            carregarDados("histvacina", "histVacinaTable", ["id", "iD_Gado", "iD_Vacina", "lote", "dataAplicacao", "proximaDose", "responsavel", "observacoes", "iD_Usuario"]);
+            carregarDados("alimentacao", "alimentacaoTable", ["id", "iD_Gado", "data", "tipo", "quantidade", "observacao", "iD_Usuario"]);
+            carregarDados("alertas", "alertasTable", ["id", "iD_Gado", "data_Prevista", "status", "iD_Usuario"]);
+            carregarDados("suplemento", "suplementoTable", ["id", "iD_Gado", "tipo", "nome", "data", "intervalo", "iD_Usuario"]);
+            carregarDados("remedio", "remedioTable", ["id", "iD_Gado", "nome", "data", "doses", "intervalo", "via", "iD_Usuario"]);
         };
     </script>
 </body>

@@ -15,17 +15,25 @@ namespace MilkApi.Controllers
             _logger = logger;
         }
 
+        // 🔹 Ajustado para filtrar opcionalmente pelo usuarioId
         [HttpGet]
-        public IEnumerable<Leite> Get()
+        public IEnumerable<Leite> Get([FromQuery] int? usuarioId)
         {
             List<Leite> lista = new List<Leite>();
 
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
                 string query = "SELECT * FROM Leite";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                conn.Open();
 
+                if (usuarioId.HasValue)
+                    query += " WHERE ID_Usuario = @usuarioId";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                if (usuarioId.HasValue)
+                    cmd.Parameters.AddWithValue("@usuarioId", usuarioId.Value);
+
+                conn.Open();
                 SqlDataReader reader = cmd.ExecuteReader();
 
                 while (reader.Read())
@@ -185,6 +193,40 @@ namespace MilkApi.Controllers
                 }
             }
         }
+
+        [HttpGet("por-usuario")]
+        public IEnumerable<Leite> GetPorUsuario(int usuarioId)
+        {
+            List<Leite> lista = new List<Leite>();
+
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            {
+                string query = "SELECT * FROM Leite WHERE ID_Usuario = @UsuarioId";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@UsuarioId", usuarioId);
+                conn.Open();
+
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Leite leite = new Leite
+                    {
+                        Id = Convert.ToInt32(reader["Id"]),
+                        ID_Gado = Convert.ToInt32(reader["ID_Gado"]),
+                        Data = Convert.ToDateTime(reader["Data"]),
+                        Litros = Convert.ToDecimal(reader["Litros"]),
+                        ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
+                    };
+                    lista.Add(leite);
+                }
+
+                reader.Close();
+            }
+
+            return lista;
+        }
+
 
     }
 }

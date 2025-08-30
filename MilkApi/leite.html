@@ -169,24 +169,53 @@
             lista.innerHTML = "<p>Carregando...</p>";
 
             try {
-                const resp = await fetch(`${apiBase}/leite`);
+                // Busca apenas os leites do usuário logado
+                const resp = await fetch(`${apiBase}/leite/por-usuario?usuarioId=${usuarioId}`);
                 if (!resp.ok) throw new Error("Erro ao buscar leite");
                 const dados = await resp.json();
 
                 lista.innerHTML = "";
-                dados.forEach(l => {
+                if (dados.length === 0) {
+                    lista.innerHTML = "<p>Nenhum registro encontrado.</p>";
+                    return;
+                }
+
+                dados.forEach(async l => {
                     const div = document.createElement("div");
                     div.className = "registro";
-                    div.innerHTML = `   
-                                        <strong>Data:</strong> ${new Date(l.data).toLocaleDateString("pt-BR")} <br>
-                                         <strong>Litros:</strong> ${l.litros}`;
+
+                    try {
+                        // Buscar os dados do gado pelo ID_Gado
+                        const resGado = await fetch(`${apiBase}/gado/${l.iD_Gado}`);
+                        let gado = {};
+                        if (resGado.ok) {
+                            gado = await resGado.json();
+                        }
+
+                        div.innerHTML = `
+                            <strong>Brinco:</strong> ${gado.brinco || 'N/A'}<br>
+                            <strong>Data:</strong> ${new Date(l.data).toLocaleDateString("pt-BR")} <br>
+                            <strong>Litros:</strong> ${l.litros}
+                        `;
+                    } catch (err) {
+                        div.innerHTML = `
+                            <strong>Data:</strong> ${new Date(l.data).toLocaleDateString("pt-BR")} <br>
+                            <strong>Litros:</strong> ${l.litros} <br>
+                            <em>Erro ao carregar dados do gado</em>
+                        `;
+                        console.error(err);
+                    }
+
                     lista.appendChild(div);
                 });
+
+
             } catch (err) {
                 lista.innerHTML = "<p>Erro ao carregar registros.</p>";
                 console.error(err);
             }
         }
+
 
         document.getElementById("modal-form").addEventListener("submit", async function (e) {
             e.preventDefault();
