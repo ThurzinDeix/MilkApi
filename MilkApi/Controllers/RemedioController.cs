@@ -160,6 +160,41 @@ namespace MilkApi.Controllers
 
             return NotFound();
         }
+
+        // GET /remedio/por-usuario?usuarioId=123
+        [HttpGet("por-usuario")]
+        public IEnumerable<Remedio> GetByUsuario(int usuarioId)
+        {
+            List<Remedio> lista = new List<Remedio>();
+
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            {
+                string query = "SELECT * FROM Remedio WHERE ID_Usuario = @ID_Usuario";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@ID_Usuario", usuarioId);
+                conn.Open();
+
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    lista.Add(new Remedio
+                    {
+                        Id = Convert.ToInt32(reader["Id"]),
+                        ID_Gado = Convert.ToInt32(reader["ID_Gado"]),
+                        Nome = reader["Nome"]?.ToString(),
+                        Date = Convert.ToDateTime(reader["Date"]),
+                        Doses = Convert.ToInt32(reader["Doses"]),
+                        intervalo = Convert.ToInt32(reader["intervalo"]),
+                        via = reader["via"]?.ToString(),
+                        ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
+                    });
+                }
+                reader.Close();
+            }
+
+            return lista;
+        }
+
     }
 
-   }
+}

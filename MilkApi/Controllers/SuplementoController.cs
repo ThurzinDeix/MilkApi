@@ -155,6 +155,37 @@ namespace MilkApi.Controllers
 
             return NotFound();
         }
+
+        // NOVO ENDPOINT: GET por usuário
+        [HttpGet("por-usuario")]
+        public IEnumerable<Suplemento> GetByUsuario(int usuarioId)
+        {
+            List<Suplemento> lista = new List<Suplemento>();
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            {
+                string query = "SELECT * FROM Suplemento WHERE ID_Usuario = @ID_Usuario";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@ID_Usuario", usuarioId);
+                conn.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    lista.Add(new Suplemento
+                    {
+                        Id = Convert.ToInt32(reader["Id"]),
+                        ID_Gado = Convert.ToInt32(reader["ID_Gado"]),
+                        Tipo = reader["Tipo"]?.ToString(),
+                        Nome = reader["Nome"]?.ToString(),
+                        Date = Convert.ToDateTime(reader["Date"]),
+                        intervalo = Convert.ToInt32(reader["intervalo"]),
+                        ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
+                    });
+                }
+                reader.Close();
+            }
+            return lista;
+        }
     }
 
     

@@ -150,6 +150,39 @@ namespace MilkApi.Controllers
 
             return NotFound();
         }
+
+        [HttpGet("por-usuario")]
+        public IEnumerable<ManejoGeral> GetByUsuario(int usuarioId)
+        {
+            List<ManejoGeral> lista = new List<ManejoGeral>();
+
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            {
+                string query = "SELECT * FROM ManejoGeral WHERE ID_Usuario = @ID_Usuario";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@ID_Usuario", usuarioId);
+                conn.Open();
+
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    ManejoGeral manejo = new ManejoGeral
+                    {
+                        Id = Convert.ToInt32(reader["Id"]),
+                        ID_Gado = Convert.ToInt32(reader["ID_Gado"]),
+                        Tipo_Manejo = reader["Tipo_Manejo"]?.ToString(),
+                        Data_Manejo = Convert.ToDateTime(reader["Data_Manejo"]),
+                        Observacoes = reader["Observacoes"]?.ToString(),
+                        ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
+                    };
+                    lista.Add(manejo);
+                }
+                reader.Close();
+            }
+
+            return lista;
+        }
+
     }
 
 }

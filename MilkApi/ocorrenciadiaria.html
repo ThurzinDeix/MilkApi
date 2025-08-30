@@ -2,303 +2,127 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Gestão de Gado</title>
+    <title>Ocorrências Diárias</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f6f8;
+            background: #fdf6ef;
             margin: 0;
-            padding: 0;
+            padding: 30px;
         }
 
         h1 {
-            text-align: center;
-            margin: 20px 0;
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        p {
+            margin-top: 0;
+            color: #555;
         }
 
         .card-container {
-            display: flex;
-            justify-content: center;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 20px;
-            flex-wrap: wrap;
-            padding: 20px;
+            margin-top: 25px;
         }
 
         .card {
-            background: linear-gradient(135deg, #4cafef, #1d8ddc);
-            color: white;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
             cursor: pointer;
-            width: 220px;
-            text-align: center;
-            font-size: 18px;
-            transition: transform 0.2s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
             .card:hover {
-                transform: scale(1.05);
+                transform: translateY(-5px);
+                box-shadow: 0 6px 14px rgba(0,0,0,0.15);
             }
 
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 10;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.6);
-        }
-
-        .modal-content {
-            background-color: #fff;
-            margin: 5% auto;
-            padding: 20px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 500px;
-            position: relative;
-        }
-
-        .close {
-            position: absolute;
-            right: 15px;
-            top: 10px;
+        .icon {
             font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .titulo {
+            font-size: 20px;
             font-weight: bold;
-            color: #555;
-            cursor: pointer;
         }
 
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-            border: 1px solid #ccc;
-            border-radius: 6px;
+        .descricao {
+            font-size: 14px;
+            color: #666;
         }
 
-        button {
-            background: #1d8ddc;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 6px;
-            cursor: pointer;
+        /* Cores específicas para cada card */
+        .leite {
+            border-left: 6px solid #3498db;
         }
 
-            button:hover {
-                background: #0d6fb5;
-            }
+        .manejo {
+            border-left: 6px solid #9b59b6;
+        }
+
+        .reproducao {
+            border-left: 6px solid #8e44ad;
+        }
+
+        .suplemento {
+            border-left: 6px solid #f1c40f;
+        }
+
+        .remedio {
+            border-left: 6px solid #2ecc71;
+        }
+
+        .qualidade {
+            border-left: 6px solid #e67e22;
+        }
     </style>
 </head>
 <body>
 
-    <h1>Gestão de Gado</h1>
+    <h1>Ocorrências Diárias</h1>
+    <p>Registre e gerencie as atividades diárias do seu rebanho</p>
 
     <div class="card-container">
-        <div class="card" onclick="abrirModal('leite')">Leite</div>
-        <div class="card" onclick="abrirModal('manejo')">Manejo Geral</div>
-        <div class="card" onclick="abrirModal('reproducao')">Reprodução</div>
-        <div class="card" onclick="abrirModal('suplemento')">Suplemento</div>
-        <div class="card" onclick="abrirModal('remedio')">Remédio</div>
-    </div>
+        <div class="card leite" onclick="location.href='leite.html'">
+            <div class="titulo">Leite</div>
+            <div class="descricao">Registrar produção de leite diária</div>
+        </div>
 
-    <!-- Modal -->
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="fecharModal()">&times;</span>
-            <h2 id="modal-titulo"></h2>
-            <form id="modal-form">
-                <label>Brinco do Gado:</label>
-                <input type="number" id="brinco" required>
-                <div id="campos-especificos"></div>
-                <button type="submit">Salvar</button>
-            </form>
+        <div class="card manejo" onclick="location.href='manejoGeral.html'">
+            <div class="titulo">Manejo Geral</div>
+            <div class="descricao">Gerenciar manejos gerais</div>
+        </div>
+
+        <div class="card reproducao" onclick="location.href='reproducao.html'">
+            <div class="titulo">Reprodução</div>
+            <div class="descricao">Controlar ciclo reprodutivo do rebanho</div>
+        </div>
+
+        <div class="card suplemento" onclick="location.href='suplemento.html'">
+            <div class="titulo">Suplementação</div>
+            <div class="descricao">Gerenciar suplementos nutricionais</div>
+        </div>
+
+        <div class="card remedio" onclick="location.href='remedio.html'">
+            <div class="titulo">Remédios</div>
+            <div class="descricao">Controlar medicamentos e dosagens</div>
+        </div>
+
+        <div class="card qualidade" onclick="location.href='QualidadeLeite.html'">
+            <div class="titulo">Qualidade do Leite</div>
+            <div class="descricao">Controlar qualidade do leite</div>
         </div>
     </div>
-
-    <script>
-        const apiBase = "https://localhost:7092";
-        let tipoAtual = "";
-
-        function abrirModal(tipo) {
-            tipoAtual = tipo;
-            document.getElementById("modal").style.display = "block";
-            document.getElementById("modal-titulo").innerText = tipo.charAt(0).toUpperCase() + tipo.slice(1);
-
-            const hoje = new Date().toISOString().split("T")[0];
-            let camposHTML = "";
-
-            if (tipo === "leite") {
-                camposHTML = `
-                        <label>Data:</label>
-                        <input type="date" id="data" value="${hoje}" required>
-                       
-                        <label>Litros:</label>
-                        <input type="number" id="litros" step="0.01" required>
-                    `;
-            }
-            if (tipo === "manejo") {
-                camposHTML = `
-                        <label>Tipo de Manejo:</label>
-                        <input type="text" id="tipoManejo" required>
-                        <label>Data do Manejo:</label>
-                        <input type="date" id="dataManejo" value="${hoje}" required>
-                        <label>Observações:</label>
-                        <textarea id="observacoes"></textarea>
-                    `;
-            }
-            if (tipo === "reproducao") {
-                camposHTML = `
-                        <label>Tipo:</label>
-                        <select id="tipoReproducao">
-                            <option value="">Selecione o tipo</option>
-                            <option value="Monta">Monta</option>
-                            <option value="Inseminação Artificial">Inseminação Artificial</option>
-                        </select>
-                        <label>Data:</label>
-                        <input type="date" id="dataReproducao" value="${hoje}" required>
-                        <label>Observação:</label>
-                        <textarea id="observacaoReproducao"></textarea>
-                    `;
-            }
-            if (tipo === "suplemento") {
-                camposHTML = `
-                        <label>Tipo:</label>
-                        <input type="text" id="tipoSuplemento">
-                        <label>Nome:</label>
-                        <input type="text" id="nomeSuplemento">
-                        <label>Data:</label>
-                        <input type="date" id="dataSuplemento" value="${hoje}" required>
-                        <label>Intervalo (dias):</label>
-                        <input type="number" id="intervaloSuplemento" required>
-                    `;
-            }
-            if (tipo === "remedio") {
-                camposHTML = `
-                        <label>Nome:</label>
-                        <input type="text" id="nomeRemedio">
-                        <label>Data:</label>
-                        <input type="date" id="dataRemedio" value="${hoje}" required>
-                        <label>Doses:</label>
-                        <input type="number" id="dosesRemedio" required>
-                        <label>Intervalo (dias):</label>
-                        <input type="number" id="intervaloRemedio" required>
-                        <label>Via:</label>
-                        <input type="text" id="viaRemedio">
-                    `;
-            }
-
-            document.getElementById("campos-especificos").innerHTML = camposHTML;
-        }
-
-        function fecharModal() {
-            document.getElementById("modal").style.display = "none";
-        }
-
-        document.getElementById("modal-form").addEventListener("submit", async function (e) {
-            e.preventDefault();
-            const brinco = document.getElementById("brinco").value;
-            const usuarioId = localStorage.getItem("userId");
-
-            // Buscar ID do gado
-            const res = await fetch(`${apiBase}/gado/por-brinco?brinco=${brinco}&usuarioId=${usuarioId}`);
-            if (!res.ok) { alert("Gado não encontrado!"); return; }
-            const gado = await res.json();
-
-            let payload = {};
-            let endpoint = "";
-
-            if (tipoAtual === "leite") {
-                const data = document.getElementById("data").value;
-                const litros = parseFloat(document.getElementById("litros").value);
-
-                payload = {
-                    ID_Gado: gado.id,
-                    Data: data,
-                    Litros: litros,
-                    ID_Usuario: usuarioId
-                };
-                endpoint = "/leite";
-            }
-
-            if (tipoAtual === "manejo") {
-                payload = {
-                    ID_Gado: gado.id,
-                    Tipo_Manejo: document.getElementById("tipoManejo").value,
-                    Data_Manejo: document.getElementById("dataManejo").value,
-                    Observacoes: document.getElementById("observacoes").value
-                };
-                endpoint = "/manejo";
-            }
-            if (tipoAtual === "reproducao") {
-                payload = {
-                    ID_Gado: gado.id,
-                    Tipo: document.getElementById("tipoReproducao").value,
-                    Data: document.getElementById("dataReproducao").value,
-                    Observacao: document.getElementById("observacaoReproducao").value
-                };
-                endpoint = "/reproducao";
-            }
-            if (tipoAtual === "suplemento") {
-                payload = {
-                    ID_Gado: gado.id,
-                    Tipo: document.getElementById("tipoSuplemento").value,
-                    Nome: document.getElementById("nomeSuplemento").value,
-                    Date: document.getElementById("dataSuplemento").value,
-                    intervalo: parseInt(document.getElementById("intervaloSuplemento").value)
-                };
-                endpoint = "/suplemento";
-            }
-            if (tipoAtual === "remedio") {
-                payload = {
-                    ID_Gado: gado.id,
-                    Nome: document.getElementById("nomeRemedio").value,
-                    Date: document.getElementById("dataRemedio").value,
-                    Doses: parseInt(document.getElementById("dosesRemedio").value),
-                    intervalo: parseInt(document.getElementById("intervaloRemedio").value),
-                    via: document.getElementById("viaRemedio").value
-                };
-                endpoint = "/remedio";
-            }
-
-
-
-            try {
-                const saveRes = await fetch(`${apiBase}${endpoint}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
-
-                if (saveRes.ok) {
-                    let result;
-                    const contentType = saveRes.headers.get("content-type");
-
-                    if (contentType && contentType.includes("application/json")) {
-                        result = await saveRes.json();
-                    } else {
-                        result = await saveRes.text(); // fallback se o backend não retornar JSON
-                    }
-
-                    alert(`${tipoAtual.charAt(0).toUpperCase() + tipoAtual.slice(1)} salvo com sucesso! ${result.id ? "ID: " + result.id : ""}`);
-                    fecharModal();
-                } else {
-                    const err = await saveRes.text();
-                    alert("Erro ao salvar " + tipoAtual + ": " + err);
-                }
-            } catch (ex) {
-                alert("Erro de conexão com o servidor: " + ex.message);
-            }
-
-            
-
-        });
-    </script>
 
 </body>
 </html>

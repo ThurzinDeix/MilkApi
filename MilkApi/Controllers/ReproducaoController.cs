@@ -19,18 +19,16 @@ namespace MilkApi.Controllers
         public IEnumerable<Reproducao> Get()
         {
             List<Reproducao> lista = new List<Reproducao>();
-
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
                 string query = "SELECT * FROM Reproducao";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 conn.Open();
-
                 SqlDataReader reader = cmd.ExecuteReader();
 
                 while (reader.Read())
                 {
-                    Reproducao repro = new Reproducao
+                    lista.Add(new Reproducao
                     {
                         Id = Convert.ToInt32(reader["Id"]),
                         ID_Gado = Convert.ToInt32(reader["ID_Gado"]),
@@ -38,12 +36,11 @@ namespace MilkApi.Controllers
                         Data = Convert.ToDateTime(reader["Data"]),
                         Observacao = reader["Observacao"]?.ToString(),
                         ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
-                    };
-                    lista.Add(repro);
+                    });
                 }
+
                 reader.Close();
             }
-
             return lista;
         }
 
@@ -61,7 +58,7 @@ namespace MilkApi.Controllers
 
                 if (reader.Read())
                 {
-                    Reproducao repro = new Reproducao
+                    var repro = new Reproducao
                     {
                         Id = Convert.ToInt32(reader["Id"]),
                         ID_Gado = Convert.ToInt32(reader["ID_Gado"]),
@@ -80,14 +77,45 @@ namespace MilkApi.Controllers
             }
         }
 
+        // NOVO ENDPOINT: GET por usuário
+        [HttpGet("por-usuario")]
+        public IEnumerable<Reproducao> GetByUsuario(int usuarioId)
+        {
+            List<Reproducao> lista = new List<Reproducao>();
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            {
+                string query = "SELECT * FROM Reproducao WHERE ID_Usuario = @ID_Usuario";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@ID_Usuario", usuarioId);
+                conn.Open();
+
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    lista.Add(new Reproducao
+                    {
+                        Id = Convert.ToInt32(reader["Id"]),
+                        ID_Gado = Convert.ToInt32(reader["ID_Gado"]),
+                        Tipo = reader["Tipo"]?.ToString(),
+                        Data = Convert.ToDateTime(reader["Data"]),
+                        Observacao = reader["Observacao"]?.ToString(),
+                        ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
+                    });
+                }
+
+                reader.Close();
+            }
+
+            return lista;
+        }
+
         [HttpPost]
         public ActionResult Create(Reproducao repro)
         {
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
-                string query = @"INSERT INTO Reproducao 
-                                (ID_Gado, Tipo, Data, Observacao, ID_Usuario) 
-                                VALUES (@ID_Gado, @Tipo, @Data, @Observacao, @ID_Usuario)";
+                string query = @"INSERT INTO Reproducao (ID_Gado, Tipo, Data, Observacao, ID_Usuario) 
+                                 VALUES (@ID_Gado, @Tipo, @Data, @Observacao, @ID_Usuario)";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@ID_Gado", repro.ID_Gado);
                 cmd.Parameters.AddWithValue("@Tipo", (object?)repro.Tipo ?? DBNull.Value);
@@ -151,6 +179,4 @@ namespace MilkApi.Controllers
             return NotFound();
         }
     }
-
-    // Modelo usado pelo controller
 }
