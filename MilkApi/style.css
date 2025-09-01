@@ -20,6 +20,7 @@ nav {
     font-size: 40px;
     color: white;
     padding-right: 40%;
+    padding-left: 10%;
 }
 
 .menu{
@@ -54,7 +55,7 @@ nav {
 }
 
 .logout {
-    margin-left: 90%;
+    margin-left: 85%;
 }
 
 .logout a {

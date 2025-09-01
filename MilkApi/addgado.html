@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <title>Gados</title>
@@ -24,12 +25,12 @@
             background: white;
             padding: 15px;
             border-radius: 10px;
-            box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
         }
 
-            .gado-card p {
-                margin: 5px 0;
-            }
+        .gado-card p {
+            margin: 5px 0;
+        }
 
         button {
             background: #28a745;
@@ -40,21 +41,22 @@
             cursor: pointer;
         }
 
-            button:hover {
-                background: #218838;
-            }
+        button:hover {
+            background: #218838;
+        }
     </style>
-     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <nav>
         <div class="nav1">
             <div class="logo">Cownt</div>
             <div class="menu">
-                <a href="dashboard.html" class="active"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
                 <a href="estatisticas.html"><i class="fas fa-chart-bar"></i> Estatísticas</a>
-                <a href="addgado.html"><i class="fas fa-cow"></i> Gerenciar Gados</a>
+                <a href="addgado.html"  class="active"><i class="fas fa-cow"></i> Gerenciar Gados</a>
                 <a href="ocorrenciadiaria.html"><i class="fas fa-calendar-alt"></i> Ocorrências Diárias</a>
             </div>
             <div class="logout">
@@ -83,7 +85,7 @@
                 </select>
             </label><br><br>
             <label>Brinco: <input type="number" id="brinco" required><br><br>
-            <span id="brinco-erro" style="color:red; font-size: 14px; display:none;"></span>
+                <span id="brinco-erro" style="color:red; font-size: 14px; display:none;"></span>
             </label><br><br>
             <label>Observação: <textarea id="observacao"></textarea></label><br><br>
             <button type="submit">Salvar</button>
@@ -193,4 +195,5 @@
 
     <script src="app.js"></script>
 </body>
+
 </html>
