@@ -122,34 +122,38 @@
                 <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
                 <a href="estatisticas.html"><i class="fas fa-chart-bar"></i> Estatísticas</a>
                 <a href="addgado.html"><i class="fas fa-cow"></i> Gerenciar Gados</a>
-                <a href="ocorrenciadiaria.html" class="active"><i class="fas fa-calendar-alt"></i> Ocorrências Diárias</a>
+                <a href="ocorrenciadiaria.html" class="active"><i class="fas fa-calendar-alt"></i> Ocorrências
+                    Diárias</a>
             </div>
             <div class="logout">
                 <a href="#"><i class="fas fa-sign-out-alt"></i> Sair</a>
             </div>
         </div>
     </nav>
-    <h1>Gestão de Leite</h1>
+    <content>
+        <h1>Gestão de Leite</h1>
 
-    <div class="card-container">
-        <div class="card" onclick="abrirModal('leite')">Leite</div>
-    </div>
-
-    <div id="listaLeite"></div>
-
-    <!-- Modal -->
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="fecharModal()">&times;</span>
-            <h2 id="modal-titulo"></h2>
-            <form id="modal-form">
-                <label>Brinco do Gado:</label>
-                <input type="number" id="brinco" required>
-                <div id="campos-especificos"></div>
-                <button type="submit">Salvar</button>
-            </form>
+        <div class="card-container">
+            <div class="card" onclick="abrirModal('leite')">Leite</div>
         </div>
-    </div>
+
+        <div id="listaLeite"></div>
+
+        <!-- Modal -->
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="fecharModal()">&times;</span>
+                <h2 id="modal-titulo"></h2>
+                <form id="modal-form">
+                    <label>Brinco do Gado:</label>
+                    <input type="number" id="brinco" required>
+                    <div id="campos-especificos"></div>
+                    <button type="submit">Salvar</button>
+                </form>
+            </div>
+        </div>
+
+    </content>
 
     <script>
         const apiBase = "https://localhost:7092";

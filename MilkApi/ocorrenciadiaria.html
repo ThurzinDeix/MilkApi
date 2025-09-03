@@ -88,6 +88,21 @@
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css"
+    />
 </head>
 
 <body>
@@ -95,54 +110,57 @@
         <div class="nav1">
             <div class="logo">Cownt</div>
             <div class="menu">
-                <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
-                <a href="estatisticas.html"><i class="fas fa-chart-bar"></i> Estatísticas</a>
-                <a href="addgado.html"><i class="fas fa-cow"></i> Gerenciar Gados</a>
-                <a href="ocorrenciadiaria.html" class="active"><i class="fas fa-calendar-alt"></i> Ocorrências Diárias</a>
+                <a href="dashboard.html"><i class="ph-bold ph-house-line"></i> Dashboard</a>
+                <a href="estatisticas.html"><i class="ph-bold ph-chart-line"></i> Estatísticas</a>
+                <a href="addgado.html"><i class="ph ph-cow"></i></i> Gerenciar Gados</a>
+                <a href="ocorrenciadiaria.html" class="active"><i class="ph-bold ph-calendar-dots"></i> Ocorrências
+                    Diárias</a>
             </div>
             <div class="logout">
-                <a href="#"><i class="fas fa-sign-out-alt"></i> Sair</a>
+                <a href="#"><i class="ph-bold ph-sign-out"></i> Sair</a>
             </div>
         </div>
     </nav>
 
-    <h1>Ocorrências Diárias</h1>
-    <p>Registre e gerencie as atividades diárias do seu rebanho</p>
+    <div class="content">
+        <h1>Ocorrências Diárias</h1>
+        <p>Registre e gerencie as atividades diárias do seu rebanho</p>
 
-    <div class="card-container">
-        <div class="card leite" onclick="location.href='leite.html'">
-            <div class="titulo">Leite</div>
-            <div class="descricao">Registrar produção de leite diária</div>
-        </div>
+        <div class="card-container">
+            <div class="card leite" onclick="location.href='leite.html'">
+                <div class="titulo">Leite</div>
+                <div class="descricao">Registrar produção de leite diária</div>
+            </div>
 
-        <div class="card manejo" onclick="location.href='manejoGeral.html'">
-            <div class="titulo">Manejo Geral</div>
-            <div class="descricao">Gerenciar manejos gerais</div>
-        </div>
+            <div class="card manejo" onclick="location.href='manejoGeral.html'">
+                <div class="titulo">Manejo Geral</div>
+                <div class="descricao">Gerenciar manejos gerais</div>
+            </div>
 
-        <div class="card reproducao" onclick="location.href='reproducao.html'">
-            <div class="titulo">Reprodução</div>
-            <div class="descricao">Controlar ciclo reprodutivo do rebanho</div>
-        </div>
+            <div class="card reproducao" onclick="location.href='reproducao.html'">
+                <div class="titulo">Reprodução</div>
+                <div class="descricao">Controlar ciclo reprodutivo do rebanho</div>
+            </div>
 
-        <div class="card suplemento" onclick="location.href='suplemento.html'">
-            <div class="titulo">Suplementação</div>
-            <div class="descricao">Gerenciar suplementos nutricionais</div>
-        </div>
+            <div class="card suplemento" onclick="location.href='suplemento.html'">
+                <div class="titulo">Suplementação</div>
+                <div class="descricao">Gerenciar suplementos nutricionais</div>
+            </div>
 
-        <div class="card remedio" onclick="location.href='remedio.html'">
-            <div class="titulo">Remédios</div>
-            <div class="descricao">Controlar medicamentos e dosagens</div>
-        </div>
+            <div class="card remedio" onclick="location.href='remedio.html'">
+                <div class="titulo">Remédios</div>
+                <div class="descricao">Controlar medicamentos e dosagens</div>
+            </div>
 
-        <div class="card qualidade" onclick="location.href='QualidadeLeite.html'">
-            <div class="titulo">Qualidade do Leite</div>
-            <div class="descricao">Controlar qualidade do leite</div>
-        </div>
+            <div class="card qualidade" onclick="location.href='QualidadeLeite.html'">
+                <div class="titulo">Qualidade do Leite</div>
+                <div class="descricao">Controlar qualidade do leite</div>
+            </div>
 
-        <div class="card qualidade" onclick="location.href='Prenhez.html'">
-            <div class="titulo">Gestação</div>
-            <div class="descricao">Gerenciar Gestação das Vacas</div>
+            <div class="card qualidade" onclick="location.href='Prenhez.html'">
+                <div class="titulo">Gestação</div>
+                <div class="descricao">Gerenciar Gestação das Vacas</div>
+            </div>
         </div>
     </div>
 

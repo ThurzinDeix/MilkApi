@@ -1,17 +1,24 @@
 body {
-    margin: 0;
+    margin: 0px;
     font-family: Arial, sans-serif;
 }
 
+.content{
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
 nav {
-    background-color: #5a3c2d; /* marrom */
     display: flex;
+    background-color: #5a3c2d; /* marrom */
     align-items: center;
+    justify-content: center;
     padding: 20px;
 }
 
 .nav1{
     display: flex;
+    
     align-items: center;
 }
 
@@ -19,29 +26,34 @@ nav {
     font-weight: bold;
     font-size: 40px;
     color: white;
-    padding-right: 40%;
-    padding-left: 10%;
+    padding-right: 25rem;
 }
 
 .menu{
     display: flex;
+    align-items: center;
+    justify-content: center;
+
 }
 
 .menu a {
+    display: flex;
     color: white;
     text-decoration: none;
-    margin-right: 12%;
+    margin-right: 15%;
     align-items: center;
     font-size: 18px;
-    display: inline-flex;
+    justify-content: center;
     white-space: nowrap;  
 }
 
 .menu a i {
     margin-right: 6px;
+    font-size: 25px;
 }
 
 .menu a.active {
+    display: flex;
     background-color: #d9cbbf; /* bege */
     color: #5a3c2d;
     padding: 8px 15px;
@@ -54,17 +66,165 @@ nav {
     flex-grow: 1;
 }
 
-.logout {
-    margin-left: 85%;
-}
+
 
 .logout a {
     color: white;
     text-decoration: none;
     display: flex;
     align-items: center;
+    padding-left: 25rem;
 }
 
 .logout a i {
     margin-right: 6px;
+    font-size: 22px;
+}
+
+@media (max-width: 1600px) {
+
+    nav {
+        display: flex;
+        background-color: #5a3c2d; /* marrom */
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+    
+    .nav1{
+        display: flex;
+        
+        align-items: center;
+    }
+    
+    .logo {
+        font-weight: bold;
+        font-size: 40px;
+        color: white;
+        padding-right: 15rem;
+    }
+    
+    .menu{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    
+    }
+    
+    .menu a {
+        display: flex;
+        color: white;
+        text-decoration: none;
+        margin-right: 5%;
+        align-items: center;
+        font-size: 18px;
+        justify-content: center;
+        white-space: nowrap;  
+    }
+    
+    .menu a i {
+        margin-right: 6px;
+    }
+    
+    .menu a.active {
+        display: flex;
+        background-color: #d9cbbf; /* bege */
+        color: #5a3c2d;
+        padding: 8px 15px;
+        border-radius: 6px;
+    }
+    
+    .menu {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+    }
+    
+    
+    
+    .logout a {
+        color: white;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        padding-left: 10rem;
+    }
+    
+    .logout a i {
+        margin-right: 6px;
+    }
+
+
+    @media (max-width: 1300px) {
+        nav {
+            display: flex;
+            background-color: #5a3c2d; /* marrom */
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .nav1{
+            display: flex;
+            
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 30px;
+            color: white;
+            padding-right: 5rem;
+        }
+
+        .menu{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+        }
+
+        .menu a {
+            display: flex;
+            color: white;
+            text-decoration: none;
+            margin-right: 5%;
+            align-items: center;
+            font-size: 15px;
+            justify-content: center;
+            white-space: nowrap;  
+        }
+
+        .menu a i {
+            margin-right: 6px;
+        }
+
+        .menu a.active {
+            display: flex;
+            background-color: #d9cbbf; /* bege */
+            color: #5a3c2d;
+            padding: 8px 15px;
+            border-radius: 6px;
+        }
+
+        .menu {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+        }
+
+
+
+        .logout a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding-left: 10rem;
+        }
+
+        .logout a i {
+            margin-right: 6px;
+        }
+    }
 }
