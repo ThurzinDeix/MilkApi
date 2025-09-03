@@ -107,8 +107,25 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+    <nav>
+        <div class="nav1">
+            <div class="logo">Cownt</div>
+            <div class="menu">
+                <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="estatisticas.html"><i class="fas fa-chart-bar"></i> Estatísticas</a>
+                <a href="addgado.html"><i class="fas fa-cow"></i> Gerenciar Gados</a>
+                <a href="ocorrenciadiaria.html" class="active"><i class="fas fa-calendar-alt"></i> Ocorrências Diárias</a>
+            </div>
+            <div class="logout">
+                <a href="#"><i class="fas fa-sign-out-alt"></i> Sair</a>
+            </div>
+        </div>
+    </nav>
 
     <h1>Gestão de Remédios</h1>
 
@@ -143,17 +160,17 @@
 
             const hoje = new Date().toISOString().split("T")[0];
             let camposHTML = `
-                <label>Data:</label>
-                <input type="date" id="data" value="${hoje}" required>
-                <label>Nome do Remédio:</label>
-                <input type="text" id="nome" required>
-                <label>Doses:</label>
-                <input type="number" id="doses" required>
-                <label>Intervalo (horas):</label>
-                <input type="number" id="intervalo" required>
-                <label>Via de Administração:</label>
-                <input type="text" id="via" placeholder="Ex.: Oral, Intramuscular..." required>
-            `;
+                    <label>Data:</label>
+                    <input type="date" id="data" value="${hoje}" required>
+                    <label>Nome do Remédio:</label>
+                    <input type="text" id="nome" required>
+                    <label>Doses:</label>
+                    <input type="number" id="doses" required>
+                    <label>Intervalo (horas):</label>
+                    <input type="number" id="intervalo" required>
+                    <label>Via de Administração:</label>
+                    <input type="text" id="via" placeholder="Ex.: Oral, Intramuscular..." required>
+                `;
 
             document.getElementById("campos-especificos").innerHTML = camposHTML;
         }
@@ -192,22 +209,22 @@
                         }
 
                         div.innerHTML = `
-                            <strong>Brinco:</strong> ${gado.brinco || 'N/A'}<br>
-                            <strong>Data:</strong> ${new Date(r.date).toLocaleDateString("pt-BR")} <br>
-                            <strong>Nome:</strong> ${r.nome} <br>
-                            <strong>Doses:</strong> ${r.doses} <br>
-                            <strong>Intervalo:</strong> ${r.intervalo} horas <br>
-                            <strong>Via:</strong> ${r.via}
-                        `;
+                                <strong>Brinco:</strong> ${gado.brinco || 'N/A'}<br>
+                                <strong>Data:</strong> ${new Date(r.date).toLocaleDateString("pt-BR")} <br>
+                                <strong>Nome:</strong> ${r.nome} <br>
+                                <strong>Doses:</strong> ${r.doses} <br>
+                                <strong>Intervalo:</strong> ${r.intervalo} horas <br>
+                                <strong>Via:</strong> ${r.via}
+                            `;
                     } catch (err) {
                         div.innerHTML = `
-                            <strong>Data:</strong> ${new Date(r.date).toLocaleDateString("pt-BR")} <br>
-                            <strong>Nome:</strong> ${r.nome} <br>
-                            <strong>Doses:</strong> ${r.doses} <br>
-                            <strong>Intervalo:</strong> ${r.intervalo} horas <br>
-                            <strong>Via:</strong> ${r.via} <br>
-                            <em>Erro ao carregar dados do gado</em>
-                        `;
+                                <strong>Data:</strong> ${new Date(r.date).toLocaleDateString("pt-BR")} <br>
+                                <strong>Nome:</strong> ${r.nome} <br>
+                                <strong>Doses:</strong> ${r.doses} <br>
+                                <strong>Intervalo:</strong> ${r.intervalo} horas <br>
+                                <strong>Via:</strong> ${r.via} <br>
+                                <em>Erro ao carregar dados do gado</em>
+                            `;
                         console.error(err);
                     }
 

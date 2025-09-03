@@ -319,6 +319,7 @@
 
 
         salvarQualidadeBtn.addEventListener('click', async () => {
+            const userId = localStorage.getItem("userId");
             if (!loteSelecionadoParaQualidade) {
                 alert("Nenhum lote selecionado!");
                 return;
@@ -329,7 +330,8 @@
                 ID_Lote: loteSelecionadoParaQualidade,
                 CCS: parseInt(ccsInput.value),
                 Proteina: parseFloat(proteinaInput.value),
-                Gordura: parseFloat(gorduraInput.value)
+                Gordura: parseFloat(gorduraInput.value),
+                ID_Usuario: userId 
             };
 
             // Verifica se já existe qualidade no lote

@@ -1,6 +1,5 @@
 ﻿<!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <title>Gestão de Reprodução</title>
@@ -30,7 +29,7 @@
             color: white;
             padding: 20px;
             border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
             cursor: pointer;
             width: 220px;
             text-align: center;
@@ -38,9 +37,9 @@
             transition: transform 0.2s ease;
         }
 
-        .card:hover {
-            transform: scale(1.05);
-        }
+            .card:hover {
+                transform: scale(1.05);
+            }
 
         .modal {
             display: none;
@@ -51,7 +50,7 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0, 0, 0, 0.6);
+            background-color: rgba(0,0,0,0.6);
         }
 
         .modal-content {
@@ -74,9 +73,7 @@
             cursor: pointer;
         }
 
-        input,
-        select,
-        textarea {
+        input, select, textarea {
             width: 100%;
             padding: 10px;
             margin: 8px 0;
@@ -93,9 +90,9 @@
             cursor: pointer;
         }
 
-        button:hover {
-            background: #0d6fb5;
-        }
+            button:hover {
+                background: #0d6fb5;
+            }
 
         #listaReproducao {
             max-width: 700px;
@@ -107,26 +104,49 @@
             padding: 15px;
             margin: 10px 0;
             border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-</head>
 
+            .registro h3 {
+                margin-top: 0;
+                margin-bottom: 10px;
+                color: #1d8ddc;
+            }
+
+            .registro ul {
+                margin: 0;
+                padding-left: 20px;
+            }
+
+            .registro li {
+                margin-bottom: 6px;
+                font-size: 14px;
+                color: #444;
+            }
+
+        .btn-prenha {
+            margin-top: 10px;
+            background: #28a745;
+        }
+
+            .btn-prenha:hover {
+                background: #218838;
+            }
+    </style>
+    <link rel="stylesheet" href="style.css"
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
 <body>
     <nav>
         <div class="nav1">
             <div class="logo">Cownt</div>
             <div class="menu">
-                <a href="dashboard.html" ><i class="fas fa-home"></i> Dashboard</a>
+                <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
                 <a href="estatisticas.html"><i class="fas fa-chart-bar"></i> Estatísticas</a>
                 <a href="addgado.html"><i class="fas fa-cow"></i> Gerenciar Gados</a>
                 <a href="ocorrenciadiaria.html" class="active"><i class="fas fa-calendar-alt"></i> Ocorrências Diárias</a>
             </div>
-            <div class="logout">
-                <a href="#"><i class="fas fa-sign-out-alt"></i> Sair</a>
-            </div>
+            <div class="logout"><a href="#"><i class="fas fa-sign-out-alt"></i> Sair</a></div>
         </div>
     </nav>
 
@@ -138,7 +158,7 @@
 
     <div id="listaReproducao"></div>
 
-    <!-- Modal -->
+    <!-- Modal de Reprodução -->
     <div id="modal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="fecharModal()">&times;</span>
@@ -152,6 +172,20 @@
         </div>
     </div>
 
+    <!-- Modal de Prenhez -->
+    <div id="modalPrenhez" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModalPrenhez()">&times;</span>
+            <h2>Registrar Prenhez</h2>
+            <form id="form-prenhez">
+                <input type="hidden" id="prenhez-gado-id">
+                <label>Data da Prenhez:</label>
+                <input type="date" id="prenhez-data" required>
+                <button type="submit">Salvar</button>
+            </form>
+        </div>
+    </div>
+
     <script>
         const apiBase = "https://localhost:7092";
         let tipoAtual = "";
@@ -160,21 +194,30 @@
             tipoAtual = tipo;
             document.getElementById("modal").style.display = "block";
             document.getElementById("modal-titulo").innerText = "Registro de Reprodução";
-
             const hoje = new Date().toISOString().split("T")[0];
             let camposHTML = `
-                <label>Data:</label>
-                <input type="date" id="data" value="${hoje}" required>
-                <label>Tipo:</label>
-                <input type="text" id="tipo" placeholder="Ex.: Monta, Inseminação..." required>
-                <label>Observação:</label>
-                <textarea id="observacao" rows="3" placeholder="Observações adicionais"></textarea>
-            `;
+                    <label>Data:</label>
+                    <input type="date" id="data" value="${hoje}" required>
+                    <label>Tipo:</label>
+                    <input type="text" id="tipo" placeholder="Ex.: Monta, Inseminação..." required>
+                    <label>Observação:</label>
+                    <textarea id="observacao" rows="3" placeholder="Observações adicionais"></textarea>
+                `;
             document.getElementById("campos-especificos").innerHTML = camposHTML;
         }
 
-        function fecharModal() {
-            document.getElementById("modal").style.display = "none";
+        function fecharModal() { document.getElementById("modal").style.display = "none"; }
+        function abrirModalPrenhez(gadoId) {
+            document.getElementById("prenhez-gado-id").value = gadoId;
+            document.getElementById("modalPrenhez").style.display = "block";
+        }
+        function fecharModalPrenhez() { document.getElementById("modalPrenhez").style.display = "none"; }
+
+        // Função segura para adicionar dias
+        function addDays(date, days) {
+            const result = new Date(date.getTime());
+            result.setDate(result.getDate() + days);
+            return result;
         }
 
         async function carregarReproducao() {
@@ -188,40 +231,59 @@
                 const resp = await fetch(`${apiBase}/reproducao/por-usuario?usuarioId=${usuarioId}`);
                 if (!resp.ok) throw new Error("Erro ao buscar reproduções");
                 const dados = await resp.json();
-
                 lista.innerHTML = "";
                 if (dados.length === 0) {
                     lista.innerHTML = "<p>Nenhum registro encontrado.</p>";
                     return;
                 }
 
-                dados.forEach(async r => {
+                // Agrupar por gado
+                const grupos = {};
+                dados.forEach(r => {
+                    if (!grupos[r.iD_Gado]) grupos[r.iD_Gado] = [];
+                    grupos[r.iD_Gado].push(r);
+                });
+
+                for (let gadoId in grupos) {
                     const div = document.createElement("div");
                     div.className = "registro";
 
                     try {
-                        const resGado = await fetch(`${apiBase}/gado/${r.iD_Gado}`);
+                        const resGado = await fetch(`${apiBase}/gado/${gadoId}`);
                         let gado = {};
                         if (resGado.ok) gado = await resGado.json();
 
-                        div.innerHTML = `
-                            <strong>Brinco:</strong> ${gado.brinco}<br>
-                            <strong>Data:</strong> ${new Date(r.data).toLocaleDateString("pt-BR")} <br>
-                            <strong>Tipo:</strong> ${r.tipo} <br>
-                            <strong>Observação:</strong> ${r.observacao || '-'}
-                        `;
+                        let inner = `<h3>🐄 Brinco: ${gado.brinco}</h3><ul>`;
+
+                        grupos[gadoId].forEach((r, index) => {
+                            const tentativa = index + 1;
+
+                            let dataEsperadaText = "";
+                            if (r.data_Esperada) {
+                                const dataEsperada = new Date(r.data_Esperada);
+                                dataEsperadaText = ` | <strong>Data Esperada:</strong> ${dataEsperada.toLocaleDateString("pt-BR")}`;
+                            }
+
+                            inner += `<li>
+                        <strong>Tentativa:</strong> ${tentativa} |
+                        <strong>Data:</strong> ${new Date(r.data).toLocaleDateString("pt-BR")} |
+                        <strong>Tipo:</strong> ${r.tipo} |
+                        <strong>Obs:</strong> ${r.observacao || '-'}
+                        ${dataEsperadaText}
+                    </li>`;
+                        });
+
+                        inner += "</ul>";
+                        inner += `<button class="btn-prenha" onclick="abrirModalPrenhez(${gado.id})">Marcar como Prenha</button>`;
+                        div.innerHTML = inner;
+
                     } catch (err) {
-                        div.innerHTML = `
-                            <strong>Data:</strong> ${new Date(r.data).toLocaleDateString("pt-BR")} <br>
-                            <strong>Tipo:</strong> ${r.tipo} <br>
-                            <strong>Observação:</strong> ${r.observacao || '-'} <br>
-                            <em>Erro ao carregar dados do gado</em>
-                        `;
+                        div.innerHTML = "<em>Erro ao carregar dados do gado</em>";
                         console.error(err);
                     }
 
                     lista.appendChild(div);
-                });
+                }
 
             } catch (err) {
                 lista.innerHTML = "<p>Erro ao carregar registros.</p>";
@@ -229,36 +291,26 @@
             }
         }
 
+
+        // Form de Reprodução
         document.getElementById("modal-form").addEventListener("submit", async function (e) {
             e.preventDefault();
-
             const brinco = document.getElementById("brinco").value;
             const usuarioId = localStorage.getItem("userId");
-
             try {
                 const resGado = await fetch(`${apiBase}/gado/por-brinco?brinco=${brinco}&usuarioId=${usuarioId}`);
                 if (!resGado.ok) { alert("Gado não encontrado"); return; }
                 const gado = await resGado.json();
-
                 if (tipoAtual === "reproducao") {
                     const data = document.getElementById("data").value;
                     const tipo = document.getElementById("tipo").value;
                     const observacao = document.getElementById("observacao").value;
-
-                    const payload = {
-                        ID_Gado: gado.id,
-                        Data: data,
-                        Tipo: tipo,
-                        Observacao: observacao,
-                        ID_Usuario: usuarioId
-                    };
-
+                    const payload = { ID_Gado: gado.id, Data: data, Tipo: tipo, Observacao: observacao, ID_Usuario: usuarioId };
                     const saveRes = await fetch(`${apiBase}/reproducao`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify(payload)
                     });
-
                     if (saveRes.ok) {
                         alert("Registro de reprodução salvo com sucesso!");
                         fecharModal();
@@ -268,17 +320,51 @@
                         alert("Erro ao salvar: " + err);
                     }
                 }
-
             } catch (err) {
                 alert("Erro de conexão: " + err.message);
                 console.error(err);
             }
         });
 
-        // Carregar registros ao abrir a página
+        // Form de Prenhez
+        document.getElementById("form-prenhez").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const usuarioId = localStorage.getItem("userId");
+            const gadoId = document.getElementById("prenhez-gado-id").value;
+            const dataPrenhezInput = document.getElementById("prenhez-data").value;
+            if (!usuarioId || !gadoId || !dataPrenhezInput) { alert("Dados inválidos."); return; }
+
+            const dataPrenhez = new Date(dataPrenhezInput);
+            const dataEsperada = addDays(dataPrenhez, 283); // 283 dias de gestação bovina
+
+            const payload = {
+                ID_Gado: parseInt(gadoId),
+                Data_Prenhez: dataPrenhezInput,
+                Data_Esperada: dataEsperada.toISOString().split("T")[0],
+                ID_Usuario: usuarioId,
+                Status: "Prenha"
+            };
+
+            try {
+                const res = await fetch(`${apiBase}/prenhez`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                if (res.ok) {
+                    alert("Prenhez registrada com sucesso!");
+                    fecharModalPrenhez();
+                } else {
+                    const err = await res.text();
+                    alert("Erro ao registrar prenhez: " + err);
+                }
+            } catch (err) {
+                alert("Erro de conexão: " + err.message);
+                console.error(err);
+            }
+        });
+
         carregarReproducao();
     </script>
-
 </body>
-
 </html>

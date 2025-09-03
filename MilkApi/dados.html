@@ -268,6 +268,23 @@
         <tbody></tbody>
     </table>
 
+    <!-- Prenhez -->
+    <h2>Prenhez</h2>
+    <table id="prenhezTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ID Gado</th>
+                <th>Data Prenhez</th>
+                <th>Data Termino</th>
+                <th>Data Esperada</th>
+                <th>Status</th>
+                <th>ID Usuário</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
     <script>
         const apiBase = "https://localhost:7092";
 
@@ -308,6 +325,7 @@
             carregarDados("alertas", "alertasTable", ["id", "iD_Gado", "data_Prevista", "status", "iD_Usuario"]);
             carregarDados("suplemento", "suplementoTable", ["id", "iD_Gado", "tipo", "nome", "data", "intervalo", "iD_Usuario"]);
             carregarDados("remedio", "remedioTable", ["id", "iD_Gado", "nome", "data", "doses", "intervalo", "via", "iD_Usuario"]);
+            carregarDados("prenhez", "prenhezTable", ["id", "iD_Gado", "data_Prenhez", "data_Termino", "data_Esperada", "status", "iD_Usuario"]);
         };
     </script>
 </body>
