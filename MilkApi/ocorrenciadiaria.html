@@ -4,88 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Ocorrências Diárias</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #fdf6ef;
-            margin: 0;
-        }
-
-        h1 {
-            font-size: 28px;
-            color: #2c3e50;
-            margin-bottom: 5px;
-        }
-
-        p {
-            margin-top: 0;
-            color: #555;
-        }
-
-        .card-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 20px;
-            margin-top: 25px;
-        }
-
-        .card {
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
-        }
-
-        .icon {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        .titulo {
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        .descricao {
-            font-size: 14px;
-            color: #666;
-        }
-
-        /* Cores específicas para cada card */
-        .leite {
-            border-left: 6px solid #3498db;
-        }
-
-        .manejo {
-            border-left: 6px solid #9b59b6;
-        }
-
-        .reproducao {
-            border-left: 6px solid #8e44ad;
-        }
-
-        .suplemento {
-            border-left: 6px solid #f1c40f;
-        }
-
-        .remedio {
-            border-left: 6px solid #2ecc71;
-        }
-
-        .qualidade {
-            border-left: 6px solid #e67e22;
-        }
-    </style>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link
@@ -112,7 +31,7 @@
             <div class="menu">
                 <a href="dashboard.html"><i class="ph-bold ph-house-line"></i> Dashboard</a>
                 <a href="estatisticas.html"><i class="ph-bold ph-chart-line"></i> Estatísticas</a>
-                <a href="addgado.html"><i class="ph ph-cow"></i></i> Gerenciar Gados</a>
+                <a href="addgado.html"><i class="ph ph-cow"></i> Gerenciar Gados</a>
                 <a href="ocorrenciadiaria.html" class="active"><i class="ph-bold ph-calendar-dots"></i> Ocorrências
                     Diárias</a>
             </div>
@@ -128,39 +47,61 @@
 
         <div class="card-container">
             <div class="card leite" onclick="location.href='leite.html'">
-                <div class="titulo">Leite</div>
-                <div class="descricao">Registrar produção de leite diária</div>
+                <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-milk-icon lucide-milk"><path d="M8 2h8"/><path d="M9 2v2.789a4 4 0 0 1-.672 2.219l-.656.984A4 4 0 0 0 7 10.212V20a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-9.789a4 4 0 0 0-.672-2.219l-.656-.984A4 4 0 0 1 15 4.788V2"/><path d="M7 15a6.472 6.472 0 0 1 5 0 6.47 6.47 0 0 0 5 0"/></svg></div>
+                <div class="card-content">
+                    <div class="titulo">Leite</div>
+                    <div class="descricao">Registrar produção de leite diária</div>
+                </div>
             </div>
 
             <div class="card manejo" onclick="location.href='manejoGeral.html'">
-                <div class="titulo">Manejo Geral</div>
-                <div class="descricao">Gerenciar manejos gerais</div>
+                <div class="icon"><i class="ph ph-cow"></i></div>
+                <div class="card-content">
+                    <div class="titulo">Manejo Geral</div>
+                    <div class="descricao">Gerenciar manejos gerais</div>
+                </div>
             </div>
 
             <div class="card reproducao" onclick="location.href='reproducao.html'">
-                <div class="titulo">Reprodução</div>
-                <div class="descricao">Controlar ciclo reprodutivo do rebanho</div>
+                <div class="icon"><i class="ph ph-first-aid"></i></div>
+                <div class="card-content">
+                    <div class="titulo">Reprodução</div>
+                    <div class="descricao">Controlar ciclo reprodutivo do rebanho</div>
+                </div>
             </div>
 
             <div class="card suplemento" onclick="location.href='suplemento.html'">
-                <div class="titulo">Suplementação</div>
-                <div class="descricao">Gerenciar suplementos nutricionais</div>
+                <div class="icon"><i class="ph ph-pill"></i></div>
+                <div class="card-content">
+                    <div class="titulo">Suplementação</div>
+                    <div class="descricao">Gerenciar suplementos nutricionais</div>
+                </div>
             </div>
 
             <div class="card remedio" onclick="location.href='remedio.html'">
-                <div class="titulo">Remédios</div>
-                <div class="descricao">Controlar medicamentos e dosagens</div>
+                <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-syringe-icon lucide-syringe"><path d="m18 2 4 4"/><path d="m17 7 3-3"/><path d="M19 9 8.7 19.3c-1 1-2.5 1-3.4 0l-.6-.6c-1-1-1-2.5 0-3.4L15 5"/><path d="m9 11 4 4"/><path d="m5 19-3 3"/><path d="m14 4 6 6"/></svg></div>
+                <div class="card-content">
+                    <div class="titulo">Remédios</div>
+                    <div class="descricao">Controlar medicamentos e dosagens</div>
+                </div>
             </div>
 
             <div class="card qualidade" onclick="location.href='QualidadeLeite.html'">
-                <div class="titulo">Qualidade do Leite</div>
-                <div class="descricao">Controlar qualidade do leite</div>
+                <div class="icon"><i class="ph ph-drop"></i></div>
+                <div class="card-content">
+                    <div class="titulo">Qualidade do Leite</div>
+                    <div class="descricao">Controlar qualidade do leite</div>
+                </div>
             </div>
 
-            <div class="card qualidade" onclick="location.href='Prenhez.html'">
-                <div class="titulo">Gestação</div>
-                <div class="descricao">Gerenciar Gestação das Vacas</div>
+            <div class="card gestacao" onclick="location.href='Prenhez.html'">
+                <div class="icon"><i class="ph ph-heartbeat"></i></div>
+                <div class="card-content">
+                    <div class="titulo">Gestação</div>
+                    <div class="descricao">Gerenciar Gestação das Vacas</div>
+                </div>
             </div>
+
         </div>
     </div>
 
