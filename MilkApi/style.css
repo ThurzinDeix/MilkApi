@@ -1,12 +1,17 @@
 body {
     margin: 0px;
     font-family: Arial, sans-serif;
-    background-color: #f4f6f8;
+    background-color: #f6ede5;
 }
 
 .content {
     margin-left: 10%;
     margin-right: 10%;
+}
+
+.body-margin{
+    margin-left: 5%;
+    margin-right: 5%;
 }
 
 nav {
@@ -189,6 +194,160 @@ p {
 .descricao {
     font-size: 14px;
     color: #666;
+}
+
+/*CSS do LEITE
+
+----------------------------------------------------------------------------------------------------------
+
+*/
+
+
+/* Conteúdo principal */
+content {
+    display: block;
+    padding: 30px;
+}
+
+h1 {
+    font-size: 28px;
+    margin-bottom: 5px;
+    color: #2c3e50;
+}
+
+h1 + p {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 20px;
+}
+
+/* Botão adicionar */
+.btn-add {
+    background-color: #5a3c2d;
+    color: #fff;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 80%;
+    margin-bottom: 2%;
+}
+
+
+.btn-add:hover {
+    background-color: #402a20;
+}
+
+/* Lista dos registros */
+.listaCards{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 25px;
+}
+
+/* Card */
+.registro {
+    background: #e7e1da;
+    padding: 18px;
+    border-radius: 8px;
+    width: 280px;
+    box-shadow: 0px 2px 6px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease;
+}
+
+.registro:hover {
+    transform: scale(1.02);
+}
+
+.registro strong {
+    color: #2c3e50;
+    display: inline-block;
+    margin-bottom: 5px;
+}
+
+.registro p {
+    margin: 5px 0;
+}
+
+/* Botões dentro do card */
+.card-actions {
+    margin-top: 12px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn-edit {
+    background: #fdf6ef;
+    border: 1px solid #ddd;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-edit:hover {
+    background: #eee;
+}
+
+.btn-delete {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-delete:hover {
+    background: #c0392b;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+}
+
+.modal-content {
+    background: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+}
+
+.close {
+    float: right;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: red;
+}
+
+.modal-content label {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
 }
 
 

@@ -3,113 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Gestão de Leite</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f8;
-            margin: 0;
-            padding: 0;
-        }
-
-        h1 {
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        .card-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            padding: 20px;
-        }
-
-        .card {
-            background: linear-gradient(135deg, #4cafef, #1d8ddc);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-            width: 220px;
-            text-align: center;
-            font-size: 18px;
-            transition: transform 0.2s ease;
-        }
-
-        .card:hover {
-            transform: scale(1.05);
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 10;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.6);
-        }
-
-        .modal-content {
-            background-color: #fff;
-            margin: 5% auto;
-            padding: 20px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 500px;
-            position: relative;
-        }
-
-        .close {
-            position: absolute;
-            right: 15px;
-            top: 10px;
-            font-size: 28px;
-            font-weight: bold;
-            color: #555;
-            cursor: pointer;
-        }
-
-        input,
-        select,
-        textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-        }
-
-        button {
-            background: #1d8ddc;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background: #0d6fb5;
-        }
-
-        #listaLeite {
-            max-width: 600px;
-            margin: 20px auto;
-        }
-
-        .registro {
-            background: #fff;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-    </style>
+    <title>Gestão de Ordenha</title>
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link
@@ -137,8 +31,7 @@
                 <a href="dashboard.html"><i class="ph-bold ph-house-line"></i> Dashboard</a>
                 <a href="estatisticas.html"><i class="ph-bold ph-chart-line"></i> Estatísticas</a>
                 <a href="addgado.html"><i class="ph ph-cow"></i> Gerenciar Gados</a>
-                <a href="ocorrenciadiaria.html" class="active"><i class="ph-bold ph-calendar-dots"></i> Ocorrências
-                    Diárias</a>
+                <a href="ocorrenciadiaria.html" class="active"><i class="ph-bold ph-calendar-dots"></i> Ocorrências Diárias</a>
             </div>
             <div class="logout">
                 <a href="#"><i class="ph-bold ph-sign-out"></i> Sair</a>
@@ -146,13 +39,12 @@
         </div>
     </nav> 
     <content>
-        <h1>Gestão de Leite</h1>
-
         <div class="card-container">
-            <div class="card" onclick="abrirModal('leite')">Leite</div>
+            <h1>Gestão de Ordenha</h1>
+            <div class="btn-add" onclick="abrirModal('leite')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-icon lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>Adicionar Ordenha</div>
         </div>
 
-        <div id="listaLeite"></div>
+        <div class="listaCards"></div>
 
         <!-- Modal -->
         <div id="modal" class="modal">
@@ -203,7 +95,7 @@
             const usuarioId = localStorage.getItem("userId");
             if (!usuarioId) return;
 
-            const lista = document.getElementById("listaLeite");
+            const lista = document.getElementsByClassName("listaCards")[0];
             lista.innerHTML = "<p>Carregando...</p>";
 
             try {
@@ -231,6 +123,7 @@
                         }
 
                         div.innerHTML = `
+                            <div class=""
                             <strong>Brinco:</strong> ${gado.brinco || 'N/A'}<br>
                             <strong>Data:</strong> ${new Date(l.data).toLocaleDateString("pt-BR")} <br>
                             <strong>Litros:</strong> ${l.litros}
