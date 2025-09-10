@@ -4,44 +4,36 @@
 <head>
     <meta charset="UTF-8">
     <title>Gestão de Ordenha</title>
-   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css"
-    />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css" />
 </head>
 
 <body>
     <nav>
         <div class="nav1">
             <div class="logo">Cownt</div>
-            <div class="menu">
-                <a href="dashboard.html"><i class="ph-bold ph-house-line"></i> Dashboard</a>
-                <a href="estatisticas.html"><i class="ph-bold ph-chart-line"></i> Estatísticas</a>
-                <a href="addgado.html"><i class="ph ph-cow"></i> Gerenciar Gados</a>
-                <a href="ocorrenciadiaria.html" class="active"><i class="ph-bold ph-calendar-dots"></i> Ocorrências Diárias</a>
-            </div>
-            <div class="logout">
-                <a href="#"><i class="ph-bold ph-sign-out"></i> Sair</a>
-            </div>
+            <div class="menu"> <a href="dashboard.html"><i class="ph-bold ph-house-line"></i> Dashboard</a> <a
+                    href="estatisticas.html"><i class="ph-bold ph-chart-line"></i> Estatísticas</a> <a
+                    href="addgado.html"><i class="ph ph-cow"></i> Gerenciar Gados</a> <a href="ocorrenciadiaria.html"
+                    class="active"><i class="ph-bold ph-calendar-dots"></i> Ocorrências Diárias</a> </div>
+            <div class="logout"> <a href="#"><i class="ph-bold ph-sign-out"></i> Sair</a> </div>
         </div>
-    </nav> 
+    </nav>
     <content>
         <div class="card-container">
             <h1>Gestão de Ordenha</h1>
-            <div class="btn-add" onclick="abrirModal('leite')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-icon lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>Adicionar Ordenha</div>
+            <div class="btn-add" onclick="abrirModal('leite')"><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                    height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-icon lucide-plus">
+                    <path d="M5 12h14" />
+                    <path d="M12 5v14" />
+                </svg>Adicionar Ordenha</div>
         </div>
 
         <div class="listaCards"></div>
@@ -59,7 +51,6 @@
                 </form>
             </div>
         </div>
-
     </content>
 
     <script>
@@ -76,12 +67,11 @@
 
             if (tipo === "leite") {
                 camposHTML = `
-
-                        <label>Data:</label>
-                        <input type="date" id="data" value="${hoje}" required>
-                        <label>Litros:</label>
-                        <input type="number" id="litros" step="0.01" required>
-                    `;
+                    <label>Data:</label>
+                    <input type="date" id="data" value="${hoje}" required>
+                    <label>Litros:</label>
+                    <input type="number" id="litros" step="0.01" required>
+                `;
             }
 
             document.getElementById("campos-especificos").innerHTML = camposHTML;
@@ -99,7 +89,6 @@
             lista.innerHTML = "<p>Carregando...</p>";
 
             try {
-                // Busca apenas os leites do usuário logado
                 const resp = await fetch(`${apiBase}/leite/por-usuario?usuarioId=${usuarioId}`);
                 if (!resp.ok) throw new Error("Erro ao buscar leite");
                 const dados = await resp.json();
@@ -112,10 +101,9 @@
 
                 dados.forEach(async l => {
                     const div = document.createElement("div");
-                    div.className = "registro";
+                    div.className = "card";
 
                     try {
-                        // Buscar os dados do gado pelo ID_Gado
                         const resGado = await fetch(`${apiBase}/gado/${l.iD_Gado}`);
                         let gado = {};
                         if (resGado.ok) {
@@ -123,15 +111,20 @@
                         }
 
                         div.innerHTML = `
-                            <div class=""
-                            <strong>Brinco:</strong> ${gado.brinco || 'N/A'}<br>
-                            <strong>Data:</strong> ${new Date(l.data).toLocaleDateString("pt-BR")} <br>
-                            <strong>Litros:</strong> ${l.litros}
+                            <p class="brinco"><strong>Brinco:</strong> ${gado.brinco || 'N/A'}</p>
+                            <p class="data"><strong>Data:</strong> ${new Date(l.data).toLocaleDateString("pt-BR")}</p>
+                            <p><strong>Produção:</strong><br>
+                               <span class="litros">${l.litros}L</span>
+                            </p>
+                            <div class="card-actions">
+                                <button class="btn-edit"><i class="fa-solid fa-pen-to-square"></i> Editar</button>
+                                <button class="btn-delete"><i class="fa-solid fa-trash"></i></button>
+                            </div>
                         `;
                     } catch (err) {
                         div.innerHTML = `
-                            <strong>Data:</strong> ${new Date(l.data).toLocaleDateString("pt-BR")} <br>
-                            <strong>Litros:</strong> ${l.litros} <br>
+                            <p><strong>Data:</strong> ${new Date(l.data).toLocaleDateString("pt-BR")}</p>
+                            <p><strong>Produção:</strong> ${l.litros}L</p>
                             <em>Erro ao carregar dados do gado</em>
                         `;
                         console.error(err);
@@ -140,13 +133,11 @@
                     lista.appendChild(div);
                 });
 
-
             } catch (err) {
                 lista.innerHTML = "<p>Erro ao carregar registros.</p>";
                 console.error(err);
             }
         }
-
 
         document.getElementById("modal-form").addEventListener("submit", async function (e) {
             e.preventDefault();
@@ -155,7 +146,6 @@
             const usuarioId = localStorage.getItem("userId");
 
             try {
-                // Buscar gado pelo brinco
                 const resGado = await fetch(`${apiBase}/gado/por-brinco?brinco=${brinco}&usuarioId=${usuarioId}`);
                 if (!resGado.ok) { alert("Gado não encontrado"); return; }
                 const gado = await resGado.json();
@@ -193,7 +183,6 @@
             }
         });
 
-        // Carregar registros na abertura
         carregarLeite();
     </script>
 </body>

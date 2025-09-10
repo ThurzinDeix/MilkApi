@@ -114,8 +114,8 @@ p {
     margin-top: 25px;
 }
 
-.card {
-    background: #fff;
+.cardoc {
+    background: #f8f2ec;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     cursor: pointer;
@@ -125,7 +125,7 @@ p {
     overflow: hidden;
 }
 
-.card:hover {
+.cardoc:hover {
     transform: translateY(-5px);
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.288);
 }
@@ -236,6 +236,14 @@ h1 + p {
     margin-bottom: 2%;
 }
 
+.btn-add i{
+    padding-right: 10px;
+}
+
+.btn-add svg{
+    padding-right: 10px;
+}
+
 
 .btn-add:hover {
     background-color: #402a20;
@@ -250,60 +258,61 @@ h1 + p {
 }
 
 /* Card */
-.registro {
-    background: #e7e1da;
-    padding: 18px;
-    border-radius: 8px;
+.card {
+    background: #f8f2ec;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     width: 280px;
-    box-shadow: 0px 2px 6px rgba(0,0,0,0.2);
-    transition: transform 0.2s ease;
-}
-
-.registro:hover {
-    transform: scale(1.02);
-}
-
-.registro strong {
-    color: #2c3e50;
     display: inline-block;
-    margin-bottom: 5px;
+    vertical-align: top;
 }
 
-.registro p {
-    margin: 5px 0;
+.brinco{
+    font-size: 25px;
+    color: #5a3c2d;
 }
 
-/* Botões dentro do card */
+.card .data {
+    font-weight: thin;
+}
+
+
+
+.card .litros {
+    font-size: 20px;
+    font-weight: bold;
+    color: #5a3c2d;
+}
+
 .card-actions {
-    margin-top: 12px;
     display: flex;
     justify-content: space-between;
+    margin-top: 15px;
 }
 
 .btn-edit {
-    background: #fdf6ef;
+    background: #f5f5f5;
     border: 1px solid #ddd;
-    padding: 6px 12px;
     border-radius: 6px;
+    padding: 6px 10px;
     cursor: pointer;
-}
-
-.btn-edit:hover {
-    background: #eee;
+    font-size: 14px;
 }
 
 .btn-delete {
     background: #e74c3c;
-    color: white;
     border: none;
-    padding: 6px 12px;
     border-radius: 6px;
+    padding: 6px 10px;
+    color: #fff;
     cursor: pointer;
+    font-size: 14px;
 }
 
-.btn-delete:hover {
-    background: #c0392b;
-}
+
+
 
 /* Modal */
 .modal {
@@ -349,6 +358,31 @@ h1 + p {
     border: 1px solid #ddd;
     border-radius: 6px;
 }
+
+/* Botão Marcar como Prenha */
+.btn-prenha {
+    display: inline-block;
+    background: #28a745;
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: 0.4s;
+    cursor: pointer;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+}
+
+.btn-prenha:hover {
+    background: #218838;
+}
+
+.btn-prenha:active {
+    background: #1e7e34;
+    transform: scale(0.97);
+}
+
 
 
 @media (max-width: 1600px) {

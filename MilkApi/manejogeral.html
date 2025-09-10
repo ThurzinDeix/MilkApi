@@ -6,21 +6,12 @@
     <title>Gestão de Manejo Geral</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css"
-    />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css" />
 </head>
 
 <body>
@@ -39,12 +30,13 @@
             </div>
         </div>
     </nav>
+
     <div class="body-margin">
-
-
         <div class="card-container">
             <h1>Gestão de Manejo Geral</h1>
-            <div class="btn-add" onclick="abrirModal('manejo')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-icon lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>Novo Manejo</div>
+            <div class="btn-add" onclick="abrirModal('manejo')">
+                <i class="fa-solid fa-plus"></i> Novo Manejo
+            </div>
         </div>
 
         <div class="listaCards"></div>
@@ -55,6 +47,7 @@
                 <span class="close" onclick="fecharModal()">&times;</span>
                 <h2 id="modal-titulo"></h2>
                 <form id="modal-form">
+                    <input type="hidden" id="manejoId">
                     <label>Brinco do Gado:</label>
                     <input type="number" id="brinco" required>
                     <div id="campos-especificos"></div>
@@ -62,40 +55,42 @@
                 </form>
             </div>
         </div>
-
     </div>
 
     <script>
         const apiBase = "https://localhost:7092";
         let tipoAtual = "";
 
-        function abrirModal(tipo) {
+        function abrirModal(tipo, dados = null) {
             tipoAtual = tipo;
             document.getElementById("modal").style.display = "block";
-            document.getElementById("modal-titulo").innerText = "Registro de Manejo Geral";
+            document.getElementById("modal-titulo").innerText = dados ? "Editar Manejo" : "Novo Manejo";
 
             const hoje = new Date().toISOString().split("T")[0];
             let camposHTML = `
                 <label>Data do Manejo:</label>
-                <input type="date" id="dataManejo" value="${hoje}" required>
+                <input type="date" id="dataManejo" value="${dados ? dados.data_Manejo.split("T")[0] : hoje}" required>
                 <label>Tipo de Manejo:</label>
-                <input type="text" id="tipoManejo" placeholder="Ex.: Arrumar pata, Casqueamento..." required>
+                <input type="text" id="tipoManejo" value="${dados ? dados.tipo_Manejo : ""}" placeholder="Ex.: Arrumar pata, Casqueamento..." required>
                 <label>Observações:</label>
-                <textarea id="observacoes" rows="3" placeholder="Detalhes adicionais"></textarea>
+                <textarea id="observacoes" rows="3" placeholder="Detalhes adicionais">${dados ? dados.observacoes : ""}</textarea>
             `;
-
             document.getElementById("campos-especificos").innerHTML = camposHTML;
+
+            document.getElementById("brinco").value = dados && dados.gado ? dados.gado.brinco : "";
+            document.getElementById("manejoId").value = dados ? dados.id : "";
         }
 
         function fecharModal() {
             document.getElementById("modal").style.display = "none";
+            document.getElementById("modal-form").reset();
         }
 
         async function carregarManejo() {
             const usuarioId = localStorage.getItem("userId");
             if (!usuarioId) return;
 
-            const lista = document.getElementsByClassName("listaCards")[0];
+            const lista = document.querySelector(".listaCards");
             lista.innerHTML = "<p>Carregando...</p>";
 
             try {
@@ -109,34 +104,32 @@
                     return;
                 }
 
-                dados.forEach(async m => {
+                for (const m of dados) {
                     const div = document.createElement("div");
-                    div.className = "registro";
+                    div.className = "card";
 
+                    let gado = {};
                     try {
                         const resGado = await fetch(`${apiBase}/gado/${m.iD_Gado}`);
-                        let gado = {};
-                        if (resGado.ok) {
-                            gado = await resGado.json();
-                        }
+                        if (resGado.ok) gado = await resGado.json();
+                    } catch { }
 
-                        div.innerHTML = `
-                            <strong>Brinco:</strong> ${gado.brinco || 'N/A'}<br>
-                            <strong>Data do Manejo:</strong> ${new Date(m.data_Manejo).toLocaleDateString("pt-BR")} <br>
-                            <strong>Tipo:</strong> ${m.tipo_Manejo} <br>
-                            <strong>Observações:</strong> ${m.observacoes || "Nenhuma"}
-                        `;
-                    } catch (err) {
-                        div.innerHTML = `
-                            <strong>Data do Manejo:</strong> ${new Date(m.data_Manejo).toLocaleDateString("pt-BR")} <br>
-                            <strong>Tipo:</strong> ${m.tipo_Manejo} <br>
-                            <em>Erro ao carregar dados do gado</em>
-                        `;
-                        console.error(err);
-                    }
-
+                    div.innerHTML = `
+                        <p class="brinco"><strong>Brinco:</strong> ${gado.brinco || 'N/A'}</p>
+                        <p><strong>Data:</strong> ${new Date(m.data_Manejo).toLocaleDateString("pt-BR")}</p>
+                        <p><strong>Tipo:</strong> ${m.tipo_Manejo}</p>
+                        <p><strong>Observações:</strong> ${m.observacoes || "Nenhuma"}</p>
+                        <div class="card-actions">
+                            <button class="btn-edit" onclick='abrirModal("manejo", ${JSON.stringify({ ...m, gado })})'>
+                                <i class="fa-solid fa-pen-to-square"></i> Editar
+                            </button>
+                            <button class="btn-delete" onclick="excluirManejo(${m.id})">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
                     lista.appendChild(div);
-                });
+                }
 
             } catch (err) {
                 lista.innerHTML = "<p>Erro ao carregar registros.</p>";
@@ -144,9 +137,26 @@
             }
         }
 
+        async function excluirManejo(id) {
+            if (!confirm("Deseja excluir este manejo?")) return;
+
+            try {
+                const res = await fetch(`${apiBase}/manejoGeral/${id}`, { method: "DELETE" });
+                if (res.ok) {
+                    alert("Registro excluído com sucesso!");
+                    carregarManejo();
+                } else {
+                    alert("Erro ao excluir registro.");
+                }
+            } catch (err) {
+                alert("Erro de conexão: " + err.message);
+            }
+        }
+
         document.getElementById("modal-form").addEventListener("submit", async function (e) {
             e.preventDefault();
 
+            const manejoId = document.getElementById("manejoId").value;
             const brinco = document.getElementById("brinco").value;
             const usuarioId = localStorage.getItem("userId");
 
@@ -155,42 +165,37 @@
                 if (!resGado.ok) { alert("Gado não encontrado"); return; }
                 const gado = await resGado.json();
 
-                if (tipoAtual === "manejo") {
-                    const dataManejo = document.getElementById("dataManejo").value;
-                    const tipoManejo = document.getElementById("tipoManejo").value;
-                    const observacoes = document.getElementById("observacoes").value;
+                const payload = {
+                    ID_Gado: gado.id,
+                    Data_Manejo: document.getElementById("dataManejo").value,
+                    Tipo_Manejo: document.getElementById("tipoManejo").value,
+                    Observacoes: document.getElementById("observacoes").value,
+                    ID_Usuario: usuarioId
+                };
 
-                    const payload = {
-                        ID_Gado: gado.id,
-                        Data_Manejo: dataManejo,
-                        Tipo_Manejo: tipoManejo,
-                        Observacoes: observacoes,
-                        ID_Usuario: usuarioId
-                    };
+                const url = manejoId ? `${apiBase}/manejoGeral/${manejoId}` : `${apiBase}/manejoGeral`;
+                const method = manejoId ? "PUT" : "POST";
 
-                    const saveRes = await fetch(`${apiBase}/manejoGeral`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(payload)
-                    });
+                const saveRes = await fetch(url, {
+                    method,
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
 
-                    if (saveRes.ok) {
-                        alert("Registro de manejo salvo com sucesso!");
-                        fecharModal();
-                        carregarManejo();
-                    } else {
-                        const err = await saveRes.text();
-                        alert("Erro ao salvar: " + err);
-                    }
+                if (saveRes.ok) {
+                    alert("Registro salvo com sucesso!");
+                    fecharModal();
+                    carregarManejo();
+                } else {
+                    const err = await saveRes.text();
+                    alert("Erro ao salvar: " + err);
                 }
-
             } catch (err) {
                 alert("Erro de conexão: " + err.message);
                 console.error(err);
             }
         });
 
-        // Carregar registros ao abrir a página
         carregarManejo();
     </script>
 </body>

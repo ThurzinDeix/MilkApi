@@ -1,134 +1,14 @@
 ﻿<!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <title>Gestão de Suplementos</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f8;
-            margin: 0;
-            padding: 0;
-        }
-
-        h1 {
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        .card-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            padding: 20px;
-        }
-
-        .card {
-            background: linear-gradient(135deg, #4cafef, #1d8ddc);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-            width: 220px;
-            text-align: center;
-            font-size: 18px;
-            transition: transform 0.2s ease;
-        }
-
-        .card:hover {
-            transform: scale(1.05);
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 10;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.6);
-        }
-
-        .modal-content {
-            background-color: #fff;
-            margin: 5% auto;
-            padding: 20px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 500px;
-            position: relative;
-        }
-
-        .close {
-            position: absolute;
-            right: 15px;
-            top: 10px;
-            font-size: 28px;
-            font-weight: bold;
-            color: #555;
-            cursor: pointer;
-        }
-
-        input,
-        select,
-        textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-        }
-
-        button {
-            background: #1d8ddc;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background: #0d6fb5;
-        }
-
-        #listaSuplementos {
-            max-width: 700px;
-            margin: 20px auto;
-        }
-
-        .registro {
-            background: #fff;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-    </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css"
-    />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css" />
 </head>
-
 <body>
     <nav>
         <div class="nav1">
@@ -137,8 +17,7 @@
                 <a href="dashboard.html"><i class="ph-bold ph-house-line"></i> Dashboard</a>
                 <a href="estatisticas.html"><i class="ph-bold ph-chart-line"></i> Estatísticas</a>
                 <a href="addgado.html"><i class="ph ph-cow"></i> Gerenciar Gados</a>
-                <a href="ocorrenciadiaria.html" class="active"><i class="ph-bold ph-calendar-dots"></i> Ocorrências
-                    Diárias</a>
+                <a href="ocorrenciadiaria.html" class="active"><i class="ph-bold ph-calendar-dots"></i> Ocorrências Diárias</a>
             </div>
             <div class="logout">
                 <a href="#"><i class="ph-bold ph-sign-out"></i> Sair</a>
@@ -146,53 +25,57 @@
         </div>
     </nav>
 
-    <h1>Gestão de Suplementos</h1>
-
-    <div class="card-container">
-        <div class="card" onclick="abrirModal('suplemento')">Novo Suplemento</div>
-    </div>
-
-    <div id="listaSuplementos"></div>
-
-    <!-- Modal -->
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="fecharModal()">&times;</span>
-            <h2 id="modal-titulo"></h2>
-            <form id="modal-form">
-                <label>Brinco do Gado:</label>
-                <input type="number" id="brinco" required>
-                <div id="campos-especificos"></div>
-                <button type="submit">Salvar</button>
-            </form>
+    <content>
+        <div class="card-container">
+            <h1>Gestão de Suplementos</h1>
+            <div class="btn-add" onclick="abrirModal('suplemento')">
+                <i class="fa-solid fa-plus"></i> Novo Suplemento
+            </div>
         </div>
-    </div>
+
+        <div class="listaCards" id="listaSuplementos"></div>
+
+        <!-- Modal -->
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="fecharModal()">&times;</span>
+                <h2 id="modal-titulo"></h2>
+                <form id="modal-form">
+                    <label>Brinco do Gado:</label>
+                    <input type="number" id="brinco" required>
+                    <div id="campos-especificos"></div>
+                    <button type="submit">Salvar</button>
+                </form>
+            </div>
+        </div>
+    </content>
 
     <script>
         const apiBase = "https://localhost:7092";
         let tipoAtual = "";
 
-        function abrirModal(tipo) {
+        function abrirModal(tipo, dados = null) {
             tipoAtual = tipo;
             document.getElementById("modal").style.display = "block";
-            document.getElementById("modal-titulo").innerText = "Registro de Suplemento";
+            document.getElementById("modal-titulo").innerText = dados ? "Editar Suplemento" : "Registro de Suplemento";
 
             const hoje = new Date().toISOString().split("T")[0];
-            let camposHTML = `
+            document.getElementById("campos-especificos").innerHTML = `
                 <label>Data:</label>
-                <input type="date" id="data" value="${hoje}" required>
+                <input type="date" id="data" value="${dados ? dados.date.split("T")[0] : hoje}" required>
                 <label>Tipo:</label>
-                <input type="text" id="tipo" required placeholder="Ex.: Mineral, Proteico...">
+                <input type="text" id="tipo" value="${dados ? dados.tipo : ''}" required placeholder="Ex.: Mineral, Proteico...">
                 <label>Nome:</label>
-                <input type="text" id="nome" required placeholder="Nome do suplemento">
+                <input type="text" id="nome" value="${dados ? dados.nome : ''}" required placeholder="Nome do suplemento">
                 <label>Intervalo (dias):</label>
-                <input type="number" id="intervalo" required>
+                <input type="number" id="intervalo" value="${dados ? dados.intervalo : ''}" required>
             `;
-            document.getElementById("campos-especificos").innerHTML = camposHTML;
+            document.getElementById("brinco").value = dados && dados.gado ? dados.gado.brinco : '';
         }
 
         function fecharModal() {
             document.getElementById("modal").style.display = "none";
+            document.getElementById("modal-form").reset();
         }
 
         async function carregarSuplementos() {
@@ -213,35 +96,33 @@
                     return;
                 }
 
-                dados.forEach(async s => {
-                    const div = document.createElement("div");
-                    div.className = "registro";
-
+                for (const s of dados) {
+                    let gado = {};
                     try {
                         const resGado = await fetch(`${apiBase}/gado/${s.iD_Gado}`);
-                        let gado = {};
                         if (resGado.ok) gado = await resGado.json();
+                    } catch {}
 
-                        div.innerHTML = `
-                            <strong>Brinco:</strong> ${gado.brinco || 'N/A'}<br>
-                            <strong>Data:</strong> ${new Date(s.date).toLocaleDateString("pt-BR")} <br>
-                            <strong>Tipo:</strong> ${s.tipo} <br>
-                            <strong>Nome:</strong> ${s.nome} <br>
-                            <strong>Intervalo:</strong> ${s.intervalo} dias
-                        `;
-                    } catch (err) {
-                        div.innerHTML = `
-                            <strong>Data:</strong> ${new Date(s.date).toLocaleDateString("pt-BR")} <br>
-                            <strong>Tipo:</strong> ${s.tipo} <br>
-                            <strong>Nome:</strong> ${s.nome} <br>
-                            <strong>Intervalo:</strong> ${s.intervalo} dias <br>
-                            <em>Erro ao carregar dados do gado</em>
-                        `;
-                        console.error(err);
-                    }
+                    const div = document.createElement("div");
+                    div.className = "card";
 
+                    div.innerHTML = `
+                        <p class="brinco"><strong>Brinco:</strong> ${gado.brinco || 'N/A'}</p>
+                        <p><strong>Data:</strong> ${new Date(s.date).toLocaleDateString("pt-BR")}</p>
+                        <p><strong>Tipo:</strong> ${s.tipo}</p>
+                        <p><strong>Nome:</strong> ${s.nome}</p>
+                        <p><strong>Intervalo:</strong> ${s.intervalo} dias</p>
+                        <div class="card-actions">
+                            <button class="btn-edit" onclick='abrirModal("suplemento", ${JSON.stringify({ ...s, gado })})'>
+                                <i class="fa-solid fa-pen-to-square"></i> Editar
+                            </button>
+                            <button class="btn-delete" onclick="excluirSuplemento(${s.id})">
+                                <i class="fa-solid fa-trash"></i> Deletar
+                            </button>
+                        </div>
+                    `;
                     lista.appendChild(div);
-                });
+                }
 
             } catch (err) {
                 lista.innerHTML = "<p>Erro ao carregar registros.</p>";
@@ -249,7 +130,22 @@
             }
         }
 
-        document.getElementById("modal-form").addEventListener("submit", async function (e) {
+        async function excluirSuplemento(id) {
+            if (!confirm("Deseja excluir este suplemento?")) return;
+            try {
+                const res = await fetch(`${apiBase}/suplemento/${id}`, { method: "DELETE" });
+                if (res.ok) {
+                    alert("Suplemento excluído com sucesso!");
+                    carregarSuplementos();
+                } else {
+                    alert("Erro ao excluir suplemento.");
+                }
+            } catch (err) {
+                alert("Erro de conexão: " + err.message);
+            }
+        }
+
+        document.getElementById("modal-form").addEventListener("submit", async function(e) {
             e.preventDefault();
 
             const brinco = document.getElementById("brinco").value;
@@ -260,35 +156,32 @@
                 if (!resGado.ok) { alert("Gado não encontrado"); return; }
                 const gado = await resGado.json();
 
-                if (tipoAtual === "suplemento") {
-                    const data = document.getElementById("data").value;
-                    const tipo = document.getElementById("tipo").value;
-                    const nome = document.getElementById("nome").value;
-                    const intervalo = parseInt(document.getElementById("intervalo").value);
+                const payload = {
+                    ID_Gado: gado.id,
+                    Tipo: document.getElementById("tipo").value,
+                    Nome: document.getElementById("nome").value,
+                    Date: document.getElementById("data").value,
+                    intervalo: parseInt(document.getElementById("intervalo").value),
+                    ID_Usuario: usuarioId
+                };
 
-                    const payload = {
-                        ID_Gado: gado.id,
-                        Tipo: tipo,
-                        Nome: nome,
-                        Date: data,
-                        intervalo: intervalo,
-                        ID_Usuario: usuarioId
-                    };
+                const suplementoId = document.getElementById("suplementoId")?.value;
+                const url = suplementoId ? `${apiBase}/suplemento/${suplementoId}` : `${apiBase}/suplemento`;
+                const method = suplementoId ? "PUT" : "POST";
 
-                    const saveRes = await fetch(`${apiBase}/suplemento`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(payload)
-                    });
+                const saveRes = await fetch(url, {
+                    method,
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
 
-                    if (saveRes.ok) {
-                        alert("Registro de suplemento salvo com sucesso!");
-                        fecharModal();
-                        carregarSuplementos();
-                    } else {
-                        const err = await saveRes.text();
-                        alert("Erro ao salvar: " + err);
-                    }
+                if (saveRes.ok) {
+                    alert("Registro salvo com sucesso!");
+                    fecharModal();
+                    carregarSuplementos();
+                } else {
+                    const err = await saveRes.text();
+                    alert("Erro ao salvar: " + err);
                 }
 
             } catch (err) {
@@ -297,10 +190,7 @@
             }
         });
 
-        // Carregar registros ao abrir a página
         carregarSuplementos();
     </script>
-
 </body>
-
 </html>
