@@ -231,6 +231,63 @@ p {
     font-family: 'Segoe UI', sans-serif;
 }
 
+.modal-content-qualidade{
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+    background-color: #f6ede5;
+    border-radius: 10px;
+    
+}
+
+.modal-content-qualidade h3{
+    color: #402a20;
+    margin-top: 0px;
+    margin-bottom: 40px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none; /* Esconde as setas */
+  margin: 0; /* Remove a margem padrão */
+}
+
+.modal-content-qualidade button{
+    padding: 10px 15px;
+    margin-top: 30px;
+    height: fit-content;
+    width: fit-content;
+    display: flex;
+    border-radius: 5px;
+    background-color: #402a20;
+    color: #fff;
+    border: 1px solid #402a20;
+}
+
+.btn-qualidade{
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+}
+
+.modal-content-qualidade p{
+    color: #402a20;
+    font-weight: bold;
+}
+
+.modal-content-qualidade input{
+    background-color: #f6ede5;
+    border-radius: 5px;
+    border: 1px solid #4b2e1f;
+    height: 30px;
+    margin-left: 10px;
+    width: max-content;
+}
+
+input[type="number"] {
+  padding-left: 10px; /* Adiciona um espaço de 10 pixels à esquerda */
+}
+
 .modal-content-leite {
     background: #f9f4ef; /* bege suave */
     padding: 20px 25px;
@@ -240,6 +297,10 @@ p {
     overflow-y: auto;
     color: #3a2c23;
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.close-leite:hover{
+    cursor: pointer;
 }
 
 /* Títulos */
@@ -279,6 +340,7 @@ p {
     border-top: 1px solid #4b2e1f;
     margin: 15px 0;
 }
+
 
 /* Cards */
 .cards-leite {
@@ -336,6 +398,10 @@ p {
 .card-leite.opaco-leite {
     opacity: 1;
     border: 2px solid #5a3c2d;
+}
+
+.card-leite.opaco-leite1 {
+    opacity: 0.4;
 }
 
 /* Botão criar lote */
@@ -429,6 +495,8 @@ h1 + p {
     max-width: 33.333%; 
     display: flex;
     flex-direction: column;
+    justify-content:space-between;
+
 }
 
 
@@ -449,10 +517,12 @@ h1 + p {
     color: #5a3c2d;
 }
 
-.card-actions {
+.card .card-actions {
     display: flex;
     gap: 15px;
     margin-top: 15px;
+    display: flex;
+    align-items: flex-end;
 }
 
 .btn-edit {

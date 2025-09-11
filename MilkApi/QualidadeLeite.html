@@ -6,21 +6,12 @@
     <title>Gerenciamento de Lotes</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css"
-    />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css" />
 
 </head>
 
@@ -41,51 +32,65 @@
         </div>
     </nav>
 
-    <h2>Lotes</h2>
-    <div>
-        <button id="novoLoteBtn">Novo Lote</button>
-    </div>
-    <div id="lotes" class="cards"></div>
+    <content>
+        <div class="card-container">
+            <h2>Lotes</h2>
 
-    
+            <button id="novoLoteBtn" class="btn-add"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" class="lucide lucide-plus-icon lucide-plus">
+                    <path d="M5 12h14" />
+                    <path d="M12 5v14" />
+                </svg>Novo Lote</button>
 
-    <!-- Modal Leite -->
-<div id="leiteModal" class="modal-leite">
-    <div class="modal-content-leite">
-        <span class="close-leite" onclick="document.getElementById('modalLeite').style.display='none'">&times;</span>
-        
-        <h2>Criar Novo Lote</h2>
-        <p>Selecione os registros de leite e defina a qualidade do lote.</p>
-
-        <label for="numLoteInput-leite">Nº do Lote: </label>
-        <input class="input-lote" type="number" id="numLoteInput" placeholder="Digite o número do lote">
-
-
-        <hr>
-
-        <p>Selecione os registros de leite para o lote:</p>
-
-        <div id="leites" class="cards-leite"></div>
-
-        <button id="criarLoteBtn-leite">Criar Lote</button>
-    </div>
-</div>
-
-
-    <!-- Modal de Qualidade -->
-    <div id="qualidadeModal" class="modal">
-        <div class="modal-content-leite">
-            <h3>Adicionar Qualidade</h3>
-            <input type="number" id="ccsInput" placeholder="CCS">
-            <input type="number" id="proteinaInput" placeholder="Proteína">
-            <input type="number" id="gorduraInput" placeholder="Gordura">
-            <button id="salvarQualidadeBtn">Salvar</button>
         </div>
-    </div>
+
+        <div id="lotes" class="cards"></div>
+
+
+
+
+        <!-- Modal Leite -->
+        <div id="leiteModal" class="modal-leite">
+            <div class="modal-content-leite">
+                <span class="close-leite"
+                    onclick="document.getElementById('leiteModal').style.display='none'">&times;</span>
+
+                <h2>Criar Novo Lote</h2>
+                <p>Selecione os registros de leite e defina a qualidade do lote.</p>
+
+                <label for="numLoteInput-leite">Nº do Lote: </label>
+                <input class="input-lote" type="number" id="numLoteInput" placeholder="Digite o número do lote">
+
+
+                <hr>
+
+                <p>Selecione os registros de leite para o lote:</p>
+
+                <div id="leites" class="cards-leite"></div>
+
+                <button id="criarLoteBtn-leite">Criar Lote</button>
+            </div>
+        </div>
+
+
+        <!-- Modal de Qualidade -->
+        <div id="qualidadeModal" class="modal-leite">
+            <div class="modal-content-qualidade">
+                <h3>Adicionar Qualidade</h3>
+                <p>CCS: <input class="ccs" type="number" id="ccsInput" placeholder="CCS"></p>
+                <p>% Proteína: <input type="number" id="proteinaInput" placeholder="Proteína"></p>
+                <p>% Gordura: <input type="number" id="gorduraInput" placeholder="Gordura"></p>
+                <div class="btn-qualidade">
+                    <button id="salvarQualidadeBtn">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </content>
 
     <script>
         const API_BASE = 'https://localhost:7092'; // Substitua pela URL da sua API
-    
+
         const lotesContainer = document.getElementById("lotes");
         const leitesContainer = document.getElementById("leites");
         const novoLoteBtn = document.getElementById("novoLoteBtn");
@@ -97,12 +102,12 @@
         const gorduraInput = document.getElementById("gorduraInput");
         const numLoteInput = document.getElementById("numLoteInput");
         const leiteModal = document.getElementById("leiteModal"); // corrigido
-    
+
         let leites = [];
         let lotes = [];
         let selecionados = [];
         let loteSelecionadoParaQualidade = null;
-    
+
         // Buscar lotes
         async function buscarLotes() {
             try {
@@ -115,9 +120,10 @@
                 alert(`Erro ao buscar lotes: ${err.message}`);
             }
         }
-    
+
         // Buscar leites
         async function buscarLeites() {
+
             try {
                 const res = await fetch(`${API_BASE}/leite`);
                 if (!res.ok) throw new Error(`Erro ${res.status}: ${res.statusText}`);
@@ -128,7 +134,7 @@
                 alert(`Erro ao buscar leites: ${err.message}`);
             }
         }
-    
+
         // Criar lote com leites
         async function criarLoteAPI(leitesSelecionados, numLote) {
             const userId = localStorage.getItem("userId");
@@ -143,14 +149,14 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(body)
                 });
-    
+
                 if (!res.ok) {
                     const text = await res.text();
                     console.error("Erro ao criar lote:", text);
                     alert(`Erro ao criar lote!\nStatus: ${res.status}\nMensagem: ${text}`);
                     return;
                 }
-    
+
                 const data = await res.json();
                 console.log("Lote criado:", data);
                 alert(`Lote criado com sucesso! ID: ${data.loteId}`);
@@ -159,21 +165,140 @@
                 alert(`Erro ao criar lote: ${err.message}`);
             }
         }
-    
+
         // Render lotes
-        function renderLotes() {
+
+        // Render lotes (versão robusta: lida com lote.leites sendo objetos ou apenas ids; faz cache de leite/gado)
+        async function renderLotes() {
+            // manter estilo semelhante à Gestão de Reprodução
+            lotesContainer.className = "listaCards";
             lotesContainer.innerHTML = '';
-            lotes.forEach(lote => {
+
+            const leiteCache = new Map();
+            const gadoCache = new Map();
+
+            for (const lote of lotes) {
+                let totalLitros = 0;
+                let registrosHTML = '';
+
+                // percorre os "leites" do lote (pode ser array de objetos ou array de ids/referências)
+                if (Array.isArray(lote.leites) && lote.leites.length > 0) {
+                    for (const leiteRef of lote.leites) {
+                        // obtém o objeto completo do leite (se já vier completo) ou busca pela API
+                        let leiteObj = null;
+
+                        if (leiteRef && typeof leiteRef === 'object' && (leiteRef.litros !== undefined || leiteRef.iD_Gado !== undefined || leiteRef.id !== undefined)) {
+                            leiteObj = leiteRef;
+                        } else {
+                            // pode ser um id simples (ex: 123) ou objeto { id: 123 }
+                            const id = leiteRef?.id ?? leiteRef;
+                            if (!id) continue;
+
+                            if (leiteCache.has(id)) {
+                                leiteObj = leiteCache.get(id);
+                            } else {
+                                try {
+                                    const res = await fetch(`${API_BASE}/leite/${id}`);
+                                    if (res.ok) {
+                                        leiteObj = await res.json();
+                                        leiteCache.set(id, leiteObj);
+                                    } else {
+                                        // falha ao buscar -> cria objeto mínimo
+                                        leiteObj = { id };
+                                    }
+                                } catch (err) {
+                                    console.error("Erro ao buscar leite:", err);
+                                    leiteObj = { id };
+                                }
+                            }
+                        }
+
+                        // pega litros (tenta várias chaves possíveis)
+                        const litros = Number(leiteObj.litros ?? leiteObj.Litros ?? leiteObj.Litro ?? 0);
+                        totalLitros += isNaN(litros) ? 0 : litros;
+
+                        // pega id do gado (tenta várias formas)
+                        const gadoId = leiteObj.iD_Gado ?? leiteObj.ID_Gado ?? leiteObj.gadoId ?? leiteObj.gado?.id ?? null;
+                        let brinco = 'N/A';
+
+                        if (gadoId) {
+                            if (gadoCache.has(gadoId)) {
+                                brinco = gadoCache.get(gadoId).brinco ?? 'N/A';
+                            } else {
+                                try {
+                                    const resG = await fetch(`${API_BASE}/gado/${gadoId}`);
+                                    if (resG.ok) {
+                                        const gado = await resG.json();
+                                        gadoCache.set(gadoId, gado);
+                                        brinco = gado.brinco ?? 'N/A';
+                                    }
+                                } catch (err) {
+                                    console.error("Erro ao buscar gado:", err);
+                                }
+                            }
+                        }
+
+                        registrosHTML += `<div class="registro-leite">BR-${brinco}: ${(isNaN(litros) ? 0 : litros).toFixed(1)}L</div>`;
+                    }
+                }
+
+                // formata data (se existir)
+                const dataStr = lote.data ? new Date(lote.data).toLocaleDateString('pt-BR') : (lote.dataCriacao ? new Date(lote.dataCriacao).toLocaleDateString('pt-BR') : '');
+
+                const loteNumero = lote.num ?? lote.Num ?? lote.Numero ?? lote.id ?? '';
+                const loteLabel = `LOTE-${String(loteNumero).padStart(3, '0')}`;
+
                 const card = document.createElement('div');
                 card.className = 'card';
-                card.innerHTML = `<strong>Lote ${lote.num}</strong>
-                              <p>Leites: ${lote.leites?.map(l => l.id).join(", ") || ''}</p>
-                              ${lote.qualidade ? `<p>CCS: ${lote.qualidade.ccs}, Prot: ${lote.qualidade.proteina}, Gord: ${lote.qualidade.gordura}</p>` : ''}
-                              <button onclick="abrirModalQualidade(${lote.id})">Adicionar Qualidade</button>`;
+                card.innerHTML = `
+            <div class="card-header">
+                <h3>${loteLabel}</h3>
+                ${dataStr ? `<p class="lote-data">Data: ${dataStr}</p>` : ''}
+            </div>
+
+            <div class="card-body">
+                <div class="volume-ccs" style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
+                    <div>
+                        <div style="font-size:13px; color:#6a5546;">Volume Total:</div>
+                        <div style="font-weight:700; font-size:20px; color:#4b2e1f;">${totalLitros.toFixed(1)}L</div>
+                    </div>
+                    ${lote.qualidade ? `
+                        <div style="text-align:right;">
+                            <div style="font-size:13px; color:#6a5546;">CCS:</div>
+                            <div style="font-weight:700; font-size:16px; color:#4b2e1f;">${lote.qualidade.ccs ?? '-'}</div>
+                        </div>
+                    ` : ''}
+                </div>
+
+                ${lote.qualidade ? `
+                    <div style="display:flex; gap:20px; margin-top:8px;">
+                        <div><small style="color:#6a5546">Proteína:</small><div>${lote.qualidade.proteina ?? '-'}%</div></div>
+                        <div><small style="color:#6a5546">Gordura:</small><div>${lote.qualidade.gordura ?? '-'}%</div></div>
+                    </div>
+                ` : ''}
+
+                <hr style="border:none; border-top:1px solid #4b2e1f30; margin:12px 0;">
+
+                <h4 style="margin:0 0 8px 0; font-size:14px; color:#6a5546;">Registros inclusos:</h4>
+                <div class="registros-leite">
+                    ${registrosHTML || '<div class="nenhum">Nenhum leite associado</div>'}
+                </div>
+            </div>
+
+            <div class="card-actions">
+                <button class="btn-edit" onclick="abrirModalQualidade(${lote.id})">
+                    <i class="fa-solid fa-pen-to-square"></i> Adicionar Qualidade
+                </button>
+                <button class="btn-delete" onclick="excluirLote(${lote.id})">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+            </div>
+        `;
                 lotesContainer.appendChild(card);
-            });
+            }
         }
-    
+
+
         // Render leites
         function renderLeites() {
             leitesContainer.innerHTML = '';
@@ -181,11 +306,13 @@
                 const card = document.createElement('div');
                 card.className = 'card-leite';
                 const jaSelecionado = lotes.some(l => l.leites?.some(ll => ll.id === leite.id));
-                if (selecionados.includes(leite.id) || jaSelecionado) card.classList.add('opaco-leite');
+
+                if (selecionados.includes(leite.id) || jaSelecionado) card.classList.add('opaco-leite1');
+                const dataFormatada = new Date(leite.data).toLocaleDateString("pt-BR");
                 card.innerHTML = `<strong>Leite ID: ${leite.id}</strong>
                               <p class="brinco">ID Gado: ${leite.iD_Gado}</p>
                               <p>Litros: ${leite.litros}</p>
-                              <p>Data: ${leite.data}`;
+                              <p>Data: ${dataFormatada}</p>`;
                 card.addEventListener('click', () => {
                     if (!selecionados.includes(leite.id)) {
                         selecionados.push(leite.id);
@@ -198,11 +325,11 @@
                 leitesContainer.appendChild(card);
             });
         }
-    
+
         function abrirModalQualidade(loteId) {
             loteSelecionadoParaQualidade = loteId;
             const lote = lotes.find(l => l.id === loteId);
-    
+
             if (lote && lote.qualidade) {
                 ccsInput.value = lote.qualidade.ccs;
                 proteinaInput.value = lote.qualidade.proteina;
@@ -214,7 +341,7 @@
             }
             qualidadeModal.style.display = 'flex';
         }
-    
+
         // Eventos
         novoLoteBtn.addEventListener('click', async () => {
             leiteModal.style.display = 'flex';
@@ -222,19 +349,19 @@
             numLoteInput.value = '';
             await buscarLeites();
         });
-    
+
         criarLoteBtn.addEventListener('click', async () => {
             const numLote = parseInt(numLoteInput.value);
             if (isNaN(numLote) || numLote <= 0) {
                 alert("Digite um número de lote válido!");
                 return;
             }
-    
+
             if (selecionados.length === 0) {
                 alert("Selecione pelo menos um leite!");
                 return;
             }
-    
+
             const leitesParaLote = leites.filter(l => selecionados.includes(l.id));
             await criarLoteAPI(leitesParaLote, numLote);
             leiteModal.style.display = 'none';
@@ -242,24 +369,24 @@
             numLoteInput.value = '';
             await buscarLotes();
         });
-    
+
         salvarQualidadeBtn.addEventListener('click', async () => {
             const userId = localStorage.getItem("userId");
             if (!loteSelecionadoParaQualidade) {
                 alert("Nenhum lote selecionado!");
                 return;
             }
-    
+
             let qualidade = {
                 ID_Lote: loteSelecionadoParaQualidade,
                 CCS: parseInt(ccsInput.value),
                 Proteina: parseFloat(proteinaInput.value),
                 Gordura: parseFloat(gorduraInput.value),
-                ID_Usuario: userId 
+                ID_Usuario: userId
             };
-    
+
             let qualidadeExistente = lotes.find(l => l.id === loteSelecionadoParaQualidade)?.qualidade;
-    
+
             let url, metodo;
             if (qualidadeExistente) {
                 url = `${API_BASE}/Qualidade/${qualidadeExistente.Id}`;
@@ -268,14 +395,14 @@
                 url = `${API_BASE}/Qualidade`;
                 metodo = 'POST';
             }
-    
+
             try {
                 const res = await fetch(url, {
                     method: metodo,
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(qualidade)
                 });
-    
+
                 if (!res.ok) {
                     const text = await res.text();
                     alert(`Erro ao salvar qualidade!\nStatus: ${res.status}\nMensagem: ${text}`);
@@ -290,7 +417,31 @@
                 console.error("Erro ao salvar qualidade:", err);
             }
         });
-    
+
+        // Excluir lote
+        async function excluirLote(id) {
+            if (!confirm("Tem certeza que deseja excluir este lote?")) return;
+
+            try {
+                const res = await fetch(`${API_BASE}/lote/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (!res.ok) {
+                    const text = await res.text();
+                    alert(`Erro ao excluir lote!\nStatus: ${res.status}\nMensagem: ${text}`);
+                    console.error("Erro ao excluir lote:", text);
+                    return;
+                }
+
+                await buscarLotes(); // recarrega a lista
+            } catch (err) {
+                alert(`Erro ao excluir lote: ${err.message}`);
+                console.error("Erro ao excluir lote:", err);
+            }
+        }
+
+
         // Fechar modais clicando fora
         qualidadeModal.addEventListener('click', (e) => {
             if (e.target === qualidadeModal) qualidadeModal.style.display = 'none';
@@ -298,10 +449,11 @@
         leiteModal.addEventListener('click', (e) => {
             if (e.target === leiteModal) leiteModal.style.display = 'none';
         });
-    
+
         // Inicial
         buscarLotes();
     </script>
-    
+
 </body>
+
 </html>

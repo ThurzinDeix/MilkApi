@@ -16,32 +16,91 @@ namespace MilkApi.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Lote> Get()
+        public async Task<IEnumerable<Lote>> Get()
         {
-            List<Lote> lista = new List<Lote>();
+            var lotes = new List<Lote>();
 
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
-                string query = "SELECT * FROM Lote";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                conn.Open();
+                await conn.OpenAsync();
 
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                // 1) Pega todos os lotes
+                string queryLotes = "SELECT * FROM Lote";
+                SqlCommand cmdLotes = new SqlCommand(queryLotes, conn);
+                SqlDataReader readerLotes = await cmdLotes.ExecuteReaderAsync();
+
+                while (await readerLotes.ReadAsync())
                 {
-                    lista.Add(new Lote
+                    lotes.Add(new Lote
                     {
-                        Id = Convert.ToInt32(reader["Id"]),
-                        Num = Convert.ToInt32(reader["Num"]),
-                        ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
+                        Id = Convert.ToInt32(readerLotes["Id"]),
+                        Num = Convert.ToInt32(readerLotes["Num"]),
+                        ID_Usuario = Convert.ToInt32(readerLotes["ID_Usuario"]),
+                        leites = new List<Leite>(),
+                        qualidade = null // inicializa como null
                     });
                 }
+                readerLotes.Close();
 
-                reader.Close();
+                // 2) Pega todos os leites associados a cada lote
+                string queryLeites = @"
+            SELECT ll.ID_Lote, l.Id AS LeiteId, l.ID_Gado, l.Data, l.Litros, l.ID_Usuario
+            FROM LoteLeite ll
+            INNER JOIN Leite l ON ll.ID_Leite = l.Id";
+                SqlCommand cmdLeites = new SqlCommand(queryLeites, conn);
+                SqlDataReader readerLeites = await cmdLeites.ExecuteReaderAsync();
+
+                while (await readerLeites.ReadAsync())
+                {
+                    int loteId = Convert.ToInt32(readerLeites["ID_Lote"]);
+                    var leite = new Leite
+                    {
+                        Id = Convert.ToInt32(readerLeites["LeiteId"]),
+                        ID_Gado = Convert.ToInt32(readerLeites["ID_Gado"]),
+                        Data = Convert.ToDateTime(readerLeites["Data"]),
+                        Litros = Convert.ToDecimal(readerLeites["Litros"]),
+                        ID_Usuario = Convert.ToInt32(readerLeites["ID_Usuario"])
+                    };
+
+                    var lote = lotes.FirstOrDefault(l => l.Id == loteId);
+                    if (lote != null)
+                    {
+                        lote.leites.Add(leite);
+                    }
+                }
+                readerLeites.Close();
+
+                // 3) Pega a qualidade de cada lote
+                string queryQualidade = "SELECT * FROM Qualidade";
+                SqlCommand cmdQualidade = new SqlCommand(queryQualidade, conn);
+                SqlDataReader readerQualidade = await cmdQualidade.ExecuteReaderAsync();
+
+                while (await readerQualidade.ReadAsync())
+                {
+                    int loteId = Convert.ToInt32(readerQualidade["ID_Lote"]);
+                    var qualidade = new Qualidade
+                    {
+                        Id = Convert.ToInt32(readerQualidade["Id"]),
+                        ID_Lote = loteId,
+                        CCS = Convert.ToInt32(readerQualidade["CCS"]),
+                        Gordura = Convert.ToDecimal(readerQualidade["Gordura"]),
+                        Proteina = Convert.ToDecimal(readerQualidade["Proteina"]),
+                        ID_Usuario = Convert.ToInt32(readerQualidade["ID_Usuario"])
+                    };
+
+                    var lote = lotes.FirstOrDefault(l => l.Id == loteId);
+                    if (lote != null)
+                    {
+                        lote.qualidade = qualidade;
+                    }
+                }
+                readerQualidade.Close();
             }
 
-            return lista;
+            return lotes;
         }
+
+
 
         [HttpGet("{id}")]
         public ActionResult GetById(int id)
@@ -76,7 +135,7 @@ namespace MilkApi.Controllers
         {
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
-                string query = @"INSERT INTO Lote (INum, ID_Usuario)
+                string query = @"INSERT INTO Lote (Num, ID_Usuario)
                                  VALUES (@Num, @ID_Usuario)";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@Num", lote.Num);
@@ -201,6 +260,43 @@ namespace MilkApi.Controllers
                 }
             }
         }
+
+        [HttpGet("{id}/leites")]
+        public ActionResult<IEnumerable<Leite>> GetLeitesDoLote(int id)
+        {
+            List<Leite> lista = new List<Leite>();
+
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            {
+                string query = @"
+            SELECT l.* 
+            FROM LoteLeite ll
+            INNER JOIN Leite l ON ll.ID_Leite = l.Id
+            WHERE ll.ID_Lote = @Id";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Id", id);
+
+                conn.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    lista.Add(new Leite
+                    {
+                        Id = Convert.ToInt32(reader["Id"]),
+                        ID_Gado = Convert.ToInt32(reader["ID_Gado"]),
+                        Data = Convert.ToDateTime(reader["Data"]),
+                        Litros = Convert.ToDecimal(reader["Litros"]),
+                        ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
+                    });
+                }
+
+                reader.Close();
+            }
+
+            return Ok(lista);
+        }
+
 
 
     }
