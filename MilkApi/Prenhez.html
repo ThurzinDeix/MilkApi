@@ -3,129 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Vacas Prenhas</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #f4f7fa;
-        }
 
-        h1 {
-            text-align: center;
-            margin: 20px 0;
-            color: #2c3e50;
-        }
-
-        .filtro-container {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        select {
-            padding: 8px 12px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-        }
-
-        .vaca-container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .vaca-card {
-            background: #fff;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.2s ease;
-        }
-
-            .vaca-card:hover {
-                transform: scale(1.02);
-            }
-
-            .vaca-card h3 {
-                margin-top: 0;
-                color: #1d8ddc;
-            }
-
-            .vaca-card ul {
-                list-style-type: none;
-                padding-left: 0;
-            }
-
-            .vaca-card li {
-                margin-bottom: 6px;
-                font-size: 14px;
-                color: #333;
-            }
-
-        .status {
-            font-weight: bold;
-            color: #e67e22;
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-
-        .btn-status {
-            margin-top: 10px;
-            background: #28a745;
-            color: #fff;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-            .btn-status:hover {
-                background: #218838;
-            }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 10;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.6);
-        }
-
-        .modal-content {
-            background-color: #fff;
-            margin: 10% auto;
-            padding: 20px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 400px;
-            position: relative;
-            text-align: center;
-        }
-
-        .close {
-            position: absolute;
-            right: 15px;
-            top: 10px;
-            font-size: 28px;
-            font-weight: bold;
-            color: #555;
-            cursor: pointer;
-        }
-
-        .modal-content button {
-            width: 45%;
-            margin: 10px;
-            padding: 10px;
-            font-size: 14px;
-        }
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Seus estilos principais -->
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link
       rel="stylesheet"
       type="text/css"
@@ -141,6 +22,8 @@
       type="text/css"
       href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css"
     />
+    <!-- Estilo específico desta página (select + pequenos ajustes) -->
+    
 </head>
 
 <body>
@@ -159,138 +42,146 @@
             </div>
         </div>
     </nav>
+    <content>
+    <h1>Vacas Prenhas</h1>
 
-        <h1>Vacas Prenhas</h1>
+    <div class="filtro-container">
+        <label for="filtroStatus"><strong>Filtrar:</strong></label>
+        <select id="filtroStatus" class="select-filtro" onchange="carregarVacasPrenhas()">
+            <option value="prenha" selected>Prenha</option>
+            <option value="todas">Todas</option>
+        </select>
+    </div>
 
-        <div class="filtro-container">
-            <label>Filtrar: </label>
-            <select id="filtroStatus" onchange="carregarVacasPrenhas()">
-                <option value="prenha" selected>Prenha</option>
-                <option value="todas">Todas</option>
-            </select>
-        </div>
+    <!-- Container que usa a sua classe padrão de cards -->
+    <div class="listaCards">
+        <p>Carregando vacas...</p>
+    </div>
 
-        <div class="vaca-container" id="vacaContainer">
-            <p>Carregando vacas...</p>
-        </div>
-
-        <!-- Modal de Status -->
-        <div id="modalStatus" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="fecharModal()">&times;</span>
-                <h3>Atualizar Status da Vaca</h3>
-                <button onclick="atualizarStatus('Pariu')">Pariu</button>
-                <button onclick="atualizarStatus('Aborto')">Aborto</button>
+    <!-- Modal de Status -->
+    <div id="modalStatus" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModal()">&times;</span>
+            <h3>Atualizar Status da Vaca</h3>
+            <div style="display:flex; justify-content:center; gap:12px; margin-top:12px;">
+                <button class="btn-prenha" onclick="atualizarStatus('Pariu')">Pariu</button>
+                <button class="btn-prenha" style="background:#c0392b" onclick="atualizarStatus('Aborto')">Aborto</button>
             </div>
         </div>
+    </div>
+    </content>
 
-        <script>
-            const apiBase = "https://localhost:7092";
-            let prenhezSelecionada = null;
+    <script>
+        const apiBase = "https://localhost:7092";
+        let prenhezSelecionada = null;
 
-            async function carregarVacasPrenhas() {
-                const usuarioId = localStorage.getItem("userId");
-                if (!usuarioId) return;
+        async function carregarVacasPrenhas() {
+            const usuarioId = localStorage.getItem("userId");
+            if (!usuarioId) return;
 
-                const filtro = document.getElementById("filtroStatus").value;
-                const container = document.getElementById("vacaContainer");
-                container.innerHTML = "<p>Carregando vacas...</p>";
+            const filtro = document.getElementById("filtroStatus").value;
+            const container = document.getElementsByClassName("listaCards")[0];
+            container.innerHTML = "<p>Carregando vacas...</p>";
 
-                try {
-                    const resPrenhez = await fetch(`${apiBase}/prenhez/por-usuario?usuarioId=${usuarioId}`);
-                    if (!resPrenhez.ok) throw new Error("Erro ao buscar prenhez");
-                    const prenhezList = await resPrenhez.json();
+            try {
+                const resPrenhez = await fetch(`${apiBase}/prenhez/por-usuario?usuarioId=${usuarioId}`);
+                if (!resPrenhez.ok) throw new Error("Erro ao buscar prenhez");
+                const prenhezList = await resPrenhez.json();
 
-                    let vacasFiltradas = prenhezList;
-                    if (filtro === "prenha") {
-                        vacasFiltradas = prenhezList.filter(p => p.status && p.status.toLowerCase() === "prenha");
-                    }
-
-                    if (vacasFiltradas.length === 0) {
-                        container.innerHTML = "<p>Nenhuma vaca encontrada.</p>";
-                        return;
-                    }
-
-                    container.innerHTML = "";
-
-                    for (const p of vacasFiltradas) {
-                        const resGado = await fetch(`${apiBase}/gado/${p.iD_Gado}`);
-                        let gado = {};
-                        if (resGado.ok) gado = await resGado.json();
-
-                        const card = document.createElement("div");
-                        card.className = "vaca-card";
-
-                        let inner = `<h3>🐄 Brinco: ${gado.brinco}</h3>
-                            <div class="status">Status Atual: ${p.status}</div>
-                            <ul>
-                                <li><strong>Raça:</strong> ${gado.raca || '-'}</li>
-                                <li><strong>Sexo:</strong> ${gado.sexo || '-'}</li>
-                                <li><strong>Peso:</strong> ${gado.peso ? gado.peso + " kg" : '-'}</li>
-                                <li><strong>Data da Prenhez:</strong> ${new Date(p.data_Prenhez).toLocaleDateString("pt-BR")}</li>
-                                <li><strong>Data Esperada do Parto:</strong> ${p.data_Esperada ? new Date(p.data_Esperada).toLocaleDateString("pt-BR") : '-'}</li>
-                                <li><strong>Observações:</strong> ${p.observacao || '-'}</li>
-                            </ul>
-                            <button class="btn-status" onclick="abrirModal(${p.id})">Atualizar Status</button>`;
-
-                        card.innerHTML = inner;
-                        container.appendChild(card);
-                    }
-
-                } catch (err) {
-                    container.innerHTML = `<p>Erro ao carregar vacas: ${err.message}</p>`;
-                    console.error(err);
+                let vacasFiltradas = prenhezList;
+                if (filtro === "prenha") {
+                    vacasFiltradas = prenhezList.filter(p => p.status && p.status.toLowerCase() === "prenha");
                 }
-            }
 
-            function abrirModal(prenhezId) {
-                prenhezSelecionada = prenhezId;
-                document.getElementById("modalStatus").style.display = "block";
-            }
-
-            function fecharModal() {
-                document.getElementById("modalStatus").style.display = "none";
-                prenhezSelecionada = null;
-            }
-
-            async function atualizarStatus(novoStatus) {
-                if (!prenhezSelecionada) return;
-
-                try {
-                    const usuarioId = localStorage.getItem("userId");
-
-                    // Buscar dados atuais da prenhez para enviar no PUT
-                    const resAtual = await fetch(`${apiBase}/prenhez/${prenhezSelecionada}`);
-                    if (!resAtual.ok) throw new Error("Erro ao buscar dados da prenhez");
-                    const prenhez = await resAtual.json();
-
-                    // Atualizar apenas o status e manter os outros dados
-                    prenhez.Status = novoStatus;
-
-                    const res = await fetch(`${apiBase}/prenhez/${prenhezSelecionada}`, {
-                        method: "PUT",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(prenhez)
-                    });
-
-                    if (!res.ok) throw new Error("Erro ao atualizar status");
-
-                    fecharModal();
-
-                    if (novoStatus === "Pariu") {
-                        window.location.href = "addgado.html";
-                    } else {
-                        carregarVacasPrenhas();
-                    }
-
-                } catch (err) {
-                    alert("Erro ao atualizar status: " + err.message);
-                    console.error(err);
+                if (vacasFiltradas.length === 0) {
+                    container.innerHTML = "<p>Nenhuma vaca encontrada.</p>";
+                    return;
                 }
+
+                container.innerHTML = "";
+
+                for (const p of vacasFiltradas) {
+                    const resGado = await fetch(`${apiBase}/gado/${p.iD_Gado}`);
+                    let gado = {};
+                    if (resGado.ok) gado = await resGado.json();
+
+                    const card = document.createElement("div");
+                    card.className = "card gestacao"; // usa .card do seu CSS principal
+
+                    // montar conteúdo usando classes do seu CSS
+                    card.innerHTML = `
+                        <p class="brinco"> <strong>Brinco:</strong> ${gado.brinco || '-'}</p>
+                        <p class="descricao"><strong>Raça:</strong> ${gado.raca || '-'}</p>
+                        <p class="descricao"><strong>Sexo:</strong> ${gado.sexo || '-'}</p>
+                        <p class="descricao"><strong>Peso:</strong> ${gado.peso ? gado.peso + ' kg' : '-'}</p>
+                        <p class="descricao"><strong>Data da Prenhez:</strong> ${p.data_Prenhez ? new Date(p.data_Prenhez).toLocaleDateString('pt-BR') : '-'}</p>
+                        <p class="descricao"><strong>Data Esperada do Parto:</strong> ${p.data_Esperada ? new Date(p.data_Esperada).toLocaleDateString('pt-BR') : '-'}</p>
+                        <p class="descricao"><strong>Observações:</strong> ${p.observacao || '-'}</p>
+                        <div class="card-actions" style="margin-top:12px;">
+                            <button class="btn-edit" onclick="abrirModal(${p.id})">Atualizar Status</button>
+                        </div>
+                    `;
+
+                    container.appendChild(card);
+                }
+
+            } catch (err) {
+                container.innerHTML = `<p>Erro ao carregar vacas: ${err.message}</p>`;
+                console.error(err);
             }
+        }
 
-            window.onload = carregarVacasPrenhas;
-        </script>
+        function abrirModal(prenhezId) {
+            prenhezSelecionada = prenhezId;
+            document.getElementById("modalStatus").style.display = "block";
+        }
 
-    </body>
+        function fecharModal() {
+            document.getElementById("modalStatus").style.display = "none";
+            prenhezSelecionada = null;
+        }
+
+        async function atualizarStatus(novoStatus) {
+            if (!prenhezSelecionada) return;
+
+            try {
+                // Buscar dados atuais da prenhez para enviar no PUT
+                const resAtual = await fetch(`${apiBase}/prenhez/${prenhezSelecionada}`);
+                if (!resAtual.ok) throw new Error("Erro ao buscar dados da prenhez");
+                const prenhez = await resAtual.json();
+
+                // Atualizar apenas o status e manter os outros dados (atenção ao nome da propriedade exigida pela API)
+                prenhez.Status = novoStatus;
+
+                const res = await fetch(`${apiBase}/prenhez/${prenhezSelecionada}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(prenhez)
+                });
+
+                if (!res.ok) throw new Error("Erro ao atualizar status");
+
+                fecharModal();
+
+                if (novoStatus === "Pariu") {
+                    window.location.href = "addgado.html";
+                } else {
+                    carregarVacasPrenhas();
+                }
+
+            } catch (err) {
+                alert("Erro ao atualizar status: " + err.message);
+                console.error(err);
+            }
+        }
+
+        window.onload = carregarVacasPrenhas;
+
+        // Fecha modal ao clicar fora (melhoria UX)
+        window.onclick = function(event) {
+            const modal = document.getElementById("modalStatus");
+            if (event.target === modal) fecharModal();
+        };
+    </script>
+</body>
 </html>

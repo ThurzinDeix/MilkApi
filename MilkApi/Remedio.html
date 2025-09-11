@@ -3,111 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Gestão de Remédios</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f8;
-            margin: 0;
-            padding: 0;
-        }
-
-        h1 {
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        .card-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            padding: 20px;
-        }
-
-        .card {
-            background: linear-gradient(135deg, #4cafef, #1d8ddc);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            cursor: pointer;
-            width: 220px;
-            text-align: center;
-            font-size: 18px;
-            transition: transform 0.2s ease;
-        }
-
-            .card:hover {
-                transform: scale(1.05);
-            }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 10;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.6);
-        }
-
-        .modal-content {
-            background-color: #fff;
-            margin: 5% auto;
-            padding: 20px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 500px;
-            position: relative;
-        }
-
-        .close {
-            position: absolute;
-            right: 15px;
-            top: 10px;
-            font-size: 28px;
-            font-weight: bold;
-            color: #555;
-            cursor: pointer;
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-        }
-
-        button {
-            background: #1d8ddc;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-            button:hover {
-                background: #0d6fb5;
-            }
-
-        #listaRemedios {
-            max-width: 700px;
-            margin: 20px auto;
-        }
-
-        .registro {
-            background: #fff;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-    </style>
-   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link
       rel="stylesheet"
@@ -142,14 +38,20 @@
             </div>
         </div>
     </nav>
-
-    <h1>Gestão de Remédios</h1>
+    <content>
 
     <div class="card-container">
-        <div class="card" onclick="abrirModal('remedio')">Novo Remédio</div>
-    </div>
+            <h1>Gestão de Remédio</h1>
+            <div class="btn-add" onclick="abrirModal('remedio')"><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                    height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-icon lucide-plus">
+                    <path d="M5 12h14" />
+                    <path d="M12 5v14" />
+                </svg>Adicionar Ordenha</div>
+        </div>
 
-    <div id="listaRemedios"></div>
+    <!-- Lista com estilo de cards -->
+    <div id="listaRemedios" class="listaCards"></div>
 
     <!-- Modal -->
     <div id="modal" class="modal">
@@ -164,35 +66,41 @@
             </form>
         </div>
     </div>
+    </content>
 
     <script>
         const apiBase = "https://localhost:7092";
         let tipoAtual = "";
+        let editId = null;
 
-        function abrirModal(tipo) {
+        function abrirModal(tipo, dados = null) {
             tipoAtual = tipo;
             document.getElementById("modal").style.display = "block";
-            document.getElementById("modal-titulo").innerText = "Registro de Remédio";
+            document.getElementById("modal-titulo").innerText = dados ? "Editar Remédio" : "Novo Remédio";
 
             const hoje = new Date().toISOString().split("T")[0];
+            document.getElementById("brinco").value = dados ? dados.brinco : "";
+
             let camposHTML = `
-                    <label>Data:</label>
-                    <input type="date" id="data" value="${hoje}" required>
-                    <label>Nome do Remédio:</label>
-                    <input type="text" id="nome" required>
-                    <label>Doses:</label>
-                    <input type="number" id="doses" required>
-                    <label>Intervalo (horas):</label>
-                    <input type="number" id="intervalo" required>
-                    <label>Via de Administração:</label>
-                    <input type="text" id="via" placeholder="Ex.: Oral, Intramuscular..." required>
-                `;
+                <label>Data:</label>
+                <input type="date" id="data" value="${dados ? dados.date.split('T')[0] : hoje}" required>
+                <label>Nome do Remédio:</label>
+                <input type="text" id="nome" value="${dados ? dados.nome : ''}" required>
+                <label>Doses:</label>
+                <input type="number" id="doses" value="${dados ? dados.doses : ''}" required>
+                <label>Intervalo (horas):</label>
+                <input type="number" id="intervalo" value="${dados ? dados.intervalo : ''}" required>
+                <label>Via de Administração:</label>
+                <input type="text" id="via" value="${dados ? dados.via : ''}" required>
+            `;
 
             document.getElementById("campos-especificos").innerHTML = camposHTML;
+            editId = dados ? dados.id : null;
         }
 
         function fecharModal() {
             document.getElementById("modal").style.display = "none";
+            editId = null;
         }
 
         async function carregarRemedios() {
@@ -208,48 +116,58 @@
                 const dados = await resp.json();
 
                 lista.innerHTML = "";
-                if (dados.length === 0) {
-                    lista.innerHTML = "<p>Nenhum registro encontrado.</p>";
-                    return;
-                }
+
+                if (dados.length === 0) return;
+
+                dados.sort((a,b) => new Date(b.date) - new Date(a.date));
 
                 dados.forEach(async r => {
-                    const div = document.createElement("div");
-                    div.className = "registro";
+                    const card = document.createElement("div");
+                    card.className = "card";
 
+                    let gado = {};
                     try {
                         const resGado = await fetch(`${apiBase}/gado/${r.iD_Gado}`);
-                        let gado = {};
-                        if (resGado.ok) {
-                            gado = await resGado.json();
-                        }
+                        if (resGado.ok) gado = await resGado.json();
+                    } catch {}
 
-                        div.innerHTML = `
-                                <strong>Brinco:</strong> ${gado.brinco || 'N/A'}<br>
-                                <strong>Data:</strong> ${new Date(r.date).toLocaleDateString("pt-BR")} <br>
-                                <strong>Nome:</strong> ${r.nome} <br>
-                                <strong>Doses:</strong> ${r.doses} <br>
-                                <strong>Intervalo:</strong> ${r.intervalo} horas <br>
-                                <strong>Via:</strong> ${r.via}
-                            `;
-                    } catch (err) {
-                        div.innerHTML = `
-                                <strong>Data:</strong> ${new Date(r.date).toLocaleDateString("pt-BR")} <br>
-                                <strong>Nome:</strong> ${r.nome} <br>
-                                <strong>Doses:</strong> ${r.doses} <br>
-                                <strong>Intervalo:</strong> ${r.intervalo} horas <br>
-                                <strong>Via:</strong> ${r.via} <br>
-                                <em>Erro ao carregar dados do gado</em>
-                            `;
-                        console.error(err);
-                    }
-
-                    lista.appendChild(div);
+                    card.innerHTML = `
+                        <p class="brinco"><strong>Brinco:</strong> ${gado.brinco || 'N/A'}</p>
+                        <h3>${r.nome}</h3>
+                        <p><strong>Data:</strong> ${new Date(r.date).toLocaleDateString("pt-BR")}</p>
+                        <p><strong>Doses:</strong> ${r.doses}</p>
+                        <p><strong>Intervalo:</strong> ${r.intervalo} horas</p>
+                        <p><strong>Via:</strong> ${r.via}</p>
+                        <div class="card-actions">
+                            <button class="btn-edit" onclick='abrirModal("remedio", ${JSON.stringify(r)})'>
+                                <i class="fa fa-edit"></i> Editar
+                            </button>
+                            <button class="btn-delete" onclick="excluirRemedio(${r.id})">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    lista.appendChild(card);
                 });
 
             } catch (err) {
                 lista.innerHTML = "<p>Erro ao carregar registros.</p>";
                 console.error(err);
+            }
+        }
+
+        async function excluirRemedio(id) {
+            if (!confirm("Tem certeza que deseja excluir este registro?")) return;
+            try {
+                const res = await fetch(`${apiBase}/remedio/${id}`, { method: "DELETE" });
+                if (res.ok) {
+                    carregarRemedios();
+                } else {
+                    alert("Erro ao excluir");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Erro de conexão");
             }
         }
 
@@ -264,37 +182,43 @@
                 if (!resGado.ok) { alert("Gado não encontrado"); return; }
                 const gado = await resGado.json();
 
-                if (tipoAtual === "remedio") {
-                    const data = document.getElementById("data").value;
-                    const nome = document.getElementById("nome").value;
-                    const doses = parseInt(document.getElementById("doses").value);
-                    const intervalo = parseInt(document.getElementById("intervalo").value);
-                    const via = document.getElementById("via").value;
+                const data = document.getElementById("data").value;
+                const nome = document.getElementById("nome").value;
+                const doses = parseInt(document.getElementById("doses").value);
+                const intervalo = parseInt(document.getElementById("intervalo").value);
+                const via = document.getElementById("via").value;
 
-                    const payload = {
-                        ID_Gado: gado.id,
-                        Date: data,
-                        Nome: nome,
-                        Doses: doses,
-                        Intervalo: intervalo,
-                        Via: via,
-                        ID_Usuario: usuarioId
-                    };
+                const payload = {
+                    ID_Gado: gado.id,
+                    Date: data,
+                    Nome: nome,
+                    Doses: doses,
+                    Intervalo: intervalo,
+                    Via: via,
+                    ID_Usuario: usuarioId
+                };
 
-                    const saveRes = await fetch(`${apiBase}/remedio`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(payload)
-                    });
+                let url = `${apiBase}/remedio`;
+                let method = "POST";
 
-                    if (saveRes.ok) {
-                        alert("Registro de remédio salvo com sucesso!");
-                        fecharModal();
-                        carregarRemedios();
-                    } else {
-                        const err = await saveRes.text();
-                        alert("Erro ao salvar: " + err);
-                    }
+                if (editId) {
+                    url = `${apiBase}/remedio/${editId}`;
+                    method = "PUT";
+                }
+
+                const saveRes = await fetch(url, {
+                    method,
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                if (saveRes.ok) {
+                    alert("Registro salvo com sucesso!");
+                    fecharModal();
+                    carregarRemedios();
+                } else {
+                    const err = await saveRes.text();
+                    alert("Erro ao salvar: " + err);
                 }
 
             } catch (err) {
@@ -303,7 +227,6 @@
             }
         });
 
-        // Carregar registros ao abrir a página
         carregarRemedios();
     </script>
 </body>
