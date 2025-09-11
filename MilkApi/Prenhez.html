@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <title>Vacas Prenhas</title>
@@ -7,23 +8,14 @@
     <!-- Seus estilos principais -->
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css"
-    />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css" />
     <!-- Estilo específico desta página (select + pequenos ajustes) -->
-    
+
 </head>
 
 <body>
@@ -43,32 +35,40 @@
         </div>
     </nav>
     <content>
-    <h1>Vacas Prenhas</h1>
+        <div class="card-container">
+            <div class="sla">
+            <h1>Vacas Prenhas</h1>
+            <p>Gerenciador as vacas em gestação</p>
+        </div>
 
-    <div class="filtro-container">
-        <label for="filtroStatus"><strong>Filtrar:</strong></label>
-        <select id="filtroStatus" class="select-filtro" onchange="carregarVacasPrenhas()">
-            <option value="prenha" selected>Prenha</option>
-            <option value="todas">Todas</option>
-        </select>
-    </div>
-
-    <!-- Container que usa a sua classe padrão de cards -->
-    <div class="listaCards">
-        <p>Carregando vacas...</p>
-    </div>
-
-    <!-- Modal de Status -->
-    <div id="modalStatus" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="fecharModal()">&times;</span>
-            <h3>Atualizar Status da Vaca</h3>
-            <div style="display:flex; justify-content:center; gap:12px; margin-top:12px;">
-                <button class="btn-prenha" onclick="atualizarStatus('Pariu')">Pariu</button>
-                <button class="btn-prenha" style="background:#c0392b" onclick="atualizarStatus('Aborto')">Aborto</button>
+            <div class="filtro-container">
+                <label for="filtroStatus" class="filtro-text"><strong>Filtrar:</strong></label>
+                <div class="borda">
+                    <select id="filtroStatus" class="select-filtro" onchange="carregarVacasPrenhas()">
+                        <option value="prenha" selected>Prenha</option>
+                        <option value="todas">Todas</option>
+                    </select>
+                </div>
             </div>
         </div>
-    </div>
+
+        <!-- Container que usa a sua classe padrão de cards -->
+        <div class="listaCards">
+            <p>Carregando vacas...</p>
+        </div>
+
+        <!-- Modal de Status -->
+        <div id="modalStatus" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="fecharModal()">&times;</span>
+                <h3>Atualizar Status da Vaca</h3>
+                <div style="display:flex; justify-content:center; gap:12px; margin-top:12px;">
+                    <button class="btn-prenha" onclick="atualizarStatus('Pariu')">Pariu</button>
+                    <button class="btn-prenha" style="background:#c0392b"
+                        onclick="atualizarStatus('Aborto')">Aborto</button>
+                </div>
+            </div>
+        </div>
     </content>
 
     <script>
@@ -178,10 +178,11 @@
         window.onload = carregarVacasPrenhas;
 
         // Fecha modal ao clicar fora (melhoria UX)
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             const modal = document.getElementById("modalStatus");
             if (event.target === modal) fecharModal();
         };
     </script>
 </body>
+
 </html>
