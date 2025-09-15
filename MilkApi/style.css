@@ -546,7 +546,8 @@ h1 + p {
     background: #e74c3c;
     border: none;
     border-radius: 6px;
-    padding: 5px 14px;
+    padding: 9px 14px;
+    height: max-content;
     color: #fff;
     cursor: pointer;
     font-size: 14px;
@@ -562,48 +563,146 @@ h1 + p {
 
 
 /* Modal */
+/* Fundo escuro transparente */
 .modal {
-    display: none;
-    position: fixed;
-    z-index: 10;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.6);
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background: rgba(0, 0, 0, 0.4);
 }
 
-.modal-content {
-    background: #fff;
-    margin: 10% auto;
-    padding: 20px;
-    border-radius: 10px;
-    width: 400px;
-    box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+/* Container do modal */
+.modal-content.form-modal {
+  background: #fff9f5;
+  margin: 5% auto;
+  padding: 25px 30px;
+  border-radius: 12px;
+  width: 400px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+  position: relative;
+  font-family: Arial, sans-serif;
 }
 
+/* Título */
+.form-modal h2 {
+  margin: 0;
+  font-size: 20px;
+  color: #402a20;
+}
+
+.form-modal .subtitle {
+  font-size: 14px;
+  color: #6c5c53;
+  margin-bottom: 15px;
+}
+
+/* Botão de fechar (X) */
 .close {
-    float: right;
-    font-size: 24px;
-    cursor: pointer;
+  position: absolute;
+  right: 20px;
+  top: 15px;
+  font-size: 20px;
+  cursor: pointer;
+  color: #6c5c53;
 }
 
-.close:hover {
-    color: red;
+/* Labels */
+.form-modal label {
+  display: block;
+  margin-top: 10px;
+  font-size: 14px;
+  color: #402a20;
 }
 
-.modal-content label {
-    display: block;
-    margin-top: 10px;
-    margin-bottom: 5px;
-    font-weight: bold;
+
+
+input:focus, 
+select:focus, 
+textarea:focus {
+    outline: none;                /* remove a borda preta padrão */
+    border: 2px solid #3d2512;    /* marrom (pode ajustar a cor) */
+    box-shadow: 0px 0px 5px #2c1d16; /* brilho marrom suave opcional */
 }
 
-.modal-content input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
+
+
+
+/* Inputs e selects */
+.form-modal input,
+.form-modal select,
+.form-modal textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #e0d6cf;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+
+.form-modal textarea {
+  resize: none;
+  height: 70px;
+}
+
+/* Campos lado a lado */
+.form-row {
+  display: flex;
+  gap: 10px;
+}
+.form-group {
+  flex: 1;
+}
+
+/* Mensagem de erro */
+.erro {
+  color: red;
+  font-size: 12px;
+  display: block;
+  margin-top: 3px;
+}
+
+/* Ações do modal */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+.btn-cancelar {
+  padding: 8px 16px;
+  border: none;
+  background: #f0ebe9;
+  color: #6c5c53;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn-adicionar {
+  padding: 8px 16px;
+  border: none;
+  background: #5a382a;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn-cancelar:hover {
+  background: #e3dbd7;
+}
+
+.btn-adicionar:hover {
+  background: #42291d;
 }
 
 /* Botão Marcar como Prenha */

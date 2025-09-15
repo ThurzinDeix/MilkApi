@@ -30,8 +30,7 @@
                 <a href="dashboard.html"><i class="ph-bold ph-house-line"></i> Dashboard</a>
                 <a href="estatisticas.html"><i class="ph-bold ph-chart-line"></i> Estatísticas</a>
                 <a href="addgado.html"><i class="ph ph-cow"></i> Gerenciar Gados</a>
-                <a href="ocorrenciadiaria.html" class="active"><i class="ph-bold ph-calendar-dots"></i> Ocorrências
-                    Diárias</a>
+                <a href="ocorrenciadiaria.html" class="active"><i class="ph-bold ph-calendar-dots"></i> Ocorrências Diárias</a>
             </div>
             <div class="logout">
                 <a href="#"><i class="ph-bold ph-sign-out"></i> Sair</a>
@@ -39,33 +38,36 @@
         </div>
     </nav>
     <content>
-
-    <div class="card-container">
-            <h1>Gestão de Remédio</h1>
-            <div class="btn-add" onclick="abrirModal('remedio')"><svg xmlns="http://www.w3.org/2000/svg" width="24"
-                    height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-icon lucide-plus">
-                    <path d="M5 12h14" />
-                    <path d="M12 5v14" />
-                </svg>Adicionar Ordenha</div>
+        <div class="card-container">
+            <h1>Gestão de Remédios</h1>
+            <div class="btn-add" onclick="abrirModal('remedio')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-icon">
+                    <path d="M5 12h14"/>
+                    <path d="M12 5v14"/>
+                </svg>
+                Adicionar Remédio
+            </div>
         </div>
 
-    <!-- Lista com estilo de cards -->
-    <div id="listaRemedios" class="listaCards"></div>
+        <div id="listaRemedios" class="listaCards"></div>
 
-    <!-- Modal -->
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="fecharModal()">&times;</span>
-            <h2 id="modal-titulo"></h2>
-            <form id="modal-form">
-                <label>Brinco do Gado:</label>
-                <input type="number" id="brinco" required>
-                <div id="campos-especificos"></div>
-                <button type="submit">Salvar</button>
-            </form>
+        <!-- Modal -->
+        <div id="modal" class="modal">
+            <div class="modal-content form-modal">
+                <span class="close" onclick="fecharModal()">&times;</span>
+                <h2 id="modal-titulo"></h2>
+                <p class="subtitle">Preencha as informações do remédio para registrar.</p>
+                <form id="modal-form">
+                    <label for="brinco">Brinco do Gado</label>
+                    <input type="number" id="brinco" placeholder="Ex: 123" required>
+                    <div id="campos-especificos"></div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+                        <button type="submit" class="btn-adicionar">Salvar</button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
     </content>
 
     <script>
@@ -81,7 +83,7 @@
             const hoje = new Date().toISOString().split("T")[0];
             document.getElementById("brinco").value = dados ? dados.brinco : "";
 
-            let camposHTML = `
+            const camposHTML = `
                 <label>Data:</label>
                 <input type="date" id="data" value="${dados ? dados.date.split('T')[0] : hoje}" required>
                 <label>Nome do Remédio:</label>
@@ -93,7 +95,6 @@
                 <label>Via de Administração:</label>
                 <input type="text" id="via" value="${dados ? dados.via : ''}" required>
             `;
-
             document.getElementById("campos-especificos").innerHTML = camposHTML;
             editId = dados ? dados.id : null;
         }
@@ -101,6 +102,7 @@
         function fecharModal() {
             document.getElementById("modal").style.display = "none";
             editId = null;
+            document.getElementById("modal-form").reset();
         }
 
         async function carregarRemedios() {
@@ -116,21 +118,19 @@
                 const dados = await resp.json();
 
                 lista.innerHTML = "";
-
                 if (dados.length === 0) return;
 
                 dados.sort((a,b) => new Date(b.date) - new Date(a.date));
 
                 dados.forEach(async r => {
-                    const card = document.createElement("div");
-                    card.className = "card";
-
                     let gado = {};
                     try {
                         const resGado = await fetch(`${apiBase}/gado/${r.iD_Gado}`);
                         if (resGado.ok) gado = await resGado.json();
                     } catch {}
 
+                    const card = document.createElement("div");
+                    card.className = "card";
                     card.innerHTML = `
                         <p class="brinco"><strong>Brinco:</strong> ${gado.brinco || 'N/A'}</p>
                         <h3>${r.nome}</h3>
@@ -149,7 +149,6 @@
                     `;
                     lista.appendChild(card);
                 });
-
             } catch (err) {
                 lista.innerHTML = "<p>Erro ao carregar registros.</p>";
                 console.error(err);
@@ -160,18 +159,15 @@
             if (!confirm("Tem certeza que deseja excluir este registro?")) return;
             try {
                 const res = await fetch(`${apiBase}/remedio/${id}`, { method: "DELETE" });
-                if (res.ok) {
-                    carregarRemedios();
-                } else {
-                    alert("Erro ao excluir");
-                }
+                if (res.ok) carregarRemedios();
+                else alert("Erro ao excluir");
             } catch (err) {
                 console.error(err);
                 alert("Erro de conexão");
             }
         }
 
-        document.getElementById("modal-form").addEventListener("submit", async function (e) {
+        document.getElementById("modal-form").addEventListener("submit", async function(e) {
             e.preventDefault();
 
             const brinco = document.getElementById("brinco").value;
@@ -182,25 +178,18 @@
                 if (!resGado.ok) { alert("Gado não encontrado"); return; }
                 const gado = await resGado.json();
 
-                const data = document.getElementById("data").value;
-                const nome = document.getElementById("nome").value;
-                const doses = parseInt(document.getElementById("doses").value);
-                const intervalo = parseInt(document.getElementById("intervalo").value);
-                const via = document.getElementById("via").value;
-
                 const payload = {
                     ID_Gado: gado.id,
-                    Date: data,
-                    Nome: nome,
-                    Doses: doses,
-                    Intervalo: intervalo,
-                    Via: via,
+                    Date: document.getElementById("data").value,
+                    Nome: document.getElementById("nome").value,
+                    Doses: parseInt(document.getElementById("doses").value),
+                    Intervalo: parseInt(document.getElementById("intervalo").value),
+                    Via: document.getElementById("via").value,
                     ID_Usuario: usuarioId
                 };
 
                 let url = `${apiBase}/remedio`;
                 let method = "POST";
-
                 if (editId) {
                     url = `${apiBase}/remedio/${editId}`;
                     method = "PUT";

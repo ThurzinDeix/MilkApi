@@ -7,7 +7,7 @@ namespace MilkApi.Controllers
     [Route("[controller]")]
     public class ManejoGeralController : Controller
     {
-        private const string ConnectionString = "Server=milkdatabase.cp64yi8w2sr2.us-east-2.rds.amazonaws.com;Database=BancoTccGado;User Id=Arthur;Password=Arthur-1234;TrustServerCertificate=True;";
+        private readonly string ConnectionString = config.ConnectionString;
         private readonly ILogger<ManejoGeralController> _logger;
 
         public ManejoGeralController(ILogger<ManejoGeralController> logger)

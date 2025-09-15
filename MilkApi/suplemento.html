@@ -37,14 +37,21 @@
 
         <!-- Modal -->
         <div id="modal" class="modal">
-            <div class="modal-content">
+            <div class="modal-content form-modal">
                 <span class="close" onclick="fecharModal()">&times;</span>
                 <h2 id="modal-titulo"></h2>
+                <p class="subtitle">Preencha as informações do suplemento para registrar.</p>
+
                 <form id="modal-form">
-                    <label>Brinco do Gado:</label>
-                    <input type="number" id="brinco" required>
+                    <label for="brinco">Brinco do Gado</label>
+                    <input type="number" id="brinco" placeholder="Ex: 123" required>
+
                     <div id="campos-especificos"></div>
-                    <button type="submit">Salvar</button>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+                        <button type="submit" class="btn-adicionar">Salvar</button>
+                    </div>
                 </form>
             </div>
         </div>

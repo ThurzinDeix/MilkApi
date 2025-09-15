@@ -4,64 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Gados</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f8f8f8;
-        }
-
-        h1 {
-            color: #333;
-        }
-
-        #gado-list {
-            margin-top: 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 10px;
-        }
-
-        .gado-card {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .gado-card p {
-            margin: 5px 0;
-        }
-
-        button {
-            background: #28a745;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background: #218838;
-        }
-    </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css"
-    />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css" />
 </head>
 
 <body>
@@ -71,9 +21,8 @@
             <div class="menu">
                 <a href="dashboard.html"><i class="ph-bold ph-house-line"></i> Dashboard</a>
                 <a href="estatisticas.html"><i class="ph-bold ph-chart-line"></i> Estatísticas</a>
-                <a href="addgado.html"><i class="ph ph-cow"></i> Gerenciar Gados</a>
-                <a href="ocorrenciadiaria.html" class="active"><i class="ph-bold ph-calendar-dots"></i> Ocorrências
-                    Diárias</a>
+                <a href="addgado.html" class="active"><i class="ph ph-cow"></i> Gerenciar Gados</a>
+                <a href="ocorrenciadiaria.html"><i class="ph-bold ph-calendar-dots"></i> Ocorrências Diárias</a>
             </div>
             <div class="logout">
                 <a href="#"><i class="ph-bold ph-sign-out"></i> Sair</a>
@@ -81,37 +30,76 @@
         </div>
     </nav>
 
-    <h1>Lista de Gados</h1>
-    <button onclick="abrirFormulario()">Adicionar Gado</button>
+    <content>
+        <div class="card-container">
+            <h1>Lista de Gados</h1>
+            <div class="btn-add" onclick="abrirModal()">
+                <i class="fa-solid fa-plus"></i> Adicionar Gado
+            </div>
+        </div>
 
-    <div id="gado-list"></div>
+        <div class="listaCards" id="gado-list"></div>
 
-    <!-- Formulário oculto -->
-    <div id="form-container" style="display:none; margin-top:20px;">
-        <h2>Novo Gado</h2>
-        <form id="form-gado">
-            <label>Data de Nascimento: <input type="date" id="dataNasc" required></label><br><br>
-            <label>Raça: <input type="text" id="raca"></label><br><br>
-            <label>Peso (kg): <input type="number" step="0.01" id="peso" required></label><br><br>
-            <label>
-                Sexo:
-                <select id="sexo">
-                    <option value="M">Macho</option>
-                    <option value="F">Fêmea</option>
-                </select>
-            </label><br><br>
-            <label>Brinco: <input type="number" id="brinco" required><br><br>
-                <span id="brinco-erro" style="color:red; font-size: 14px; display:none;"></span>
-            </label><br><br>
-            <label>Observação: <textarea id="observacao"></textarea></label><br><br>
-            <button type="submit">Salvar</button>
-        </form>
-    </div>
+        <!-- Modal -->
+        <!-- Modal -->
+        <div id="modal" class="modal">
+            <div class="modal-content form-modal">
+                <span class="close" onclick="fecharModal()">&times;</span>
+                <h2>Adicionar Novo Gado</h2>
+                <p class="subtitle">Preencha as informações do animal para adicionar ao rebanho.</p>
+
+                <form id="form-gado">
+                    <label for="brinco">Brinco</label>
+                    <input type="text" id="brinco" placeholder="Ex: BR-004" required>
+                    <span id="brinco-erro" class="erro"></span>
+
+                    <label for="raca">Raça</label>
+                    <select id="raca" required>
+                        <option value="">Selecione a raça</option>
+                        <option value="Holandês">Holandês</option>
+                        <option value="Jersey">Jersey</option>
+                        <option value="Gir Leiteiro">Gir Leiteiro</option>
+                        <option value="Girolando">Girolando</option>
+                        <option value="Pardo Suíço">Pardo Suíço</option>
+                        <option value="Guzerá Leiteiro">Guzerá Leiteiro</option>
+                        <option value="Sindi">Sindi</option>
+                        <option value="Indubrasil">Indubrasil</option>
+                    </select>
+
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="peso">Peso (kg)</label>
+                            <input type="number" step="0.01" id="peso" placeholder="Ex: 450" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="sexo">Sexo</label>
+                            <select id="sexo">
+                                <option value="M">Macho</option>
+                                <option value="F">Fêmea</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <label for="dataNasc">Data de Nascimento</label>
+                    <input type="date" id="dataNasc" required>
+
+                    <label for="observacao">Observação</label>
+                    <textarea id="observacao" placeholder="Observações sobre o animal..."></textarea>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+                        <button type="submit" class="btn-adicionar">Adicionar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </content>
 
     <script>
         const apiBase = "https://localhost:7092/Gado"; // Troque pela sua URL real
 
-        // Função para buscar e mostrar gados do usuário logado
         async function carregarGados() {
             const ID_Usuario = localStorage.getItem("userId");
             if (!ID_Usuario) {
@@ -127,17 +115,25 @@
                 const lista = document.getElementById("gado-list");
                 lista.innerHTML = "";
 
+                if (gados.length === 0) {
+                    lista.innerHTML = "<p>Nenhum gado encontrado.</p>";
+                    return;
+                }
+
                 gados.forEach(g => {
                     const card = document.createElement("div");
-                    card.className = "gado-card";
+                    card.className = "card";
                     card.innerHTML = `
-                <p><strong>ID:</strong> ${g.id}</p>
-                <p><strong>Raça:</strong> ${g.raca || "Não informado"}</p>
-                <p><strong>Peso:</strong> ${g.peso} kg</p>
-                <p><strong>Sexo:</strong> ${g.sexo}</p>
-                <p><strong>Brinco:</strong> ${g.brinco}</p>
-                <p><strong>Observação:</strong> ${g.observacao || "Nenhuma"}</p>
-            `;
+                        <p class="brinco"><strong>Brinco:</strong> ${g.brinco}</p>
+                        <p><strong>Raça:</strong> ${g.raca || "Não informado"}</p>
+                        <p><strong>Peso:</strong> ${g.peso} kg</p>
+                        <p><strong>Sexo:</strong> ${g.sexo}</p>
+                        <p><strong>Observação:</strong> ${g.observacao || "Nenhuma"}</p>
+                        <div class="card-actions">
+                            <button class="btn-edit"><i class="fa-solid fa-pen-to-square"></i> Editar</button>
+                            <button class="btn-delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+                        </div>
+                    `;
                     lista.appendChild(card);
                 });
             } catch (error) {
@@ -145,8 +141,12 @@
             }
         }
 
-        function abrirFormulario() {
-            document.getElementById("form-container").style.display = "block";
+        function abrirModal() {
+            document.getElementById("modal").style.display = "block";
+        }
+
+        function fecharModal() {
+            document.getElementById("modal").style.display = "none";
         }
 
         document.getElementById("form-gado").addEventListener("submit", async (e) => {
@@ -160,10 +160,9 @@
 
             const brincoNovo = parseInt(document.getElementById("brinco").value);
             const erroBrinco = document.getElementById("brinco-erro");
-            erroBrinco.style.display = "none"; // limpa mensagem ao tentar de novo
+            erroBrinco.style.display = "none";
 
             try {
-                // Buscar gados do usuário para checar brinco duplicado
                 const resCheck = await fetch(`${apiBase}?usuarioId=${ID_Usuario}`);
                 if (!resCheck.ok) throw new Error("Erro ao verificar brincos existentes!");
                 const gadosExistentes = await resCheck.json();
@@ -194,22 +193,17 @@
                 if (!res.ok) throw new Error("Erro ao adicionar gado!");
 
                 alert("Gado adicionado com sucesso!");
-                carregarGados();
-                document.getElementById("form-container").style.display = "none";
+                fecharModal();
                 document.getElementById("form-gado").reset();
+                carregarGados();
 
             } catch (error) {
                 alert(error.message);
             }
         });
 
-        // Carrega os gados ao carregar a página
         carregarGados();
-
-
     </script>
-
-    <script src="app.js"></script>
 </body>
 
 </html>

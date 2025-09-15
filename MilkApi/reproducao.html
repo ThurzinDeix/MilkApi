@@ -43,7 +43,7 @@
 
     <!-- Modal de Reprodução -->
     <div id="modal" class="modal">
-      <div class="modal-content">
+      <div class="modal-content form-modal">
         <span class="close" onclick="fecharModal()">&times;</span>
         <h2 id="modal-titulo"></h2>
         <form id="modal-form">
@@ -51,21 +51,27 @@
           <label>Brinco do Gado:</label>
           <input type="number" id="brinco" required>
           <div id="campos-especificos"></div>
-          <button type="submit">Salvar</button>
+          <div class="modal-actions">
+            <button type="button" class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+            <button type="submit" class="btn-adicionar">Salvar</button>
+          </div>
         </form>
       </div>
     </div>
 
     <!-- Modal de Prenhez -->
     <div id="modalPrenhez" class="modal">
-      <div class="modal-content">
+      <div class="modal-content form-modal">
         <span class="close" onclick="fecharModalPrenhez()">&times;</span>
         <h2>Registrar Prenhez</h2>
         <form id="form-prenhez">
           <input type="hidden" id="prenhez-gado-id">
           <label>Data da Prenhez:</label>
           <input type="date" id="prenhez-data" required>
-          <button type="submit">Salvar</button>
+          <div class="modal-actions">
+            <button type="button" class="btn-cancelar" onclick="fecharModalPrenhez()">Cancelar</button>
+            <button type="submit" class="btn-adicionar">Salvar</button>
+          </div>
         </form>
       </div>
     </div>
@@ -77,7 +83,7 @@
 
     function abrirModal(tipo, dados = null) {
       tipoAtual = tipo;
-      document.getElementById("modal").style.display = "block";
+      document.getElementById("modal").style.display = "flex";
       document.getElementById("modal-titulo").innerText = dados ? "Editar Reprodução" : "Nova Reprodução";
 
       const hoje = new Date().toISOString().split("T")[0];
@@ -85,7 +91,11 @@
         <label>Data:</label>
         <input type="date" id="data" value="${dados ? dados.data.split("T")[0] : hoje}" required>
         <label>Tipo:</label>
-        <input type="text" id="tipo" value="${dados ? dados.tipo : ""}" placeholder="Ex.: Monta, Inseminação..." required>
+        <select id="tipo" required>
+          <option value="" disabled ${dados ? "" : "selected"}>Selecione o tipo</option>
+          <option value="Monta" ${dados && dados.tipo === "Monta" ? "selected" : ""}>Monta</option>
+          <option value="Inseminação" ${dados && dados.tipo === "Inseminação" ? "selected" : ""}>Inseminação</option>
+        </select>
         <label>Observação:</label>
         <textarea id="observacao" rows="3" placeholder="Observações adicionais">${dados ? dados.observacao : ""}</textarea>
       `;
@@ -102,11 +112,12 @@
 
     function abrirModalPrenhez(gadoId) {
       document.getElementById("prenhez-gado-id").value = gadoId;
-      document.getElementById("modalPrenhez").style.display = "block";
+      document.getElementById("modalPrenhez").style.display = "flex";
     }
 
     function fecharModalPrenhez() {
       document.getElementById("modalPrenhez").style.display = "none";
+      document.getElementById("form-prenhez").reset();
     }
 
     function addDays(date, days) {

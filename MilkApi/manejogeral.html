@@ -42,19 +42,50 @@
         <div class="listaCards"></div>
 
         <!-- Modal -->
+        <!-- Modal -->
         <div id="modal" class="modal">
-            <div class="modal-content">
+            <div class="modal-content form-modal">
                 <span class="close" onclick="fecharModal()">&times;</span>
                 <h2 id="modal-titulo"></h2>
+                <p class="subtitle">Preencha as informações do manejo geral.</p>
+
                 <form id="modal-form">
                     <input type="hidden" id="manejoId">
-                    <label>Brinco do Gado:</label>
-                    <input type="number" id="brinco" required>
-                    <div id="campos-especificos"></div>
-                    <button type="submit">Salvar</button>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="brinco">Brinco do Gado:</label>
+                            <input type="number" id="brinco" placeholder="Ex: 123" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="dataManejo">Data do Manejo:</label>
+                            <input type="date" id="dataManejo" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="tipoManejo">Tipo de Manejo:</label>
+                            <input type="text" id="tipoManejo" placeholder="Ex.: Casqueamento, Arrumar pata..."
+                                required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group" style="width: 100%;">
+                            <label for="observacoes">Observações:</label>
+                            <textarea id="observacoes" rows="3" placeholder="Detalhes adicionais"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+                        <button type="submit" class="btn-adicionar">Salvar</button>
+                    </div>
                 </form>
             </div>
         </div>
+
     </div>
 
     <script>

@@ -37,9 +37,9 @@
     <content>
         <div class="card-container">
             <div class="sla">
-            <h1>Vacas Prenhas</h1>
-            <p>Gerenciador as vacas em gestação</p>
-        </div>
+                <h1>Vacas Prenhas</h1>
+                <p>Gerenciador as vacas em gestação</p>
+            </div>
 
             <div class="filtro-container">
                 <label for="filtroStatus" class="filtro-text"><strong>Filtrar:</strong></label>
@@ -59,16 +59,18 @@
 
         <!-- Modal de Status -->
         <div id="modalStatus" class="modal">
-            <div class="modal-content">
+            <div class="modal-content form-modal">
                 <span class="close" onclick="fecharModal()">&times;</span>
-                <h3>Atualizar Status da Vaca</h3>
-                <div style="display:flex; justify-content:center; gap:12px; margin-top:12px;">
-                    <button class="btn-prenha" onclick="atualizarStatus('Pariu')">Pariu</button>
-                    <button class="btn-prenha" style="background:#c0392b"
+                <h2>Atualizar Status da Vaca</h2>
+                <p class="subtitle">Selecione o novo status da vaca prenha.</p>
+                <div class="modal-actions" style="justify-content:center; gap:12px; margin-top:12px;">
+                    <button class="btn-adicionar" onclick="atualizarStatus('Pariu')">Pariu</button>
+                    <button class="btn-cancelar" style="background:#c0392b"
                         onclick="atualizarStatus('Aborto')">Aborto</button>
                 </div>
             </div>
         </div>
+
     </content>
 
     <script>
