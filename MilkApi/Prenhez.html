@@ -65,7 +65,7 @@
                 <p class="subtitle">Selecione o novo status da vaca prenha.</p>
                 <div class="modal-actions" style="justify-content:center; gap:12px; margin-top:12px;">
                     <button class="btn-adicionar" onclick="atualizarStatus('Pariu')">Pariu</button>
-                    <button class="btn-cancelar" style="background:#c0392b"
+                    <button class="btn-cancelar" style="background:#c0392b; color: #fff;"
                         onclick="atualizarStatus('Aborto')">Aborto</button>
                 </div>
             </div>
@@ -76,6 +76,7 @@
     <script>
         const apiBase = "https://localhost:7092";
         let prenhezSelecionada = null;
+
 
         async function carregarVacasPrenhas() {
             const usuarioId = localStorage.getItem("userId");
@@ -110,9 +111,18 @@
                     const card = document.createElement("div");
                     card.className = "card gestacao"; // usa .card do seu CSS principal
 
-                    // montar conteúdo usando classes do seu CSS
+                    // Determinar classe e texto do badge
+                    let statusTexto = p.status || '-';
+                    let statusClasse = '';
+                    if (statusTexto.toLowerCase() === 'prenha') statusClasse = 'status-prenha';
+                    else if (statusTexto.toLowerCase() === 'pariu') statusClasse = 'status-pariu';
+                    else if (statusTexto.toLowerCase() === 'aborto') statusClasse = 'status-aborto';
+
+                    // Conteúdo do card
                     card.innerHTML = `
-                        <p class="brinco"> <strong>Brinco:</strong> ${gado.brinco || '-'}</p>
+                        <p class="brinco"> <strong>Brinco:</strong> ${gado.brinco || '-'}
+                            <span class="badge-status ${statusClasse}">${statusTexto}</span>
+                        </p>
                         <p class="descricao"><strong>Raça:</strong> ${gado.raca || '-'}</p>
                         <p class="descricao"><strong>Sexo:</strong> ${gado.sexo || '-'}</p>
                         <p class="descricao"><strong>Peso:</strong> ${gado.peso ? gado.peso + ' kg' : '-'}</p>
@@ -123,6 +133,7 @@
                             <button class="btn-edit" onclick="abrirModal(${p.id})">Atualizar Status</button>
                         </div>
                     `;
+
 
                     container.appendChild(card);
                 }

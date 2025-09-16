@@ -130,27 +130,32 @@
     }
 
     async function login() {
-      const email = document.getElementById("loginEmail").value;
-      const senha = document.getElementById("loginSenha").value;
+  const email = document.getElementById("loginEmail").value;
+  const senha = document.getElementById("loginSenha").value;
 
-      try {
-        const res = await fetch(apiUrl);
-        const usuarios = await res.json();
+  try {
+    const res = await fetch(apiUrl);
+    const usuarios = await res.json();
 
-        const user = usuarios.find(u => u.email === email && u.senha === senha);
-        if (user) {
-          alert("Login bem-sucedido! Bem-vindo, " + user.nome);
-          localStorage.setItem('userId', user.id);
-          localStorage.setItem('authenticated', 'true');
-          window.location.href = 'dashboard.html';
-        } else {
-          alert("Email ou senha incorretos.");
-        }
-      } catch (err) {
-        alert("Erro ao conectar com a API.");
-        console.error(err);
-      }
+    const user = usuarios.find(u => u.email === email && u.senha === senha);
+    if (user) {
+      alert("Login bem-sucedido! Bem-vindo, " + user.nome);
+      localStorage.setItem('userId', user.id);
+      
+      // Novo alert mostrando o ID armazenado
+      alert("ID do usuário armazenado no localStorage: " + user.id);
+
+      localStorage.setItem('authenticated', 'true');
+      window.location.href = 'dashboard.html';
+    } else {
+      alert("Email ou senha incorretos.");
     }
+  } catch (err) {
+    alert("Erro ao conectar com a API.");
+    console.error(err);
+  }
+}
+
 
     document.getElementById('cadCPF').addEventListener('input', function (e) {
       let value = e.target.value.replace(/\D/g, '');

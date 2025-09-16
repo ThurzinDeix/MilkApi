@@ -42,7 +42,6 @@
         <div class="listaCards"></div>
 
         <!-- Modal -->
-        <!-- Modal -->
         <div id="modal" class="modal">
             <div class="modal-content form-modal">
                 <span class="close" onclick="fecharModal()">&times;</span>
@@ -51,32 +50,15 @@
 
                 <form id="modal-form">
                     <input type="hidden" id="manejoId">
-
                     <div class="form-row">
                         <div class="form-group">
                             <label for="brinco">Brinco do Gado:</label>
                             <input type="number" id="brinco" placeholder="Ex: 123" required>
                         </div>
-                        <div class="form-group">
-                            <label for="dataManejo">Data do Manejo:</label>
-                            <input type="date" id="dataManejo" required>
-                        </div>
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="tipoManejo">Tipo de Manejo:</label>
-                            <input type="text" id="tipoManejo" placeholder="Ex.: Casqueamento, Arrumar pata..."
-                                required>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group" style="width: 100%;">
-                            <label for="observacoes">Observações:</label>
-                            <textarea id="observacoes" rows="3" placeholder="Detalhes adicionais"></textarea>
-                        </div>
-                    </div>
+                    <!-- Aqui os campos específicos (data, tipo, observações) serão inseridos via JS -->
+                    <div id="campos-especificos"></div>
 
                     <div class="modal-actions">
                         <button type="button" class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
@@ -92,31 +74,45 @@
         const apiBase = "https://localhost:7092";
         let tipoAtual = "";
 
+        // Abrir modal para criar ou editar manejo
         function abrirModal(tipo, dados = null) {
             tipoAtual = tipo;
             document.getElementById("modal").style.display = "block";
             document.getElementById("modal-titulo").innerText = dados ? "Editar Manejo" : "Novo Manejo";
 
             const hoje = new Date().toISOString().split("T")[0];
-            let camposHTML = `
-                <label>Data do Manejo:</label>
-                <input type="date" id="dataManejo" value="${dados ? dados.data_Manejo.split("T")[0] : hoje}" required>
-                <label>Tipo de Manejo:</label>
-                <input type="text" id="tipoManejo" value="${dados ? dados.tipo_Manejo : ""}" placeholder="Ex.: Arrumar pata, Casqueamento..." required>
-                <label>Observações:</label>
-                <textarea id="observacoes" rows="3" placeholder="Detalhes adicionais">${dados ? dados.observacoes : ""}</textarea>
-            `;
-            document.getElementById("campos-especificos").innerHTML = camposHTML;
-
-            document.getElementById("brinco").value = dados && dados.gado ? dados.gado.brinco : "";
             document.getElementById("manejoId").value = dados ? dados.id : "";
+            document.getElementById("brinco").value = dados && dados.gado ? dados.gado.brinco : "";
+
+            document.getElementById("campos-especificos").innerHTML = `
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Data do Manejo:</label>
+                        <input type="date" id="dataManejo" value="${dados ? dados.data_Manejo.split("T")[0] : hoje}" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tipo de Manejo:</label>
+                        <input type="text" id="tipoManejo" value="${dados ? dados.tipo_Manejo : ""}" placeholder="Ex.: Casqueamento, Arrumar pata..." required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Observações:</label>
+                        <textarea id="observacoes" rows="3" placeholder="Detalhes adicionais">${dados ? dados.observacoes : ""}</textarea>
+                    </div>
+                </div>
+            `;
         }
 
         function fecharModal() {
             document.getElementById("modal").style.display = "none";
             document.getElementById("modal-form").reset();
+            document.getElementById("campos-especificos").innerHTML = "";
         }
 
+        // Carregar registros do manejo
         async function carregarManejo() {
             const usuarioId = localStorage.getItem("userId");
             if (!usuarioId) return;
@@ -161,16 +157,15 @@
                     `;
                     lista.appendChild(div);
                 }
-
             } catch (err) {
                 lista.innerHTML = "<p>Erro ao carregar registros.</p>";
                 console.error(err);
             }
         }
 
+        // Excluir manejo
         async function excluirManejo(id) {
             if (!confirm("Deseja excluir este manejo?")) return;
-
             try {
                 const res = await fetch(`${apiBase}/manejoGeral/${id}`, { method: "DELETE" });
                 if (res.ok) {
@@ -184,6 +179,7 @@
             }
         }
 
+        // Submit do form (criação ou edição)
         document.getElementById("modal-form").addEventListener("submit", async function (e) {
             e.preventDefault();
 
@@ -230,5 +226,4 @@
         carregarManejo();
     </script>
 </body>
-
 </html>

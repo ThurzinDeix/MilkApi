@@ -242,12 +242,15 @@ namespace MilkApi.Controllers
                         // 2) Criar relações na tabela LoteLeite
                         foreach (var idLeite in dto.IDsLeite)
                         {
-                            string insertLoteLeite = "INSERT INTO LoteLeite (ID_Lote, ID_Leite) VALUES (@ID_Lote, @ID_Leite)";
+                            string insertLoteLeite = "INSERT INTO LoteLeite (ID_Lote, ID_Leite, ID_Usuario) VALUES (@ID_Lote, @ID_Leite, @ID_Usuario)";
                             SqlCommand cmdLoteLeite = new SqlCommand(insertLoteLeite, conn, tran);
                             cmdLoteLeite.Parameters.AddWithValue("@ID_Lote", loteId);
                             cmdLoteLeite.Parameters.AddWithValue("@ID_Leite", idLeite);
+                            cmdLoteLeite.Parameters.AddWithValue("@ID_Usuario", dto.ID_Usuario); // ✅ adiciona aqui
                             await cmdLoteLeite.ExecuteNonQueryAsync();
                         }
+
+
 
                         tran.Commit();
                         return Ok(new { loteId = loteId });

@@ -136,22 +136,41 @@ namespace MilkApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
-                string query = "DELETE FROM Leite WHERE Id = @Id";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@Id", id);
+                await conn.OpenAsync();
+                using (var tran = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        // 1) Deleta registros dependentes em LoteLeite
+                        string deleteLoteLeite = "DELETE FROM LoteLeite WHERE ID_Leite = @Id";
+                        SqlCommand cmdLL = new SqlCommand(deleteLoteLeite, conn, tran);
+                        cmdLL.Parameters.AddWithValue("@Id", id);
+                        await cmdLL.ExecuteNonQueryAsync();
 
-                conn.Open();
-                int rows = cmd.ExecuteNonQuery();
+                        // 2) Deleta o leite
+                        string deleteLeite = "DELETE FROM Leite WHERE Id = @Id";
+                        SqlCommand cmdL = new SqlCommand(deleteLeite, conn, tran);
+                        cmdL.Parameters.AddWithValue("@Id", id);
+                        int rows = await cmdL.ExecuteNonQueryAsync();
 
-                if (rows > 0) return Ok();
+                        tran.Commit();
+
+                        if (rows > 0) return Ok();
+                        return NotFound();
+                    }
+                    catch (Exception ex)
+                    {
+                        tran.Rollback();
+                        return StatusCode(500, $"Erro ao excluir leite: {ex.Message}");
+                    }
+                }
             }
-
-            return NotFound();
         }
+
 
         [HttpPost("leite-com-lote")]
         public IActionResult CriarLeiteComLote([FromBody] LeiteComLoteDTO dto)

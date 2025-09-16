@@ -69,7 +69,7 @@
 
                 <div id="leites" class="cards-leite"></div>
 
-                <button id="criarLoteBtn-leite">Criar Lote</button>
+                <button id="criarLoteBtn-leite" onclick="criarLoteAPI()">Criar Lote</button>
             </div>
         </div>
 
@@ -136,35 +136,61 @@
         }
 
         // Criar lote com leites
-        async function criarLoteAPI(leitesSelecionados, numLote) {
+        // Criar lote com leites (versão com alerts de debug)
+        const criarLoteAPI = async (leitesSelecionados, numLote) => {
+            
+
+            if (!leitesSelecionados || leitesSelecionados.length === 0) {
+                return;
+            }
+
+            if (!numLote || isNaN(numLote)) {
+                alert("Número do lote inválido: " + numLote);
+                return;
+            }
+
             const userId = localStorage.getItem("userId");
+            if (!userId) {
+                return;
+            }
+
             const body = {
-                Num: numLote,
-                ID_Usuario: userId,
-                IDsLeite: leitesSelecionados.map(l => l.id)
+                num: parseInt(numLote),
+                iD_Usuario: parseInt(userId),
+                iDsLeite: leitesSelecionados.map(l => parseInt(l.id))
             };
+
+            console.log("Body que será enviado:", body);
+
             try {
-                const res = await fetch(`${API_BASE}/lote/criar-com-leites`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                const response = await fetch("https://localhost:7092/Lote/criar-com-leites", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(body)
                 });
 
-                if (!res.ok) {
-                    const text = await res.text();
-                    console.error("Erro ao criar lote:", text);
-                    alert(`Erro ao criar lote!\nStatus: ${res.status}\nMensagem: ${text}`);
+                alert("Requisição enviada, aguardando resposta...");
+
+                if (!response.ok) {
+                    alert("Resposta da API NÃO OK! Status: " + response.status);
+                    const error = await response.json().catch(() => null);
+                    console.error("Erro detalhado:", error);
+                    alert("Erro retornado da API:\n" + JSON.stringify(error, null, 2));
                     return;
                 }
 
-                const data = await res.json();
-                console.log("Lote criado:", data);
-                alert(`Lote criado com sucesso! ID: ${data.loteId}`);
+                const result = await response.json();
+                console.log("Resultado da API:", result);
+                alert("Lote criado com sucesso! ");
+
             } catch (err) {
-                console.error("Erro ao criar lote:", err);
-                alert(`Erro ao criar lote: ${err.message}`);
+                console.error("Erro no try/catch:", err);
+                alert("Erro no fetch ou na requisição:\n" + err.message);
             }
-        }
+        };
+
+
+
 
         // Render lotes
 
