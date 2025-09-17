@@ -14,33 +14,32 @@ body {
     margin-right: 5%;
 }
 
+
 nav {
     display: flex;
     background-color: #5a3c2d;
-    /* marrom */
     align-items: center;
-    justify-content: center;
     padding: 20px;
+    justify-content: center;
 }
 
-.nav1 {
+.nav1{
     display: flex;
-
-    align-items: center;
+    justify-content: space-between;
+    width: 90%;
 }
 
 .logo {
     font-weight: bold;
     font-size: 40px;
     color: white;
-    padding-right: 25rem;
 }
 
 .menu {
     display: flex;
     align-items: center;
-    justify-content: center;
-
+    justify-content: space-around;
+    width: 80%;
 }
 
 .card-content1{
@@ -60,18 +59,19 @@ nav {
     display: flex;
     color: white;
     text-decoration: none;
-    margin-right: 15%;
     align-items: center;
     font-size: 18px;
     justify-content: center;
     white-space: nowrap;
-    padding: 8px 15px;
     border-radius: 6px;
+    padding: 10px 15px;
+    margin: 0px 10px
 }
 
 .menu a i {
-    margin-right: 6px;
     font-size: 25px;
+    display: flex;
+    padding: 0px 10px;
 }
 
 .menu a.active {
@@ -83,10 +83,7 @@ nav {
     border-radius: 6px;
 }
 
-.menu {
-    display: flex;
-    align-items: center;
-}
+
 
 .menu :hover{
     background-color: #d9cbbf;
@@ -94,19 +91,21 @@ nav {
     color: #5a3c2d;
 }
 
-
+.logout{
+    display: flex;
+    align-items: center;
+}
 
 .logout a {
     color: white;
     text-decoration: none;
     display: flex;
     align-items: center;
-    padding-left: 25rem;
 }
 
 .logout a i {
-    margin-right: 6px;
     font-size: 22px;
+    padding: 0px 5px;
 }
 
 h1 {
@@ -119,6 +118,30 @@ p {
     margin-top: 0;
     color: #555;
 }
+
+.totaltentativas{
+    margin-top: 20px;
+}
+
+.ul{
+    margin: 0px;
+    padding: 0px;
+}
+
+.tentativa{
+    display: flex;
+    margin: 0px;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.tentativa .p{
+    margin: 0px;
+    display: flex;
+    align-items: center;
+}
+
+
 
 .card-container{
     display: flex;
@@ -535,6 +558,7 @@ h1 + p {
     box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
     flex: 1;
     transition: 0.4s;
+    margin-left: 10px;
 }
 
 .btn-edit:hover{
@@ -553,6 +577,8 @@ h1 + p {
     font-size: 14px;
     transition: 0.4s;
     box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+    margin-left: 10px;
+
 }
 
 .btn-delete:hover{
@@ -780,154 +806,3 @@ option{
     justify-content: flex-start;
 }
 
-@media (max-width: 1600px) {
-
-    nav {
-        display: flex;
-        background-color: #5a3c2d;
-        /* marrom */
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-    }
-
-    .nav1 {
-        display: flex;
-
-        align-items: center;
-    }
-
-    .logo {
-        font-weight: bold;
-        font-size: 40px;
-        color: white;
-        padding-right: 15rem;
-    }
-
-    .menu {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-    }
-
-    .menu a {
-        display: flex;
-        color: white;
-        text-decoration: none;
-        margin-right: 5%;
-        align-items: center;
-        font-size: 18px;
-        justify-content: center;
-        white-space: nowrap;
-    }
-
-    .menu a i {
-        margin-right: 6px;
-    }
-
-    .menu a.active {
-        display: flex;
-        background-color: #d9cbbf;
-        /* bege */
-        color: #5a3c2d;
-        padding: 8px 15px;
-        border-radius: 6px;
-    }
-
-    .menu {
-        display: flex;
-        align-items: center;
-        flex-grow: 1;
-    }
-
-
-
-    .logout a {
-        color: white;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        padding-left: 10rem;
-    }
-
-    .logout a i {
-        margin-right: 6px;
-    }
-
-
-    @media (max-width: 1300px) {
-        nav {
-            display: flex;
-            background-color: #5a3c2d;
-            /* marrom */
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .nav1 {
-            display: flex;
-
-            align-items: center;
-        }
-
-        .logo {
-            font-weight: bold;
-            font-size: 30px;
-            color: white;
-            padding-right: 5rem;
-        }
-
-        .menu {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-        }
-
-        .menu a {
-            display: flex;
-            color: white;
-            text-decoration: none;
-            margin-right: 5%;
-            align-items: center;
-            font-size: 15px;
-            justify-content: center;
-            white-space: nowrap;
-        }
-
-        .menu a i {
-            margin-right: 6px;
-        }
-
-        .menu a.active {
-            display: flex;
-            background-color: #d9cbbf;
-            /* bege */
-            color: #5a3c2d;
-            padding: 8px 15px;
-            border-radius: 6px;
-        }
-
-        .menu {
-            display: flex;
-            align-items: center;
-            flex-grow: 1;
-        }
-
-
-
-        .logout a {
-            color: white;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            padding-left: 10rem;
-        }
-
-        .logout a i {
-            margin-right: 6px;
-        }
-    }
-}

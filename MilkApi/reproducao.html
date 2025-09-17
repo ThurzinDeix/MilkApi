@@ -22,20 +22,19 @@
         <a href="dashboard.html"><i class="ph-bold ph-house-line"></i> Dashboard</a>
         <a href="estatisticas.html"><i class="ph-bold ph-chart-line"></i> Estatísticas</a>
         <a href="addgado.html"><i class="ph ph-cow"></i> Gerenciar Gados</a>
-        <a href="ocorrenciadiaria.html" class="active"><i class="ph-bold ph-calendar-dots"></i> Ocorrências
-          Diárias</a>
+        <a href="ocorrenciadiaria.html" class="active"><i class="ph-bold ph-calendar-dots"></i> OcorrênciasDiárias</a>
       </div>
       <div class="logout">
-        <a href="#"><i class="ph-bold ph-sign-out"></i> Sair</a>
+        <a onclick="logout()"><i class="ph-bold ph-sign-out"></i> Sair</a>
       </div>
     </div>
-  </nav>
+</nav>
 
   <div class="body-margin">
     <div class="card-container">
-      <h1>Gestão de Reprodução</h1>
+      <h1>Gestão de Tentativa de Reprodução</h1>
       <div class="btn-add" onclick="abrirModal('reproducao')">
-        <i class="fa-solid fa-plus"></i> Nova Reprodução
+        <i class="fa-solid fa-plus"></i> Nova Tentativa de Reprodução
       </div>
     </div>
 
@@ -143,34 +142,52 @@
           return;
         }
 
+        // agrupar tentativas por gado
+        const tentativasPorGado = {};
         for (const r of dados) {
-          const div = document.createElement("div");
-          div.className = "card";
+          if (!tentativasPorGado[r.iD_Gado]) tentativasPorGado[r.iD_Gado] = [];
+          tentativasPorGado[r.iD_Gado].push(r);
+        }
+
+        for (const gadoId in tentativasPorGado) {
+          const tentativas = tentativasPorGado[gadoId];
+          tentativas.sort((a, b) => new Date(a.data) - new Date(b.data));
+          const ultima = tentativas[tentativas.length - 1];
 
           let gado = {};
           try {
-            const resGado = await fetch(`${apiBase}/gado/${r.iD_Gado}`);
+            const resGado = await fetch(`${apiBase}/gado/${gadoId}`);
             if (resGado.ok) gado = await resGado.json();
           } catch { }
 
+          let listaTentativas = `<ul class="ul">`;
+          for (const t of tentativas) {
+            listaTentativas += `<li class="tentativa"><p class="p">${new Date(t.data).toLocaleDateString("pt-BR")} - ${t.tipo} </p>
+              <button class="btn-edit" onclick='abrirModal("reproducao", ${JSON.stringify({ ...t, gado })})'><i class="fa-solid fa-pen-to-square"></i></button>
+              <button class="btn-delete" onclick="excluirReproducao(${t.id})"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            </li>`;
+          }
+          listaTentativas += "</ul>";
+
+          const div = document.createElement("div");
+          div.className = "card";
+
           div.innerHTML = `
-            <p><strong>Brinco:</strong> ${gado.brinco || 'N/A'}</p>
-            <p><strong>Data:</strong> ${new Date(r.data).toLocaleDateString("pt-BR")}</p>
-            <p><strong>Tipo:</strong> ${r.tipo}</p>
-            <p><strong>Obs:</strong> ${r.observacao || '-'}</p>
-            ${r.data_Esperada ? `<p><strong>Data Esperada:</strong> ${new Date(r.data_Esperada).toLocaleDateString("pt-BR")}</p>` : ""}
+            <p class="brinco"><strong>Brinco:</strong> ${gado.brinco || 'N/A'}</p>
+            <p><strong>Número de tentativas:</strong> ${tentativas.length}</p>
+            <p><strong>Última Data:</strong> ${new Date(ultima.data).toLocaleDateString("pt-BR")}</p>
+            <p><strong>Último Tipo:</strong> ${ultima.tipo}</p>
+            <hr style="border:none; border-top:1px solid #4b2e1f30; margin:12px 0;">
+            <p class="totaltentativas"><strong>Todas as tentativas:</strong></p>
+            ${listaTentativas}
             <div class="card-actions">
-              <button class="btn-edit" onclick='abrirModal("reproducao", ${JSON.stringify({ ...r, gado })})'>
-                <i class="fa-solid fa-pen-to-square"></i> Editar
-              </button>
-              <button class="btn-delete" onclick="excluirReproducao(${r.id})">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-              </button>
               <button class="btn-prenha" onclick="abrirModalPrenhez(${gado.id})">
                 <i class="fa-solid fa-venus"></i> Marcar Prenha
               </button>
             </div>
           `;
+
           lista.appendChild(div);
         }
       } catch (err) {
