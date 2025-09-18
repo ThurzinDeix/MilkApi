@@ -85,7 +85,7 @@ nav {
 
 
 
-.menu :hover{
+.menu a:hover{
     background-color: #d9cbbf;
     border-radius: 6px;
     color: #5a3c2d;
@@ -107,6 +107,66 @@ nav {
     font-size: 22px;
     padding: 0px 5px;
 }
+
+.user-menu{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+  
+  .user-avatar {
+    color: #fff;
+    display: flex;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .user-avatar i{
+    font-size: 40px;
+    padding: 5px 5px;
+    border-radius: 5px;
+  }
+
+  .user-avatar i:hover{
+    background-color: #d9cbbf;
+    color: #5a3c2d;
+  }
+  
+  .dropdown {
+    display: none;
+    position: absolute;
+    padding: 10px 10px;
+    right: 0;
+    top: 70px;
+    background: #f8f2ec;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    min-width: 180px;
+    overflow: hidden;
+  }
+  
+  .dropdown a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    color: #333;
+    text-decoration: none;
+    transition: background 0.3s;
+  }
+
+  .dropdown a i{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    color: #333;
+    text-decoration: none;
+    transition: background 0.3s;
+  }
+  
+  
 
 h1 {
     font-size: 28px;
@@ -754,8 +814,9 @@ textarea:focus {
 
 /* Botão Marcar como Prenha */
 .btn-prenha {
-    display: inline-block;
-    background: #28a745;
+    display: flex;
+    justify-content: flex-end;
+    background: #5a3c2d;
     color: #fff;
     border: none;
     padding: 10px 18px;
@@ -768,7 +829,7 @@ textarea:focus {
 }
 
 .btn-prenha:hover {
-    background: #218838;
+    background: #744e3c;
 }
 
 .btn-prenha:active {
@@ -806,3 +867,6 @@ option{
     justify-content: flex-start;
 }
 
+.show {
+    display: block;
+}

@@ -13,4 +13,14 @@ function logout() {
       window.location.href = "login.html";
     }
   }
+
+  function toggleDropdown() {
+    document.getElementById("dropdownMenu").classList.toggle("show");
+  }
+  
+  window.onclick = function(e) {
+    if (!e.target.closest('.user-menu')) {
+      document.getElementById("dropdownMenu").classList.remove("show");
+    }
+  }
   
