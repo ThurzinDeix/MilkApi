@@ -2,214 +2,258 @@
 <html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Gados</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" type="text/css"
-        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
-    <link rel="stylesheet" type="text/css"
-        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
-    <link rel="stylesheet" type="text/css"
-        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css" />
+  <meta charset="UTF-8">
+  <title>Gados</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" type="text/css"
+    href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+  <link rel="stylesheet" type="text/css"
+    href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+  <link rel="stylesheet" type="text/css"
+    href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css" />
 </head>
 
 <body>
-    <nav>
-        <div class="nav1">
-          <div class="logo">Cownt</div>
-          <div class="menu">
-            <a href="dashboard.html" ><i class="ph-bold ph-house-line"></i> Dashboard</a>
-            <a href="estatisticas.html"><i class="ph-bold ph-chart-line"></i> Estatísticas</a>
-            <a href="addgado.html" class="active"><i class="ph ph-cow"></i> Gerenciar Gados</a>
-            <a href="ocorrenciadiaria.html"><i class="ph-bold ph-calendar-dots"></i> Ocorrências Diárias</a>
-            <div class="user-menu">
-              <div class="user-avatar" onclick="toggleDropdown()"><i class="ph ph-user-circle"></i></div>
-              <div class="dropdown" id="dropdownMenu">
-                <a class="drop-menu" href="perfil.html"><i class="ph-bold ph-user"></i> Editar Perfil</a>
-                <a class="drop-menu" href="#" onclick="logout()"><i class="ph-bold ph-sign-out"></i> Sair da Conta</a>
-              </div>
+  <nav>
+    <div class="nav1">
+      <div class="logo">Cownt</div>
+      <div class="menu">
+        <a href="dashboard.html"><i class="ph-bold ph-house-line"></i> Dashboard</a>
+        <a href="estatisticas.html"><i class="ph-bold ph-chart-line"></i> Estatísticas</a>
+        <a href="addgado.html" class="active"><i class="ph ph-cow"></i> Gerenciar Gados</a>
+        <a href="registro.html"><i class="ph ph-cow"></i> Registros</a>
+        <a href="ocorrenciadiaria.html"><i class="ph-bold ph-calendar-dots"></i> Ocorrências Diárias</a>
+        <div class="user-menu">
+          <div class="user-avatar" onclick="toggleDropdown()"><i class="ph ph-user-circle"></i></div>
+          <div class="dropdown" id="dropdownMenu">
+            <a class="drop-menu" href="perfil.html"><i class="ph-bold ph-user"></i> Editar Perfil</a>
+            <a class="drop-menu" href="#" onclick="logout()"><i class="ph-bold ph-sign-out"></i> Sair da Conta</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <content>
+    <div class="card-container">
+      <h1>Lista de Gados</h1>
+      <div class="btn-add" onclick="abrirModal()">
+        <i class="fa-solid fa-plus"></i> Adicionar Gado
+      </div>
+    </div>
+
+    <div class="listaCards" id="gado-list"></div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+      <div class="modal-content form-modal">
+        <span class="close" onclick="fecharModal()">&times;</span>
+        <h2 id="modal-title">Adicionar Novo Gado</h2>
+        <p class="subtitle" id="modal-subtitle">Preencha as informações do animal.</p>
+
+        <form id="form-gado">
+          <input type="hidden" id="gadoId"> <!-- usado na edição -->
+
+          <label for="brinco">Brinco</label>
+          <input type="text" id="brinco" placeholder="Ex: BR-004" required>
+          <span id="brinco-erro" class="erro"></span>
+
+          <label for="raca">Raça</label>
+          <select id="raca" required>
+            <option value="">Selecione a raça</option>
+            <option value="Holandês">Holandês</option>
+            <option value="Jersey">Jersey</option>
+            <option value="Gir Leiteiro">Gir Leiteiro</option>
+            <option value="Girolando">Girolando</option>
+            <option value="Pardo Suíço">Pardo Suíço</option>
+            <option value="Guzerá Leiteiro">Guzerá Leiteiro</option>
+            <option value="Sindi">Sindi</option>
+            <option value="Indubrasil">Indubrasil</option>
+          </select>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="peso">Peso (kg)</label>
+              <input type="number" step="0.01" id="peso" placeholder="Ex: 450" required>
+            </div>
+            <div class="form-group">
+              <label for="sexo">Sexo</label>
+              <select id="sexo">
+                <option value="M">Macho</option>
+                <option value="F">Fêmea</option>
+              </select>
             </div>
           </div>
-          
-        </div>
-    </nav>
 
-    <content>
-        <div class="card-container">
-            <h1>Lista de Gados</h1>
-            <div class="btn-add" onclick="abrirModal()">
-                <i class="fa-solid fa-plus"></i> Adicionar Gado
-            </div>
-        </div>
+          <label for="dataNasc">Data de Nascimento</label>
+          <input type="date" id="dataNasc" required>
 
-        <div class="listaCards" id="gado-list"></div>
+          <label for="observacao">Observação</label>
+          <textarea id="observacao" placeholder="Observações sobre o animal..."></textarea>
 
-        <!-- Modal -->
-        <!-- Modal -->
-        <div id="modal" class="modal">
-            <div class="modal-content form-modal">
-                <span class="close" onclick="fecharModal()">&times;</span>
-                <h2>Adicionar Novo Gado</h2>
-                <p class="subtitle">Preencha as informações do animal para adicionar ao rebanho.</p>
+          <div class="modal-actions">
+            <button type="button" class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+            <button type="submit" class="btn-adicionar" id="btn-submit">Adicionar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </content>
 
-                <form id="form-gado">
-                    <label for="brinco">Brinco</label>
-                    <input type="text" id="brinco" placeholder="Ex: BR-004" required>
-                    <span id="brinco-erro" class="erro"></span>
+  <script>
+    const apiBase = "https://localhost:7092/Gado"; // sua API
+    let editando = false;
 
-                    <label for="raca">Raça</label>
-                    <select id="raca" required>
-                        <option value="">Selecione a raça</option>
-                        <option value="Holandês">Holandês</option>
-                        <option value="Jersey">Jersey</option>
-                        <option value="Gir Leiteiro">Gir Leiteiro</option>
-                        <option value="Girolando">Girolando</option>
-                        <option value="Pardo Suíço">Pardo Suíço</option>
-                        <option value="Guzerá Leiteiro">Guzerá Leiteiro</option>
-                        <option value="Sindi">Sindi</option>
-                        <option value="Indubrasil">Indubrasil</option>
-                    </select>
+    async function carregarGados() {
+      const ID_Usuario = localStorage.getItem("userId");
+      if (!ID_Usuario) {
+        alert("Usuário não autenticado!");
+        return;
+      }
 
+      try {
+        const res = await fetch(`${apiBase}?usuarioId=${ID_Usuario}`);
+        if (!res.ok) throw new Error("Erro ao buscar gados");
+        const gados = await res.json();
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="peso">Peso (kg)</label>
-                            <input type="number" step="0.01" id="peso" placeholder="Ex: 450" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="sexo">Sexo</label>
-                            <select id="sexo">
-                                <option value="M">Macho</option>
-                                <option value="F">Fêmea</option>
-                            </select>
-                        </div>
-                    </div>
+        const lista = document.getElementById("gado-list");
+        lista.innerHTML = "";
 
-                    <label for="dataNasc">Data de Nascimento</label>
-                    <input type="date" id="dataNasc" required>
-
-                    <label for="observacao">Observação</label>
-                    <textarea id="observacao" placeholder="Observações sobre o animal..."></textarea>
-
-                    <div class="modal-actions">
-                        <button type="button" class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
-                        <button type="submit" class="btn-adicionar">Adicionar</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-    </content>
-
-    <script>
-        const apiBase = "https://localhost:7092/Gado"; // Troque pela sua URL real
-
-        async function carregarGados() {
-            const ID_Usuario = localStorage.getItem("userId");
-            if (!ID_Usuario) {
-                alert("Usuário não autenticado!");
-                return;
-            }
-
-            try {
-                const res = await fetch(`${apiBase}?usuarioId=${ID_Usuario}`);
-                if (!res.ok) throw new Error("Erro ao buscar gados");
-                const gados = await res.json();
-
-                const lista = document.getElementById("gado-list");
-                lista.innerHTML = "";
-
-                if (gados.length === 0) {
-                    lista.innerHTML = "<p>Nenhum gado encontrado.</p>";
-                    return;
-                }
-
-                gados.forEach(g => {
-                    const card = document.createElement("div");
-                    card.className = "card";
-                    card.innerHTML = `
-                        <p class="brinco"><strong>Brinco:</strong> ${g.brinco}</p>
-                        <p><strong>Raça:</strong> ${g.raca || "Não informado"}</p>
-                        <p><strong>Peso:</strong> ${g.peso} kg</p>
-                        <p><strong>Sexo:</strong> ${g.sexo}</p>
-                        <p><strong>Observação:</strong> ${g.observacao || "Nenhuma"}</p>
-                        <div class="card-actions">
-                            <button class="btn-edit"><i class="fa-solid fa-pen-to-square"></i> Editar</button>
-                            <button class="btn-delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
-                        </div>
-                    `;
-                    lista.appendChild(card);
-                });
-            } catch (error) {
-                alert(error.message);
-            }
+        if (gados.length === 0) {
+          lista.innerHTML = "<p>Nenhum gado encontrado.</p>";
+          return;
         }
 
-        function abrirModal() {
-            document.getElementById("modal").style.display = "block";
-        }
+        gados.forEach(g => {
+          const card = document.createElement("div");
+          card.className = "card";
 
-        function fecharModal() {
-            document.getElementById("modal").style.display = "none";
-        }
+          // cor do status: você pode mapear os status para cores
+          let statusCor = "gray"; // padrão
+          switch ((g.statusProdutivo || "").toLowerCase()) {
+            case "gravida":
+            case "lactante gestante":
+              statusCor = "green"; break;
+            case "seca":
+              statusCor = "orange"; break;
+            case "novilha":
+              statusCor = "blue"; break;
+            case "lactante vazia":
+              statusCor = "purple"; break;
+            case "vazia não lactante":
+              statusCor = "red"; break;
+          }
 
-        document.getElementById("form-gado").addEventListener("submit", async (e) => {
-            e.preventDefault();
+          card.innerHTML = `
+              <p class="brinco">
+                <strong>Brinco:</strong> ${g.brinco}
+                <span class="status-badge" style="background-color: ${statusCor}; color: white; padding: 2px 6px; border-radius: 12px; font-size: 0.8rem; margin-left: 8px;">
+                  ${g.statusProdutivo || "Desconhecido"}
+                </span>
+              </p>
+              <p><strong>Raça:</strong> ${g.raca || "Não informado"}</p>
+              <p><strong>Peso:</strong> ${g.peso} kg</p>
+              <p><strong>Sexo:</strong> ${g.sexo}</p>
+              <p><strong>Observação:</strong> ${g.observacao || "Nenhuma"}</p>
+              <div class="card-actions">
+                <button class="btn-edit"><i class="fa-solid fa-pen-to-square"></i> Editar</button>
+                <button class="btn-delete"><i class="fa-solid fa-trash"></i></button>
+              </div>
+            `;
 
-            const ID_Usuario = localStorage.getItem("userId");
-            if (!ID_Usuario) {
-                alert("ID do usuário não encontrado no localStorage!");
-                return;
-            }
-
-            const brincoNovo = parseInt(document.getElementById("brinco").value);
-            const erroBrinco = document.getElementById("brinco-erro");
-            erroBrinco.style.display = "none";
-
-            try {
-                const resCheck = await fetch(`${apiBase}?usuarioId=${ID_Usuario}`);
-                if (!resCheck.ok) throw new Error("Erro ao verificar brincos existentes!");
-                const gadosExistentes = await resCheck.json();
-
-                const brincoDuplicado = gadosExistentes.some(g => g.brinco === brincoNovo);
-                if (brincoDuplicado) {
-                    erroBrinco.textContent = "Já existe um gado cadastrado com esse número de brinco!";
-                    erroBrinco.style.display = "inline";
-                    return;
-                }
-
-                const novoGado = {
-                    id_Usuario: parseInt(ID_Usuario),
-                    data_Nasc: document.getElementById("dataNasc").value,
-                    raca: document.getElementById("raca").value,
-                    peso: parseFloat(document.getElementById("peso").value),
-                    sexo: document.getElementById("sexo").value,
-                    brinco: brincoNovo,
-                    observacao: document.getElementById("observacao").value
-                };
-
-                const res = await fetch(apiBase, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(novoGado)
-                });
-
-                if (!res.ok) throw new Error("Erro ao adicionar gado!");
-
-                alert("Gado adicionado com sucesso!");
-                fecharModal();
-                document.getElementById("form-gado").reset();
-                carregarGados();
-
-            } catch (error) {
-                alert(error.message);
-            }
+          card.querySelector(".btn-edit").addEventListener("click", () => abrirModalEdicao(g));
+          lista.appendChild(card);
         });
 
+      } catch (error) {
+        alert(error.message);
+      }
+    }
+
+    function abrirModal() {
+      document.getElementById("modal-title").textContent = "Adicionar Novo Gado";
+      document.getElementById("btn-submit").textContent = "Adicionar";
+      document.getElementById("form-gado").reset();
+      document.getElementById("gadoId").value = "";
+      editando = false;
+      document.getElementById("modal").style.display = "block";
+    }
+
+    function abrirModalEdicao(gado) {
+      document.getElementById("modal-title").textContent = "Editar Gado";
+      document.getElementById("btn-submit").textContent = "Salvar Alterações";
+      document.getElementById("modal").style.display = "block";
+
+      document.getElementById("gadoId").value = gado.id;
+      document.getElementById("brinco").value = gado.brinco;
+      document.getElementById("raca").value = gado.raca;
+      document.getElementById("peso").value = gado.peso;
+
+      // 🔹 Ajuste do sexo (aceita "M", "F", "Macho", "Fêmea")
+      let sexoVal = (gado.sexo || "").toString().trim().toLowerCase();
+      if (sexoVal.startsWith("m")) sexoVal = "M";
+      if (sexoVal.startsWith("f")) sexoVal = "F";
+      document.getElementById("sexo").value = sexoVal;
+
+      document.getElementById("dataNasc").value = gado.data_Nasc.split("T")[0];
+      document.getElementById("observacao").value = gado.observacao || "";
+
+      editando = true;
+    }
+
+    function fecharModal() {
+      document.getElementById("modal").style.display = "none";
+    }
+
+    document.getElementById("form-gado").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const ID_Usuario = localStorage.getItem("userId");
+      if (!ID_Usuario) {
+        alert("ID do usuário não encontrado no localStorage!");
+        return;
+      }
+
+      const gadoId = document.getElementById("gadoId").value;
+      const gadoData = {
+        id_Usuario: parseInt(ID_Usuario),
+        data_Nasc: document.getElementById("dataNasc").value,
+        raca: document.getElementById("raca").value,
+        peso: parseFloat(document.getElementById("peso").value),
+        sexo: document.getElementById("sexo").value,
+        brinco: parseInt(document.getElementById("brinco").value),
+        observacao: document.getElementById("observacao").value
+      };
+
+      try {
+        let res;
+        if (editando) {
+          res = await fetch(`${apiBase}/${gadoId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(gadoData)
+          });
+          if (!res.ok) throw new Error("Erro ao atualizar gado!");
+          alert("Gado atualizado com sucesso!");
+        } else {
+          res = await fetch(apiBase, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(gadoData)
+          });
+          if (!res.ok) throw new Error("Erro ao adicionar gado!");
+          alert("Gado adicionado com sucesso!");
+        }
+
+        fecharModal();
         carregarGados();
-    </script>
-    <script src="app.js"></script>
+      } catch (error) {
+        alert(error.message);
+      }
+    });
+
+    carregarGados();
+  </script>
 
 </body>
 

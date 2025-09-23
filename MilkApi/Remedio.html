@@ -1,54 +1,49 @@
 ﻿<!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <title>Gestão de Remédios</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css"
-    />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css" />
 </head>
 
 <body>
     <nav>
         <div class="nav1">
-          <div class="logo">Cownt</div>
-          <div class="menu">
-            <a href="dashboard.html" ><i class="ph-bold ph-house-line"></i> Dashboard</a>
-            <a href="estatisticas.html"><i class="ph-bold ph-chart-line"></i> Estatísticas</a>
-            <a href="addgado.html"><i class="ph ph-cow"></i> Gerenciar Gados</a>
-            <a href="ocorrenciadiaria.html" class="active"><i class="ph-bold ph-calendar-dots"></i> Ocorrências Diárias</a>
-            <div class="user-menu">
-              <div class="user-avatar" onclick="toggleDropdown()"><i class="ph ph-user-circle"></i></div>
-              <div class="dropdown" id="dropdownMenu">
-                <a class="drop-menu" href="perfil.html"><i class="ph-bold ph-user"></i> Editar Perfil</a>
-                <a class="drop-menu" href="#" onclick="logout()"><i class="ph-bold ph-sign-out"></i> Sair da Conta</a>
-              </div>
+            <div class="logo">Cownt</div>
+            <div class="menu">
+                <a href="dashboard.html"><i class="ph-bold ph-house-line"></i> Dashboard</a>
+                <a href="estatisticas.html"><i class="ph-bold ph-chart-line"></i> Estatísticas</a>
+                <a href="addgado.html"><i class="ph ph-cow"></i> Gerenciar Gados</a>
+                <a href="ocorrenciadiaria.html" class="active"><i class="ph-bold ph-calendar-dots"></i> Ocorrências
+                    Diárias</a>
+                <div class="user-menu">
+                    <div class="user-avatar" onclick="toggleDropdown()"><i class="ph ph-user-circle"></i></div>
+                    <div class="dropdown" id="dropdownMenu">
+                        <a class="drop-menu" href="perfil.html"><i class="ph-bold ph-user"></i> Editar Perfil</a>
+                        <a class="drop-menu" href="#" onclick="logout()"><i class="ph-bold ph-sign-out"></i> Sair da
+                            Conta</a>
+                    </div>
+                </div>
             </div>
-          </div>
-          
+
         </div>
     </nav>
     <content>
         <div class="card-container">
             <h1>Gestão de Remédios</h1>
             <div class="btn-add" onclick="abrirModal('remedio')">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-icon">
-                    <path d="M5 12h14"/>
-                    <path d="M12 5v14"/>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-icon">
+                    <path d="M5 12h14" />
+                    <path d="M12 5v14" />
                 </svg>
                 Adicionar Remédio
             </div>
@@ -80,15 +75,29 @@
         let tipoAtual = "";
         let editId = null;
 
-        function abrirModal(tipo, dados = null) {
+        async function abrirModal(tipo, dados = null) {
             tipoAtual = tipo;
             document.getElementById("modal").style.display = "block";
             document.getElementById("modal-titulo").innerText = dados ? "Editar Remédio" : "Novo Remédio";
 
             const hoje = new Date().toISOString().split("T")[0];
-            document.getElementById("brinco").value = dados ? dados.brinco : "";
+            document.getElementById("brinco").value = dados ? "" : "";
 
-            const camposHTML = `
+            if (dados) {
+                // 🔹 Buscar o brinco do gado
+                try {
+                    const resGado = await fetch(`${apiBase}/gado/${dados.iD_Gado}`);
+                    if (resGado.ok) {
+                        const gado = await resGado.json();
+                        document.getElementById("brinco").value = gado.brinco;
+                    }
+                } catch (err) {
+                    console.error("Erro ao buscar gado:", err);
+                }
+            }
+
+            const camposHTML = 
+                `
                 <label>Data:</label>
                 <input type="date" id="data" value="${dados ? dados.date.split('T')[0] : hoje}" required>
                 <label>Nome do Remédio:</label>
@@ -101,6 +110,7 @@
                 <input type="text" id="via" value="${dados ? dados.via : ''}" required>
             `;
             document.getElementById("campos-especificos").innerHTML = camposHTML;
+
             editId = dados ? dados.id : null;
         }
 
@@ -125,14 +135,14 @@
                 lista.innerHTML = "";
                 if (dados.length === 0) return;
 
-                dados.sort((a,b) => new Date(b.date) - new Date(a.date));
+                dados.sort((a, b) => new Date(b.date) - new Date(a.date));
 
                 dados.forEach(async r => {
                     let gado = {};
                     try {
                         const resGado = await fetch(`${apiBase}/gado/${r.iD_Gado}`);
                         if (resGado.ok) gado = await resGado.json();
-                    } catch {}
+                    } catch { }
 
                     const card = document.createElement("div");
                     card.className = "card";
@@ -172,7 +182,7 @@
             }
         }
 
-        document.getElementById("modal-form").addEventListener("submit", async function(e) {
+        document.getElementById("modal-form").addEventListener("submit", async function (e) {
             e.preventDefault();
 
             const brinco = document.getElementById("brinco").value;
@@ -226,4 +236,5 @@
     <script src="app.js"></script>
 
 </body>
+
 </html>

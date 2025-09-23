@@ -18,21 +18,23 @@
 <body>
     <nav>
         <div class="nav1">
-          <div class="logo">Cownt</div>
-          <div class="menu">
-            <a href="dashboard.html" ><i class="ph-bold ph-house-line"></i> Dashboard</a>
-            <a href="estatisticas.html"><i class="ph-bold ph-chart-line"></i> Estatísticas</a>
-            <a href="addgado.html"><i class="ph ph-cow"></i> Gerenciar Gados</a>
-            <a href="ocorrenciadiaria.html" class="active"><i class="ph-bold ph-calendar-dots"></i> Ocorrências Diárias</a>
-            <div class="user-menu">
-              <div class="user-avatar" onclick="toggleDropdown()"><i class="ph ph-user-circle"></i></div>
-              <div class="dropdown" id="dropdownMenu">
-                <a class="drop-menu" href="perfil.html"><i class="ph-bold ph-user"></i> Editar Perfil</a>
-                <a class="drop-menu" href="#" onclick="logout()"><i class="ph-bold ph-sign-out"></i> Sair da Conta</a>
-              </div>
+            <div class="logo">Cownt</div>
+            <div class="menu">
+                <a href="dashboard.html"><i class="ph-bold ph-house-line"></i> Dashboard</a>
+                <a href="estatisticas.html"><i class="ph-bold ph-chart-line"></i> Estatísticas</a>
+                <a href="addgado.html"><i class="ph ph-cow"></i> Gerenciar Gados</a>
+                <a href="ocorrenciadiaria.html" class="active"><i class="ph-bold ph-calendar-dots"></i> Ocorrências
+                    Diárias</a>
+                <div class="user-menu">
+                    <div class="user-avatar" onclick="toggleDropdown()"><i class="ph ph-user-circle"></i></div>
+                    <div class="dropdown" id="dropdownMenu">
+                        <a class="drop-menu" href="perfil.html"><i class="ph-bold ph-user"></i> Editar Perfil</a>
+                        <a class="drop-menu" href="#" onclick="logout()"><i class="ph-bold ph-sign-out"></i> Sair da
+                            Conta</a>
+                    </div>
+                </div>
             </div>
-          </div>
-          
+
         </div>
     </nav>
 
@@ -142,7 +144,7 @@
         // Criar lote com leites
         // Criar lote com leites (versão com alerts de debug)
         const criarLoteAPI = async (leitesSelecionados, numLote) => {
-            
+
 
             if (!leitesSelecionados || leitesSelecionados.length === 0) {
                 return;
@@ -172,8 +174,6 @@
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(body)
                 });
-
-                alert("Requisição enviada, aguardando resposta...");
 
                 if (!response.ok) {
                     alert("Resposta da API NÃO OK! Status: " + response.status);
@@ -415,13 +415,17 @@
                 ID_Usuario: userId
             };
 
+            // pega a qualidade existente do lote (se houver)
             let qualidadeExistente = lotes.find(l => l.id === loteSelecionadoParaQualidade)?.qualidade;
 
             let url, metodo;
-            if (qualidadeExistente) {
-                url = `${API_BASE}/Qualidade/${qualidadeExistente.Id}`;
+            if (qualidadeExistente && (qualidadeExistente.id || qualidadeExistente.Id)) {
+                // já existe qualidade → atualizar com PUT
+                const idQualidade = qualidadeExistente.id ?? qualidadeExistente.Id;
+                url = `${API_BASE}/Qualidade/${idQualidade}`;
                 metodo = 'PUT';
             } else {
+                // não existe qualidade → criar nova com POST
                 url = `${API_BASE}/Qualidade`;
                 metodo = 'POST';
             }
@@ -438,7 +442,7 @@
                     alert(`Erro ao salvar qualidade!\nStatus: ${res.status}\nMensagem: ${text}`);
                     console.error("Erro ao salvar qualidade:", text);
                 } else {
-                    alert("Qualidade salva com sucesso!");
+                    alert(metodo === 'POST' ? "Qualidade criada com sucesso!" : "Qualidade atualizada com sucesso!");
                     qualidadeModal.style.display = 'none';
                     await buscarLotes();
                 }
@@ -447,6 +451,7 @@
                 console.error("Erro ao salvar qualidade:", err);
             }
         });
+
 
         // Excluir lote
         async function excluirLote(id) {
