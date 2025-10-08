@@ -16,27 +16,26 @@
 
 <body>
 
-    <nav>
-        <div class="nav1">
-            <div class="logo">Cownt</div>
-            <div class="menu">
-                <a href="dashboard.html"><i class="ph-bold ph-house-line"></i> Dashboard</a>
-                <a href="estatisticas.html"><i class="ph-bold ph-chart-line"></i> Estatísticas</a>
-                <a href="addgado.html"><i class="ph ph-cow"></i> Gerenciar Gados</a>
-                <a href="ocorrenciadiaria.html"><i class="ph-bold ph-calendar-dots"></i> Ocorrências
-                    Diárias</a>
-                <div class="user-menu">
-                    <div class="user-avatar" onclick="toggleDropdown()"><i class="ph ph-user-circle active"></i></div>
-                    <div class="dropdown" id="dropdownMenu">
-                        <a class="drop-menu" href="perfil.html"><i class="ph-bold ph-user"></i> Editar Perfil</a>
-                        <a class="drop-menu" href="#" onclick="logout()"><i class="ph-bold ph-sign-out"></i> Sair da
-                            Conta</a>
-                    </div>
-                </div>
-            </div>
-
+  <nav>
+    <div class="nav1">
+      <div class="logo">Cownt</div>
+      <div class="menu">
+        <a href="dashboard.html"><i class="ph-bold ph-house-line"></i> Dashboard</a>
+        <a href="estatisticas.html"><i class="ph-bold ph-chart-line"></i> Estatísticas</a>
+        <a href="addgado.html" ><i class="ph ph-cow"></i> Gerenciar Gados</a>
+        <a href="registro.html"><i class="ph ph-cow"></i> Registros</a>
+        <a href="ocorrenciadiaria.html"><i class="ph-bold ph-calendar-dots"></i> Ocorrências Diárias</a>
+        <div class="user-menu ">
+          <div class="user-avatar" onclick="toggleDropdown()"><i class="ph ph-user-circle active"></i></div>
+          <div class="dropdown" id="dropdownMenu">
+            <a class="drop-menu" href="perfil.html"><i class="ph-bold ph-user"></i> Editar Perfil</a>
+            <a class="drop-menu" href="#" onclick="logout()"><i class="ph-bold ph-sign-out"></i> Sair da Conta</a>
+          </div>
         </div>
-    </nav>
+      </div>
+    </div>
+  </nav>
+
     <div class="perfil-wrapper">
         <h2>Editar Perfil</h2>
         <p class="perfil-subtitle">Gerencie suas informações pessoais</p>
@@ -63,7 +62,7 @@
     </div>
 
     <script>
-// mantém o valor da senha retornada pelo GET para reenviar no PUT
+
 let senhaExistente = '';
 
 window.onload = async function () {
@@ -90,8 +89,6 @@ window.onload = async function () {
 
       document.getElementById("email").value = user.email || "";
 
-      // <-- aqui só armazenamos a senha existente (sem mostrá-la no form)
-      // usamos fallback para maiúscula/minúscula caso a API retorne diferente
       senhaExistente = user.senha ?? user.Senha ?? '';
     }
   } catch (err) {
@@ -133,6 +130,7 @@ document.getElementById("perfilForm").addEventListener("submit", async (e) => {
 });
 
 </script>
+<script src="app.js"></script>
 </body>
 
 </html>

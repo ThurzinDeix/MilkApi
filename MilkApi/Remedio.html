@@ -26,24 +26,23 @@
 <body>
     <nav>
         <div class="nav1">
-            <div class="logo">Cownt</div>
-            <div class="menu">
-                <a href="dashboard.html"><i class="ph-bold ph-house-line"></i> Dashboard</a>
-                <a href="estatisticas.html"><i class="ph-bold ph-chart-line"></i> Estatísticas</a>
-                <a href="addgado.html"><i class="ph ph-cow"></i> Gerenciar Gados</a>
-                <a href="ocorrenciadiaria.html" class="active"><i class="ph-bold ph-calendar-dots"></i> Ocorrências
-                    Diárias</a>
-                <div class="user-menu">
-                    <div class="user-avatar" onclick="toggleDropdown()"><i class="ph ph-user-circle"></i></div>
-                    <div class="dropdown" id="dropdownMenu">
-                        <a class="drop-menu" href="perfil.html"><i class="ph-bold ph-user"></i> Editar Perfil</a>
-                        <a class="drop-menu" href="#" onclick="logout()"><i class="ph-bold ph-sign-out"></i> Sair da
-                            Conta</a>
-                    </div>
-                </div>
+          <div class="logo">Cownt</div>
+          <div class="menu">
+            <a href="dashboard.html"><i class="ph-bold ph-house-line"></i> Dashboard</a>
+            <a href="estatisticas.html"><i class="ph-bold ph-chart-line"></i> Estatísticas</a>
+            <a href="addgado.html" ><i class="ph ph-cow"></i> Gerenciar Gados</a>
+            <a href="registro.html"><i class="ph ph-cow"></i> Registros</a>
+            <a href="ocorrenciadiaria.html"><i class="ph-bold ph-calendar-dots"></i> Ocorrências Diárias</a>
+            <div class="user-menu">
+              <div class="user-avatar" onclick="toggleDropdown()"><i class="ph ph-user-circle"></i></div>
+              <div class="dropdown" id="dropdownMenu">
+                <a class="drop-menu" href="perfil.html"><i class="ph-bold ph-user"></i> Editar Perfil</a>
+                <a class="drop-menu" href="#" onclick="logout()"><i class="ph-bold ph-sign-out"></i> Sair da Conta</a>
+              </div>
             </div>
+          </div>
         </div>
-    </nav>
+      </nav>
     <content>
 
         <div class="card-container">
@@ -279,5 +278,6 @@
         carregarRemedios();
         carregarAlertas();
     </script>
+    <script src="app.js"></script>
 </body>
 </html>

@@ -329,7 +329,7 @@ namespace MilkApi.Controllers
                         StatusProdutivo = reader["StatusProdutivo"]?.ToString()
                     });
                 }
-            }
+            }   
 
             foreach (var vaca in vacas)
             {

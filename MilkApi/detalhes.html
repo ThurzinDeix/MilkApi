@@ -50,24 +50,23 @@
 <body>
     <nav>
         <div class="nav1">
-            <div class="menu">
-                <div class="logo">Cownt</div>
-                <a href="dashboard.html"><i class="ph-bold ph-house-line"></i> Dashboard</a>
-                <a href="estatisticas.html"><i class="ph-bold ph-chart-line"></i> Estatísticas</a>
-                <a href="addgado.html" class="active"><i class="ph ph-cow"></i> Gerenciar Gados</a>
-                <a href="registro.html"><i class="ph ph-cow"></i> Registros</a>
-                <a href="ocorrenciadiaria.html"><i class="ph-bold ph-calendar-dots"></i> Ocorrências Diárias</a>
-                <div class="user-menu">
-                    <div class="user-avatar" onclick="toggleDropdown()"><i class="ph ph-user-circle"></i></div>
-                    <div class="dropdown" id="dropdownMenu">
-                        <a class="drop-menu" href="perfil.html"><i class="ph-bold ph-user"></i> Editar Perfil</a>
-                        <a class="drop-menu" href="#" onclick="logout()"><i class="ph-bold ph-sign-out"></i> Sair da
-                            Conta</a>
-                    </div>
-                </div>
+          <div class="logo">Cownt</div>
+          <div class="menu">
+            <a href="dashboard.html"><i class="ph-bold ph-house-line"></i> Dashboard</a>
+            <a href="estatisticas.html"><i class="ph-bold ph-chart-line"></i> Estatísticas</a>
+            <a href="addgado.html" ><i class="ph ph-cow"></i> Gerenciar Gados</a>
+            <a href="registro.html" class="active"><i class="ph ph-cow"></i> Registros</a>
+            <a href="ocorrenciadiaria.html"><i class="ph-bold ph-calendar-dots"></i> Ocorrências Diárias</a>
+            <div class="user-menu">
+              <div class="user-avatar" onclick="toggleDropdown()"><i class="ph ph-user-circle"></i></div>
+              <div class="dropdown" id="dropdownMenu">
+                <a class="drop-menu" href="perfil.html"><i class="ph-bold ph-user"></i> Editar Perfil</a>
+                <a class="drop-menu" href="#" onclick="logout()"><i class="ph-bold ph-sign-out"></i> Sair da Conta</a>
+              </div>
             </div>
+          </div>
         </div>
-    </nav>
+      </nav>
 
     <div class="content">
         <h1 class="tit-registro">Registros por Vaca <a href="registro.html" class="btn-add">⬅ Voltar</a></h1>
@@ -76,6 +75,7 @@
         <div id="registrosWrapper"></div>
     </div>
 
+    <script src="app.js"></script>
     <script>
         async function carregarDetalhes() {
     const vacaId = localStorage.getItem("vacaSelecionada");
@@ -231,7 +231,7 @@
 window.onload = carregarDetalhes;
 
     </script>
-
+    
 
 </body>
 
