@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Alertas do Rebanho</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css" />
+</head>
+
+<body>
+    <nav>
+        <div class="nav1">
+            <div class="logo">Cownt</div>
+            <div class="menu">
+                <a href="dashboard.html" class="active"><i class="ph-bold ph-house-line"></i> Dashboard</a>
+                <a href="estatisticas.html"><i class="ph-bold ph-chart-line"></i> Estatísticas</a>
+                <a href="addgado.html"><i class="ph ph-cow"></i> Gerenciar Gados</a>
+                <a href="registro.html"><i class="ph ph-cow"></i> Registros</a>
+                <a href="ocorrenciadiaria.html"><i class="ph-bold ph-calendar-dots"></i> Ocorrências Diárias</a>
+                <div class="user-menu">
+                    <div class="user-avatar" onclick="toggleDropdown()"><i class="ph ph-user-circle"></i></div>
+                    <div class="dropdown" id="dropdownMenu">
+                        <a class="drop-menu" href="perfil.html"><i class="ph-bold ph-user"></i> Editar Perfil</a>
+                        <a class="drop-menu" href="#" onclick="logout()"><i class="ph-bold ph-sign-out"></i> Sair da
+                            Conta</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <a href="dashboard.html" style="color: #fff; text-decoration:none; margin-left:auto;">Voltar ao Dashboard</a>
+
+    <div class="content">
+        <h2>Notificações</h2>
+        <p>Visualize todas as notificações organizadas por categoria</p>
+        <div id="alertasCategorias" class="alertas-categorias"></div>
+    </div>
+
+
+    <script>
+        function carregarAlertas() {
+            const container = document.getElementById("alertasCategorias");
+            const alertas = JSON.parse(localStorage.getItem("alertas") || "[]");
+
+            if (!alertas.length) {
+                container.innerHTML = "<p>Nenhum alerta encontrado.</p>";
+                return;
+            }
+
+            // Categorias que vamos exibir
+            const categorias = {
+                "Remedio": "Vacinação/Remédio",
+                "Leite": "Produção",
+                "Prenhez": "Próxima de Parto",
+                "Suplemento": "Outras Notificações",
+                "Qualidade": "Outras Notificações"
+            };
+
+            // Agrupar alertas por categoria
+            const agrupados = {};
+            alertas.forEach(a => {
+                const cat = categorias[a.origem] || "Outras Notificações";
+                if (!agrupados[cat]) agrupados[cat] = [];
+                agrupados[cat].push(a);
+            });
+
+            // Criar HTML para cada categoria
+            Object.keys(agrupados).forEach(cat => {
+                const divCat = document.createElement("div");
+                divCat.classList.add("alerta-categoria");
+
+                divCat.addEventListener("click", () => {
+                    const visivel = lista.style.display === "block";
+                    lista.style.display = visivel ? "none" : "block";
+                    divCat.querySelector(".icon-seta svg").style.transform = visivel ? "rotate(0deg)" : "rotate(180deg)";
+                    divCat.querySelector(".icon-seta svg").style.transition = "transform 0.3s";
+
+
+                    const categoria = divCat.closest(".alerta-categoria");
+
+                    // Ativa ou desativa a classe que bloqueia o hover
+                    if (visivel) {
+                        categoria.classList.remove("sem-hover");
+                    } else {
+                        categoria.classList.add("sem-hover");
+                    }
+                });
+
+
+
+                // Cabeçalho da categoria
+                const header = document.createElement("div");
+                header.classList.add("alerta-header");
+                header.innerHTML = `
+                    <div class="titulo">${cat}<div class="contador">${agrupados[cat].length}</div></div> <div class="icon-seta"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down-icon lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg> </div>
+                `;
+
+                // Lista de alertas (inicialmente oculta)
+                const lista = document.createElement("div");
+                lista.classList.add("lista-alertas");
+                lista.style.display = "none";
+
+                agrupados[cat].forEach(a => {
+                    const item = document.createElement("div");
+                    item.classList.add("alerta-item", a.tipo);
+                    item.innerHTML = `
+                <strong>[${a.origem}]</strong> ${a.mensagem}
+                <span class="idgado">Gado ${a.iD_Gado ?? ""}</span>
+            `;
+                    lista.appendChild(item);
+                });
+
+                // Clique para expandir/colapsar
+                
+
+                divCat.appendChild(header);
+                divCat.appendChild(lista);
+                container.appendChild(divCat);
+            });
+        }
+        if (window.location.pathname.includes("alertas.html")) {
+            carregarAlertas();
+        }
+    </script>
+
+
+    <script src="app.js"></script>
+</body>
+
+</html>

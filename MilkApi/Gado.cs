@@ -18,15 +18,12 @@ namespace MilkApi
         public string? Observacao { get; set; }
 
         public string? StatusProdutivo { get; set; }
-
-        // Datas usadas no cálculo
+       
         public DateTime? UltimoParto { get; set; }
         public List<Prenhez> Prenhezes { get; set; } = new();
 
-        // Campo para indicar se o StatusProdutivo foi definido manualmente
         public bool StatusManual { get; set; } = false;
 
-        // Método para calcular automaticamente o status
         public string CalcularStatus()
         {
             var hoje = DateTime.Now;

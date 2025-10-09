@@ -2,52 +2,16 @@
 <html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Monitoramento de Gado</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f8;
-            color: #333;
-        }
-
-        /* Container do conteúdo */
-        .content {
-            max-width: 900px;
-            margin: 30px auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            color: #2c3e50;
-        }
-
-        p {
-            line-height: 1.6;
-            font-size: 16px;
-        }
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css"
-    />
+  <meta charset="UTF-8">
+  <title>Monitoramento de Gado</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" type="text/css"
+    href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+  <link rel="stylesheet" type="text/css"
+    href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+  <link rel="stylesheet" type="text/css"
+    href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css" />
 </head>
 
 <body>
@@ -57,8 +21,8 @@
       <div class="menu">
         <a href="dashboard.html" class="active"><i class="ph-bold ph-house-line"></i> Dashboard</a>
         <a href="estatisticas.html"><i class="ph-bold ph-chart-line"></i> Estatísticas</a>
-        <a href="addgado.html" ><i class="ph ph-cow"></i> Gerenciar Gados</a>
-        <a href="registro.html" ><i class="ph ph-cow"></i> Registros</a>
+        <a href="addgado.html"><i class="ph ph-cow"></i> Gerenciar Gados</a>
+        <a href="registro.html"><i class="ph ph-cow"></i> Registros</a>
         <a href="ocorrenciadiaria.html"><i class="ph-bold ph-calendar-dots"></i> Ocorrências Diárias</a>
         <div class="user-menu">
           <div class="user-avatar" onclick="toggleDropdown()"><i class="ph ph-user-circle"></i></div>
@@ -71,25 +35,120 @@
     </div>
   </nav>
 
-    <!-- Conteúdo principal -->
-    <div class="content">
-        <h1>Monitoramento de Gado</h1>
-        <p>
-            O monitoramento de gado é uma prática essencial para produtores rurais que buscam aumentar
-            a eficiência, garantir o bem-estar animal e melhorar a produtividade.
-            Com o uso de sistemas de controle e análise, é possível acompanhar dados sobre alimentação,
-            saúde, reprodução e produção de leite de cada animal.
-        </p>
-        <p>
-            Tecnologias modernas permitem que pequenos e médios produtores tenham acesso a informações
-            detalhadas em tempo real, possibilitando decisões mais assertivas no manejo do rebanho.
-            Isso contribui para a redução de custos, otimização de recursos e aumento da rentabilidade
-            da propriedade rural.
-        </p>
+  <!-- Conteúdo principal -->
+  <div class="content">
+    <div class="dashboard-dados">
+      <div class="card-dados">
+        <div class="linha-card-dados">
+          <p class="tit-card-dados">Total Animais</p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="#5a3c2d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-activity-icon lucide-activity">
+            <path
+              d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" />
+          </svg>
+        </div>
+        <p class="Numero-card-dados" id="totalAnimais"></p>
+      </div>
+      <div class="card-dados">
+        <div class="linha-card-dados">
+          <p class="tit-card-dados">Produção Hoje</p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="#5a3c2d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-milk-icon lucide-milk">
+            <path d="M8 2h8" />
+            <path
+              d="M9 2v2.789a4 4 0 0 1-.672 2.219l-.656.984A4 4 0 0 0 7 10.212V20a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-9.789a4 4 0 0 0-.672-2.219l-.656-.984A4 4 0 0 1 15 4.788V2" />
+            <path d="M7 15a6.472 6.472 0 0 1 5 0 6.47 6.47 0 0 0 5 0" />
+          </svg>
+        </div>
+        <p class="Numero-card-dados" id="producaoDiaria"></p>
+      </div>
+      <div class="card-dados">
+        <div class="linha-card-dados">
+          <p class="tit-card-dados">Taxa de Natalidade</p>
+          <i class="ph ph-first-aid"></i>
+        </div>
+        <p class="Numero-card-dados" id="taxaNatalidade"></p>
+      </div>
+      <div class="card-dados">
+        <div class="linha-card-dados">
+          <p class="tit-card-dados">Média de produção Mensal</p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="#5a3c2d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-chart-no-axes-combined-icon lucide-chart-no-axes-combined">
+            <path d="M12 16v5" />
+            <path d="M16 14v7" />
+            <path d="M20 10v11" />
+            <path d="m22 3-8.646 8.646a.5.5 0 0 1-.708 0L9.354 8.354a.5.5 0 0 0-.707 0L2 15" />
+            <path d="M4 18v3" />
+            <path d="M8 14v7" />
+          </svg>
+        </div>
+        <p class="Numero-card-dados" id="mediaMensal"></p>
+      </div>
     </div>
-    <script src="app.js"></script>
+
+    <div class="notf1" onclick="abrirAlertas()">
+      <div class="notf">
+        <p class="num-not" id="numNotificacao"></p>
+        <p class="text-not">Notificações pendentes</p>
+      </div>
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5a3c2d"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bell-icon lucide-bell">
+        <path d="M10.268 21a2 2 0 0 0 3.464 0" />
+        <path
+          d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" />
+      </svg>
+    </div>
 
 
+  </div>
+  <script>
+    const apiBase = "https://localhost:7092";
+    const usuarioId = localStorage.getItem("userId")
+
+    async function carregarDashboard() {
+      try {
+        const res = await fetch(`${apiBase}/Alerta/${usuarioId}`);
+        if (!res.ok) throw new Error("Erro ao buscar dados do servidor");
+        const data = await res.json();
+
+        // --- Estatísticas ---
+        document.getElementById("totalAnimais").textContent = data.estatisticas.numeroDeVacas;
+        document.getElementById("producaoDiaria").textContent = `${data.estatisticas.producaoTotalDiaria} L`;
+        document.getElementById("taxaNatalidade").textContent = `${data.estatisticas.taxaNatalidade}%`;
+        document.getElementById("mediaMensal").textContent = `${data.estatisticas.mediaMensalPorVaca} L`;
+
+        // --- Contagem de notificações ---
+        document.getElementById("numNotificacao").textContent = data.totalAlertas;
+
+
+        localStorage.setItem("alertas", JSON.stringify(data.alertas));
+      } catch (erro) {
+        console.error("Erro ao carregar dados:", erro);
+      }
+    }
+
+
+    function abrirAlertas() {
+      window.location.href = "alertas.html";
+    }
+
+
+    // Detecta qual página está aberta
+    if (window.location.pathname.includes("dashboard.html")) {
+      carregarDashboard();
+    }
+    if (window.location.pathname.includes("alertas.html")) {
+      carregarAlertas();
+    }
+
+  </script>
+
+
+
+  <script src="app.js"></script>
 </body>
 
 </html>
