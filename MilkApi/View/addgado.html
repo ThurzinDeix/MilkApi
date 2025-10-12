@@ -268,6 +268,24 @@
       }
     });
 
+    async function atualizarStatusProdutivo() {
+      try {
+        const res = await fetch("https://localhost:7092/Gado/AtualizarStatusProdutivo");
+        if (!res.ok) throw new Error("Erro ao atualizar status produtivo");
+        const msg = await res.text();
+        console.log(msg); // mensagem do backend
+      } catch (error) {
+        console.error("Falha ao atualizar status produtivo:", error);
+      }
+    }
+
+    // Chame ao carregar a página
+    window.addEventListener("load", async () => {
+      await atualizarStatusProdutivo();
+      carregarGados(); // depois atualiza a lista de vacas
+    });
+
+
     carregarGados();
   </script>
   <script src="app.js"></script>

@@ -178,5 +178,44 @@ namespace MilkApi.Controllers
 
             return NotFound();
         }
+
+        [HttpGet("verificar-prenha")]
+        public ActionResult VerificarPrenha(string brinco, int usuarioId)
+        {
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            {
+                conn.Open();
+
+                // Buscar o ID_Gado pelo brinco
+                string queryGado = "SELECT Id FROM Gado WHERE Brinco = @Brinco AND ID_Usuario = @ID_Usuario";
+                SqlCommand cmdGado = new SqlCommand(queryGado, conn);
+                cmdGado.Parameters.AddWithValue("@Brinco", brinco);
+                cmdGado.Parameters.AddWithValue("@ID_Usuario", usuarioId);
+
+                var gadoIdObj = cmdGado.ExecuteScalar();
+                if (gadoIdObj == null)
+                {
+                    return NotFound(new { mensagem = "Gado não encontrado." });
+                }
+
+                int gadoId = Convert.ToInt32(gadoIdObj);
+
+                // Verifica se há prenhez ativa para este gado
+                string queryPrenha = "SELECT COUNT(*) FROM Prenhez WHERE ID_Gado = @ID_Gado AND Status = 'Prenha'";
+                SqlCommand cmdPrenha = new SqlCommand(queryPrenha, conn);
+                cmdPrenha.Parameters.AddWithValue("@ID_Gado", gadoId);
+
+                int count = Convert.ToInt32(cmdPrenha.ExecuteScalar());
+
+                if (count > 0)
+                {
+                    return Ok(new { prenha = true, mensagem = "Esta vaca já está prenha." });
+                }
+                else
+                {
+                    return Ok(new { prenha = false });
+                }
+            }
+        }
     }
 }

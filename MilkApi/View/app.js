@@ -23,4 +23,3 @@ window.onclick = function (e) {
     document.getElementById("dropdownMenu").classList.remove("show");
   }
 }
-

@@ -114,13 +114,11 @@
         if (!res.ok) throw new Error("Erro ao buscar dados do servidor");
         const data = await res.json();
 
-        // --- Estatísticas ---
         document.getElementById("totalAnimais").textContent = data.estatisticas.numeroDeVacas;
         document.getElementById("producaoDiaria").textContent = `${data.estatisticas.producaoTotalDiaria} L`;
         document.getElementById("taxaNatalidade").textContent = `${data.estatisticas.taxaNatalidade}%`;
-        document.getElementById("mediaMensal").textContent = `${data.estatisticas.mediaMensalPorVaca} L`;
+        document.getElementById("mediaMensal").textContent = `${data.estatisticas.mediaMensalPorVaca} L / Vaca`;
 
-        // --- Contagem de notificações ---
         document.getElementById("numNotificacao").textContent = data.totalAlertas;
 
 
@@ -136,7 +134,6 @@
     }
 
 
-    // Detecta qual página está aberta
     if (window.location.pathname.includes("dashboard.html")) {
       carregarDashboard();
     }

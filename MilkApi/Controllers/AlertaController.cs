@@ -73,7 +73,6 @@ namespace MilkApi.Controllers
             {
                 conn.Open();
 
-                // Mapeia ID_Gado -> Brinco
                 var brincos = new Dictionary<int, string>();
                 string sqlBrincos = "SELECT ID, Brinco FROM Gado WHERE ID_Usuario = @id";
                 using (var cmd = new SqlCommand(sqlBrincos, conn))
@@ -95,8 +94,7 @@ namespace MilkApi.Controllers
                     }
                 }
 
-                // ================= NOVO TRECHO =================
-                // Mapeia ID_Lote -> Num (número legível do lote)
+
                 var lotes = new Dictionary<int, int>();
                 string sqlLotes = "SELECT Id, Num FROM Lote WHERE ID_Usuario = @id";
                 using (var cmd = new SqlCommand(sqlLotes, conn))
@@ -112,11 +110,7 @@ namespace MilkApi.Controllers
                         }
                     }
                 }
-                // =================================================
 
-                // -----------------------------------------
-                // Estatísticas gerais do usuário
-                // -----------------------------------------
 
                 string sqlProducaoDiaria = @"SELECT ISNULL(SUM(Litros), 0) 
                                              FROM Leite 
@@ -158,9 +152,7 @@ namespace MilkApi.Controllers
                     estatisticas.MediaMensalPorVaca = Math.Round(Convert.ToDouble(cmd.ExecuteScalar()), 2);
                 }
 
-                // -----------------------------------------
-                // ALERTAS
-                // -----------------------------------------
+
 
                 double mediaEsperada = 12.0;
                 DateTime umaSemanaAtras = DateTime.Now.AddDays(-7);
@@ -185,11 +177,11 @@ namespace MilkApi.Controllers
                             double mediaLitros = reader.IsDBNull(1) ? 0 : reader.GetDouble(1);
 
                             if (mediaLitros < mediaEsperada * 0.9)
-                                alertas.Add(new Alerta { Tipo = "danger", Mensagem = $"Gado Brinco: {brincos.GetValueOrDefault(idGado, idGado.ToString())}: média da última semana abaixo da esperada ({mediaLitros:F1} L)", Origem = "Leite" });
+                                alertas.Add(new Alerta { Tipo = "danger", Mensagem = $"Brinco {brincos.GetValueOrDefault(idGado, idGado.ToString())}: média da última semana abaixo da esperada ({mediaLitros:F1} L)", Origem = "Leite" });
                             else if (mediaLitros < mediaEsperada)
-                                alertas.Add(new Alerta { Tipo = "warning", Mensagem = $"Gado Brinco: {brincos.GetValueOrDefault(idGado, idGado.ToString())}: média da última semana próxima do mínimo ({mediaLitros:F1} L)", Origem = "Leite" });
+                                alertas.Add(new Alerta { Tipo = "warning", Mensagem = $"Brinco {brincos.GetValueOrDefault(idGado, idGado.ToString())}: média da última semana próxima do mínimo ({mediaLitros:F1} L)", Origem = "Leite" });
                             else if (mediaLitros > mediaEsperada * 1.1)
-                                alertas.Add(new Alerta { Tipo = "info", Mensagem = $"Gado Brinco: {brincos.GetValueOrDefault(idGado, idGado.ToString())}: média da última semana acima da esperada ({mediaLitros:F1} L)", Origem = "Leite" });
+                                alertas.Add(new Alerta { Tipo = "info", Mensagem = $"Brinco {brincos.GetValueOrDefault(idGado, idGado.ToString())}: média da última semana acima da esperada ({mediaLitros:F1} L)", Origem = "Leite" });
                         }
                     }
                 }
@@ -230,21 +222,21 @@ namespace MilkApi.Controllers
                                     {
                                         string brinco = brincos.GetValueOrDefault(idGado, idGado.ToString());
                                         if (lote.ccs < 100000)
-                                            alertas.Add(new Alerta { Tipo = "info", Mensagem = $"Gado Brinco: {brinco} no lote {loteNum}: CCS excelente (<100k)", Origem = "Qualidade" });
+                                            alertas.Add(new Alerta { Tipo = "info", Mensagem = $"Brinco {brinco} no lote {loteNum}: CCS excelente (<100k)", Origem = "Qualidade" });
                                         else if (lote.ccs > 300000)
-                                            alertas.Add(new Alerta { Tipo = "danger", Mensagem = $"Gado Brinco: {brinco} no lote {loteNum}: CCS alto (>300k)", Origem = "Qualidade" });
+                                            alertas.Add(new Alerta { Tipo = "danger", Mensagem = $"Brinco {brinco} no lote {loteNum}: CCS alto (>300k)", Origem = "Qualidade" });
                                         else if (lote.ccs > 200000)
-                                            alertas.Add(new Alerta { Tipo = "warning", Mensagem = $"Gado Brinco: {brinco} no lote {loteNum}: CCS elevado (200k–300k)", Origem = "Qualidade" });
+                                            alertas.Add(new Alerta { Tipo = "warning", Mensagem = $"Brinco {brinco} no lote {loteNum}: CCS elevado (200k–300k)", Origem = "Qualidade" });
 
                                         if (lote.gordura < 2.5m)
-                                            alertas.Add(new Alerta { Tipo = "warning", Mensagem = $"Gado Brinco: {brinco} no lote {loteNum}: gordura baixa (<2.5%)", Origem = "Qualidade" });
+                                            alertas.Add(new Alerta { Tipo = "warning", Mensagem = $"Brinco {brinco} no lote {loteNum}: gordura baixa (<2.5%)", Origem = "Qualidade" });
                                         else if (lote.gordura > 4.0m)
-                                            alertas.Add(new Alerta { Tipo = "warning", Mensagem = $"Gado Brinco: {brinco} no lote {loteNum}: gordura alta (>4.0%)", Origem = "Qualidade" });
+                                            alertas.Add(new Alerta { Tipo = "warning", Mensagem = $"Brinco {brinco} no lote {loteNum}: gordura alta (>4.0%)", Origem = "Qualidade" });
 
                                         if (lote.proteina < 3.2m)
-                                            alertas.Add(new Alerta { Tipo = "warning", Mensagem = $"Gado Brinco: {brinco} no lote {loteNum}: proteína baixa (<3.2%)", Origem = "Qualidade" });
+                                            alertas.Add(new Alerta { Tipo = "warning", Mensagem = $"Brinco {brinco} no lote {loteNum}: proteína baixa (<3.2%)", Origem = "Qualidade" });
                                         else if (lote.proteina > 4.0m)
-                                            alertas.Add(new Alerta { Tipo = "warning", Mensagem = $"Gado Brinco: {brinco} no lote {loteNum}: proteína alta (>4.0%)", Origem = "Qualidade" });
+                                            alertas.Add(new Alerta { Tipo = "warning", Mensagem = $"Brinco {brinco} no lote {loteNum}: proteína alta (>4.0%)", Origem = "Qualidade" });
                                     }
                                 }
                             }
@@ -252,8 +244,6 @@ namespace MilkApi.Controllers
                     }
                 }
 
-                // O restante (Remédio, Suplemento, Prenhez) continua igual
-                // Apenas usa o brinco (já está no dicionário), sem mostrar IDs numéricos
 
                 string sqlRemedio = @"
                     SELECT r.Id, r.ID_Gado, r.Nome, r.Date, r.intervalo, r.Doses,
@@ -291,7 +281,7 @@ namespace MilkApi.Controllers
                                     alertas.Add(new Alerta
                                     {
                                         Tipo = "danger",
-                                        Mensagem = $"Gado Brinco: {brinco} -> medicamento {nome} em atraso ({dosesRestantes} doses restantes, próxima deveria ser {proximaDose:dd/MM HH:mm})",
+                                        Mensagem = $"Brinco {brinco} -> medicamento {nome} em atraso ({dosesRestantes} doses restantes, próxima deveria ser {proximaDose:dd/MM HH:mm})",
                                         Origem = "Remedio",
                                         ID_Gado = idGado
                                     });
@@ -301,7 +291,7 @@ namespace MilkApi.Controllers
                                     alertas.Add(new Alerta
                                     {
                                         Tipo = "warning",
-                                        Mensagem = $"Gado Brinco: {brinco} -> deve tomar {nome} em breve ({dosesRestantes} doses restantes, próxima às {proximaDose:HH:mm dd/MM})",
+                                        Mensagem = $"Brinco {brinco} -> deve tomar {nome} em breve ({dosesRestantes} doses restantes, próxima às {proximaDose:HH:mm dd/MM})",
                                         Origem = "Remedio",
                                         ID_Gado = idGado
                                     });
@@ -328,9 +318,9 @@ namespace MilkApi.Controllers
                             string brinco = brincos.GetValueOrDefault(idGado, idGado.ToString());
 
                             if (proxima < DateTime.Now)
-                                alertas.Add(new Alerta { Tipo = "danger", Mensagem = $"Gado Brinco: {brinco} -> suplemento {nome} em atraso", Origem = "Suplemento" });
+                                alertas.Add(new Alerta { Tipo = "danger", Mensagem = $"Brinco {brinco} -> suplemento {nome} em atraso", Origem = "Suplemento" });
                             else if (proxima <= DateTime.Now.AddDays(3))
-                                alertas.Add(new Alerta { Tipo = "warning", Mensagem = $"Gado Brinco: {brinco} -> deve receber suplemento {nome} em breve", Origem = "Suplemento" });
+                                alertas.Add(new Alerta { Tipo = "warning", Mensagem = $"Brinco {brinco} -> deve receber suplemento {nome} em breve", Origem = "Suplemento" });
                         }
                     }
                 }
@@ -352,9 +342,9 @@ namespace MilkApi.Controllers
                             if (status == "Aguardando Diagnóstico" && dataEsperada.HasValue)
                             {
                                 if (dataEsperada.Value < DateTime.Now)
-                                    alertas.Add(new Alerta { Tipo = "danger", Mensagem = $"Gado Brinco: {brinco} -> diagnóstico de prenhez atrasado", Origem = "Prenhez" });
+                                    alertas.Add(new Alerta { Tipo = "danger", Mensagem = $"Brinco {brinco} -> diagnóstico de prenhez atrasado", Origem = "Prenhez" });
                                 else if (dataEsperada.Value <= DateTime.Now.AddDays(5))
-                                    alertas.Add(new Alerta { Tipo = "warning", Mensagem = $"Gado Brinco: {brinco} -> diagnóstico de prenhez em breve", Origem = "Prenhez" });
+                                    alertas.Add(new Alerta { Tipo = "warning", Mensagem = $"Brinco {brinco} -> diagnóstico de prenhez em breve", Origem = "Prenhez" });
                             }
 
                             DateTime dataParto = dataPrenhez.AddDays(280);
@@ -363,17 +353,17 @@ namespace MilkApi.Controllers
                             if (dataSecagem <= DateTime.Now.AddDays(7) && status != "Seca")
                             {
                                 if (dataSecagem < DateTime.Now)
-                                    alertas.Add(new Alerta { Tipo = "danger", Mensagem = $"Gado Brinco: {brinco} -> já deveria estar seca", Origem = "Prenhez" });
+                                    alertas.Add(new Alerta { Tipo = "danger", Mensagem = $"Brinco {brinco} -> já deveria estar seca", Origem = "Prenhez" });
                                 else
-                                    alertas.Add(new Alerta { Tipo = "warning", Mensagem = $"Gado Brinco: {brinco} -> deve ser seca na próxima semana", Origem = "Prenhez" });
+                                    alertas.Add(new Alerta { Tipo = "warning", Mensagem = $"Brinco {brinco} -> deve ser seca na próxima semana", Origem = "Prenhez" });
                             }
 
                             if (dataParto <= DateTime.Now.AddDays(7) && status != "Parida")
                             {
                                 if (dataParto < DateTime.Now)
-                                    alertas.Add(new Alerta { Tipo = "danger", Mensagem = $"Gado Brinco: {brinco} -> já deveria ter parido", Origem = "Prenhez" });
+                                    alertas.Add(new Alerta { Tipo = "danger", Mensagem = $"Brinco {brinco} -> já deveria ter parido", Origem = "Prenhez" });
                                 else
-                                    alertas.Add(new Alerta { Tipo = "warning", Mensagem = $"Gado Brinco: {brinco} -> prestes a parir", Origem = "Prenhez" });
+                                    alertas.Add(new Alerta { Tipo = "warning", Mensagem = $"Brinco {brinco} -> prestes a parir", Origem = "Prenhez" });
                             }
                         }
                     }

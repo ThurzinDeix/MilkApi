@@ -35,10 +35,13 @@
             </div>
         </div>
     </nav>
-    <a href="dashboard.html" style="color: #fff; text-decoration:none; margin-left:auto;">Voltar ao Dashboard</a>
 
     <div class="content">
-        <h2>Notificações</h2>
+        <h1 class="tit-registro">Notificações<div>
+                <a href="dashboard.html" class="btn-add">Voltar ao Dashboard</a>
+            </div>
+        </h1>
+
         <p>Visualize todas as notificações organizadas por categoria</p>
         <div id="alertasCategorias" class="alertas-categorias"></div>
     </div>
@@ -54,7 +57,6 @@
                 return;
             }
 
-            // Categorias que vamos exibir
             const categorias = {
                 "Remedio": "Vacinação/Remédio",
                 "Leite": "Produção",
@@ -63,7 +65,6 @@
                 "Qualidade": "Outras Notificações"
             };
 
-            // Agrupar alertas por categoria
             const agrupados = {};
             alertas.forEach(a => {
                 const cat = categorias[a.origem] || "Outras Notificações";
@@ -71,38 +72,21 @@
                 agrupados[cat].push(a);
             });
 
-            // Criar HTML para cada categoria
             Object.keys(agrupados).forEach(cat => {
                 const divCat = document.createElement("div");
                 divCat.classList.add("alerta-categoria");
 
-                divCat.addEventListener("click", () => {
-                    const visivel = lista.style.display === "block";
-                    lista.style.display = visivel ? "none" : "block";
-                    divCat.querySelector(".icon-seta svg").style.transform = visivel ? "rotate(0deg)" : "rotate(180deg)";
-                    divCat.querySelector(".icon-seta svg").style.transition = "transform 0.3s";
-
-
-                    const categoria = divCat.closest(".alerta-categoria");
-
-                    // Ativa ou desativa a classe que bloqueia o hover
-                    if (visivel) {
-                        categoria.classList.remove("sem-hover");
-                    } else {
-                        categoria.classList.add("sem-hover");
-                    }
-                });
-
-
-
-                // Cabeçalho da categoria
                 const header = document.createElement("div");
                 header.classList.add("alerta-header");
                 header.innerHTML = `
-                    <div class="titulo">${cat}<div class="contador">${agrupados[cat].length}</div></div> <div class="icon-seta"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down-icon lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg> </div>
+                <div class="titulo">${cat}<div class="contador">${agrupados[cat].length}</div></div>
+                <div class="icon-seta">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down-icon lucide-chevron-down">
+                        <path d="m6 9 6 6 6-6"/>
+                    </svg>
+                </div>
                 `;
 
-                // Lista de alertas (inicialmente oculta)
                 const lista = document.createElement("div");
                 lista.classList.add("lista-alertas");
                 lista.style.display = "none";
@@ -110,23 +94,58 @@
                 agrupados[cat].forEach(a => {
                     const item = document.createElement("div");
                     item.classList.add("alerta-item", a.tipo);
+
+                    let icone = "";
+                    if (a.tipo === "danger") {
+                        icone = `<div class="icone-alertas"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E53935" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert-icon lucide-triangle-alert"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></div>`;
+                    } else if (a.tipo === "warning") {
+                        icone = `<div class="icone-alertas"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FBC02D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-alert-icon lucide-circle-alert"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg></div>`;
+                    } else if (a.tipo === "info") {
+                        icone = `<div class="icone-alertas"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1E88E5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chart-line-icon lucide-chart-line"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></svg></div>`;
+                    }
+
                     item.innerHTML = `
-                <strong>[${a.origem}]</strong> ${a.mensagem}
-                <span class="idgado">Gado ${a.iD_Gado ?? ""}</span>
-            `;
+                        <div class="alerta-mensagens">${a.mensagem}
+                        <span class="idgado">${a.brinco ? ` | Brinco: ${a.brinco}` : ""}</span></div>
+                        ${icone}
+                    `;
+
                     lista.appendChild(item);
                 });
 
-                // Clique para expandir/colapsar
-                
+                divCat.addEventListener("click", () => {
+                    const visivel = lista.style.display === "block";
+                    lista.style.display = visivel ? "none" : "block";
+                    divCat.querySelector(".icon-seta svg").style.transform = visivel ? "rotate(0deg)" : "rotate(180deg)";
+                    divCat.querySelector(".icon-seta svg").style.transition = "transform 0.3s";
+
+                    if (visivel) {
+                        divCat.classList.remove("sem-hover");
+                    } else {
+                        divCat.classList.add("sem-hover");
+                    }
+                });
 
                 divCat.appendChild(header);
                 divCat.appendChild(lista);
                 container.appendChild(divCat);
             });
         }
+
         if (window.location.pathname.includes("alertas.html")) {
             carregarAlertas();
+        }
+
+
+        async function atualizarStatusProdutivo() {
+            try {
+                const res = await fetch("https://localhost:7092/Gado/AtualizarStatusProdutivo");
+                if (!res.ok) throw new Error("Erro ao atualizar status produtivo");
+                const msg = await res.text();
+                console.log(msg);
+            } catch (error) {
+                console.error("Falha ao atualizar status produtivo:", error);
+            }
         }
     </script>
 

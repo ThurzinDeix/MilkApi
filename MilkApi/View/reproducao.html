@@ -21,7 +21,7 @@
       <div class="menu">
         <a href="dashboard.html"><i class="ph-bold ph-house-line"></i> Dashboard</a>
         <a href="estatisticas.html"><i class="ph-bold ph-chart-line"></i> Estatísticas</a>
-        <a href="addgado.html" ><i class="ph ph-cow"></i> Gerenciar Gados</a>
+        <a href="addgado.html"><i class="ph ph-cow"></i> Gerenciar Gados</a>
         <a href="registro.html"><i class="ph ph-cow"></i> Registros</a>
         <a href="ocorrenciadiaria.html"><i class="ph-bold ph-calendar-dots"></i> Ocorrências Diárias</a>
         <div class="user-menu">
@@ -80,7 +80,7 @@
       </div>
     </div>
   </div>
-  
+
   <script>
     const apiBase = "https://localhost:7092";
     let tipoAtual = "";
@@ -89,24 +89,22 @@
       tipoAtual = tipo;
       document.getElementById("modal").style.display = "flex";
       document.getElementById("modal-titulo").innerText = dados ? "Editar Reprodução" : "Nova Reprodução";
-
       const hoje = new Date().toISOString().split("T")[0];
       let camposHTML = `
-        <label>Data:</label>
-        <input type="date" id="data" value="${dados ? dados.data.split("T")[0] : hoje}" required>
-        <label>Tipo:</label>
-        <select id="tipo" required>
-          <option value="" disabled ${dados ? "" : "selected"}>Selecione o tipo</option>
-          <option value="Monta" ${dados && dados.tipo === "Monta" ? "selected" : ""}>Monta</option>
-          <option value="Inseminação" ${dados && dados.tipo === "Inseminação" ? "selected" : ""}>Inseminação</option>
-        </select>
-        <label>Observação:</label>
-        <textarea id="observacao" rows="3" placeholder="Observações adicionais">${dados ? dados.observacao : ""}</textarea>
-      `;
+    <label>Data:</label>
+    <input type="date" id="data" value="${dados ? (dados.data || dados.Data || "").split ? (dados.data || dados.Data).split("T")[0] : hoje : hoje}" required>
+    <label>Tipo:</label>
+    <select id="tipo" required>
+      <option value="" disabled ${dados ? "" : "selected"}>Selecione o tipo</option>
+      <option value="Monta" ${dados && (dados.tipo === "Monta" || dados.Tipo === "Monta") ? "selected" : ""}>Monta</option>
+      <option value="Inseminação" ${dados && (dados.tipo === "Inseminação" || dados.Tipo === "Inseminação") ? "selected" : ""}>Inseminação</option>
+    </select>
+    <label>Observação:</label>
+    <textarea id="observacao" rows="3" placeholder="Observações adicionais">${dados ? (dados.observacao || dados.Observacao || "") : ""}</textarea>
+  `;
       document.getElementById("campos-especificos").innerHTML = camposHTML;
-
-      document.getElementById("brinco").value = dados && dados.gado ? dados.gado.brinco : "";
-      document.getElementById("reproducaoId").value = dados ? dados.id : "";
+      document.getElementById("brinco").value = dados && (dados.gado && (dados.gado.brinco || dados.gado.Brinco) || dados.brinco || dados.Brinco) ? (dados.gado ? (dados.gado.brinco || dados.gado.Brinco) : (dados.brinco || dados.Brinco)) : "";
+      document.getElementById("reproducaoId").value = dados ? (dados.id || dados.Id || "") : "";
     }
 
     function fecharModal() {
@@ -133,68 +131,82 @@
     async function carregarReproducao() {
       const usuarioId = localStorage.getItem("userId");
       if (!usuarioId) return;
-
       const lista = document.querySelector(".listaCards");
       lista.innerHTML = "<p>Carregando...</p>";
-
       try {
         const resp = await fetch(`${apiBase}/reproducao/por-usuario?usuarioId=${usuarioId}`);
         if (!resp.ok) throw new Error("Erro ao buscar reproduções");
         const dados = await resp.json();
         lista.innerHTML = "";
-        if (dados.length === 0) {
+        if (!dados || dados.length === 0) {
           lista.innerHTML = "<p>Nenhum registro encontrado.</p>";
           return;
         }
-
-        // agrupar tentativas por gado
         const tentativasPorGado = {};
         for (const r of dados) {
-          if (!tentativasPorGado[r.iD_Gado]) tentativasPorGado[r.iD_Gado] = [];
-          tentativasPorGado[r.iD_Gado].push(r);
+          const gId = r.iD_Gado ?? r.ID_Gado ?? r.id_gado ?? r.gadoId ?? r.GadoId ?? r.gado?.id ?? r.gado?.Id;
+          if (!tentativasPorGado[gId]) tentativasPorGado[gId] = [];
+          tentativasPorGado[gId].push(r);
         }
-
+        let prenheSet = new Set();
+        try {
+          const respPrenhez = await fetch(`${apiBase}/prenhez/por-usuario?usuarioId=${usuarioId}`);
+          if (respPrenhez.ok) {
+            const prenhezDados = await respPrenhez.json();
+            for (const p of prenhezDados) {
+              const pid = p.iD_Gado ?? p.ID_Gado ?? p.gadoId ?? p.ID_Gado;
+              if (pid != null) prenheSet.add(Number(pid));
+            }
+          }
+        } catch { }
+        const cardsPrenhas = [];
+        const cardsNormais = [];
         for (const gadoId in tentativasPorGado) {
           const tentativas = tentativasPorGado[gadoId];
-          tentativas.sort((a, b) => new Date(a.data) - new Date(b.data));
+          tentativas.sort((a, b) => new Date((a.data || a.Data) || 0) - new Date((b.data || b.Data) || 0));
           const ultima = tentativas[tentativas.length - 1];
-
           let gado = {};
           try {
             const resGado = await fetch(`${apiBase}/gado/${gadoId}`);
             if (resGado.ok) gado = await resGado.json();
           } catch { }
-
           let listaTentativas = `<ul class="ul">`;
           for (const t of tentativas) {
-            listaTentativas += `<li class="tentativa"><p class="p">${new Date(t.data).toLocaleDateString("pt-BR")} - ${t.tipo} </p>
-              <button class="btn-edit" onclick='abrirModal("reproducao", ${JSON.stringify({ ...t, gado })})'><i class="fa-solid fa-pen-to-square"></i></button>
-              <button class="btn-delete" onclick="excluirReproducao(${t.id})"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-              </button>
-            </li>`;
+            const dataStr = (t.data || t.Data) ? new Date(t.data || t.Data).toLocaleDateString("pt-BR") : "N/A";
+            const tipoStr = t.tipo || t.Tipo || "";
+            const tWithGado = Object.assign({}, t, { gado });
+            listaTentativas += `<li class="tentativa"><p class="p">${dataStr} - ${tipoStr} </p>
+          <button class="btn-edit" onclick='abrirModal("reproducao", ${JSON.stringify(tWithGado)})'><i class="fa-solid fa-pen-to-square"></i></button>
+          <button class="btn-delete" onclick="excluirReproducao(${t.id || t.Id || 0})"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          </button>
+        </li>`;
           }
           listaTentativas += "</ul>";
-
           const div = document.createElement("div");
           div.className = "card";
-
+          const statusFromGado = (gado.status || gado.Status || gado.situacao || gado.prenha || gado.Prenha || gado.estaPrenha) ?? null;
+          const isPrenha = prenheSet.has(Number(gadoId)) || String(statusFromGado).toLowerCase() === "prenha" || String(statusFromGado).toLowerCase() === "prẽnha" || String(statusFromGado).toLowerCase() === "pregnant";
+          if (isPrenha) div.classList.add("prenhe");
           div.innerHTML = `
-            <p class="brinco"><strong>Brinco:</strong> ${gado.brinco || 'N/A'}</p>
-            <p><strong>Número de tentativas:</strong> ${tentativas.length}</p>
-            <p><strong>Última Data:</strong> ${new Date(ultima.data).toLocaleDateString("pt-BR")}</p>
-            <p><strong>Último Tipo:</strong> ${ultima.tipo}</p>
-            <hr style="border:none; border-top:1px solid #4b2e1f30; margin:12px 0;">
-            <p class="totaltentativas"><strong>Todas as tentativas:</strong></p>
-            ${listaTentativas}
-            <div class="card-actions">
-              <button class="btn-prenha" onclick="abrirModalPrenhez(${gado.id})">
-                <i class="fa-solid fa-venus"></i> Marcar Prenha
-              </button>
-            </div>
-          `;
-
-          lista.appendChild(div);
+        <p class="brinco"><strong>Brinco:</strong> ${gado.brinco ?? gado.Brinco ?? 'N/A'}</p>
+        <p><strong>Status:</strong> ${isPrenha ? "Prenha" : "Normal"}</p>
+        <p><strong>Número de tentativas:</strong> ${tentativas.length}</p>
+        <p><strong>Última Data:</strong> ${(ultima && (ultima.data || ultima.Data)) ? new Date(ultima.data || ultima.Data).toLocaleDateString("pt-BR") : "N/A"}</p>
+        <p><strong>Último Tipo:</strong> ${ultima ? (ultima.tipo || ultima.Tipo || "") : ""}</p>
+        <hr style="border:none; border-top:1px solid #4b2e1f30; margin:12px 0;">
+        <p class="totaltentativas"><strong>Todas as tentativas:</strong></p>
+        ${listaTentativas}
+        <div class="card-actions">
+          <button class="btn-prenha" onclick="abrirModalPrenhez(${gado.id ?? gado.Id ?? gadoId})">
+            <i class="fa-solid fa-venus"></i> Marcar Prenha
+          </button>
+        </div>
+      `;
+          if (isPrenha) cardsPrenhas.push(div);
+          else cardsNormais.push(div);
         }
+        cardsNormais.forEach(c => lista.appendChild(c));
+        cardsPrenhas.forEach(c => lista.appendChild(c));
       } catch (err) {
         lista.innerHTML = "<p>Erro ao carregar registros.</p>";
         console.error(err);
@@ -218,45 +230,79 @@
 
     document.getElementById("modal-form").addEventListener("submit", async function (e) {
       e.preventDefault();
+
       const reproducaoId = document.getElementById("reproducaoId").value;
       const brinco = document.getElementById("brinco").value;
+      const tipo = document.getElementById("tipo").value;
+      const data = document.getElementById("data").value;
+      const observacao = document.getElementById("observacao").value;
       const usuarioId = localStorage.getItem("userId");
 
       try {
+        // 1️⃣ Verifica se o gado existe
         const resGado = await fetch(`${apiBase}/gado/por-brinco?brinco=${brinco}&usuarioId=${usuarioId}`);
-        if (!resGado.ok) { alert("Gado não encontrado"); return; }
+        if (!resGado.ok) {
+          alert("Gado não encontrado. Verifique o brinco informado.");
+          return;
+        }
+
         const gado = await resGado.json();
 
-        const payload = {
+        // 2️⃣ Verifica se já está prenha
+        const resPrenha = await fetch(`${apiBase}/reproducao/verificar-prenha?brinco=${brinco}&usuarioId=${usuarioId}`);
+        if (resPrenha.ok) {
+          const dataPrenha = await resPrenha.json();
+          if (dataPrenha.prenha) {
+            alert(dataPrenha.mensagem);
+            return;
+          }
+        }
+
+        // 3️⃣ Monta o objeto para envio
+        const novaReproducao = {
           ID_Gado: gado.id,
-          Data: document.getElementById("data").value,
-          Tipo: document.getElementById("tipo").value,
-          Observacao: document.getElementById("observacao").value,
+          Tipo: tipo,
+          Data: data,
+          Observacao: observacao,
           ID_Usuario: usuarioId
         };
 
-        const url = reproducaoId ? `${apiBase}/reproducao/${reproducaoId}` : `${apiBase}/reproducao`;
-        const method = reproducaoId ? "PUT" : "POST";
+        // 4️⃣ Decide entre criar ou atualizar
+        if (reproducaoId) {
+          const res = await fetch(`${apiBase}/reproducao/${reproducaoId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(novaReproducao)
+          });
 
-        const saveRes = await fetch(url, {
-          method,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-
-        if (saveRes.ok) {
-          alert("Registro salvo com sucesso!");
-          fecharModal();
-          carregarReproducao();
+          if (res.ok) {
+            alert("Registro atualizado com sucesso!");
+            carregarReproducoes();
+            fecharModal();
+          } else {
+            alert("Erro ao atualizar o registro.");
+          }
         } else {
-          const err = await saveRes.text();
-          alert("Erro ao salvar: " + err);
+          const res = await fetch(`${apiBase}/reproducao`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(novaReproducao)
+          });
+
+          if (res.ok) {
+            alert("Reprodução adicionada com sucesso!");
+            carregarReproducoes();
+            fecharModal();
+          } else {
+            alert("Erro ao adicionar reprodução.");
+          }
         }
-      } catch (err) {
-        alert("Erro de conexão: " + err.message);
-        console.error(err);
+      } catch (error) {
+        console.error("Erro ao salvar reprodução:", error);
+        alert("Ocorreu um erro ao salvar a reprodução.");
       }
     });
+
 
     document.getElementById("form-prenhez").addEventListener("submit", async function (e) {
       e.preventDefault();
@@ -264,10 +310,8 @@
       const gadoId = document.getElementById("prenhez-gado-id").value;
       const dataPrenhezInput = document.getElementById("prenhez-data").value;
       if (!usuarioId || !gadoId || !dataPrenhezInput) { alert("Dados inválidos."); return; }
-
       const dataPrenhez = new Date(dataPrenhezInput);
       const dataEsperada = addDays(dataPrenhez, 283);
-
       const payload = {
         ID_Gado: parseInt(gadoId),
         Data_Prenhez: dataPrenhezInput,
@@ -275,7 +319,6 @@
         ID_Usuario: usuarioId,
         Status: "Prenha"
       };
-
       try {
         const res = await fetch(`${apiBase}/prenhez`, {
           method: "POST",
@@ -285,6 +328,7 @@
         if (res.ok) {
           alert("Prenhez registrada com sucesso!");
           fecharModalPrenhez();
+          carregarReproducao();
         } else {
           const err = await res.text();
           alert("Erro ao registrar prenhez: " + err);
@@ -297,6 +341,8 @@
 
     carregarReproducao();
   </script>
-  
+
+
 </body>
+
 </html>

@@ -202,12 +202,18 @@ p {
     margin: 0px;
     justify-content: space-between;
     margin-top: 20px;
+    align-items: center;
 }
 
 .tentativa .p {
     margin: 0px;
     display: flex;
     align-items: center;
+}
+
+.prenhe {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 
@@ -1436,6 +1442,7 @@ span i {
 .alerta-item {
     padding: 20px 10px;
     background-color: #f3efea;
+    max-width: 96%;
     margin-top: 15px;
     border-radius: 8px;
     box-shadow: 0 0px 2px rgba(0, 0, 0, 0.3);
@@ -1443,6 +1450,19 @@ span i {
 .alerta-item:last-child {
     border-bottom: none;
 }
-.alerta-item.danger { color: #c0392b; }
-.alerta-item.warning { color: #f39c12; }
-.alerta-item.info { color: #2980b9; }
+.alerta-item{ 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+}
+
+.alerta-mensagens{
+    display: flex;
+    margin-left: 10px;
+}
+
+.icone-alertas{
+    display: flex;
+    margin-right: 10px;
+}

@@ -26,25 +26,38 @@ namespace MilkApi.Controllers
                 .OrderByDescending(p => p.Data_Termino)
                 .FirstOrDefault();
 
-            if (ultimoParto == null) return "Novilha";
+            var prenhezAtiva = prenhezes.FirstOrDefault(p => !p.Data_Termino.HasValue);
+
+            if (ultimoParto == null)
+            {
+                if (prenhezAtiva != null)
+                    return "Gestante";
+                else
+                    return "Novilha";
+            }
 
             var diasPosParto = (DateTime.Now - ultimoParto.Data_Termino.Value).TotalDays;
-            var prenhezAtiva = prenhezes.FirstOrDefault(p => !p.Data_Termino.HasValue);
 
             if (prenhezAtiva != null)
             {
-                if (diasPosParto <= 305) return "Lactante Gestante";
+                if (diasPosParto <= 305)
+                    return "Lactante Gestante";
+
                 if (prenhezAtiva.Data_Esperada.HasValue &&
                     (prenhezAtiva.Data_Esperada.Value - DateTime.Now).TotalDays <= 60)
                     return "Seca";
-                return "Lactante Gestante";
+
+                return "Gestante";
             }
             else
             {
-                if (diasPosParto <= 305) return "Lactante Vazia";
-                return "Vazia Não Lactante";
+                if (diasPosParto <= 305)
+                    return "Lactante Vazia";
+                else
+                    return "Vazia Não Lactante";
             }
         }
+
 
         // GET geral
         [HttpGet]
@@ -303,7 +316,6 @@ namespace MilkApi.Controllers
             return Ok(lista);
         }
 
-        // Atualizar StatusProdutivo em lote
         [HttpGet("AtualizarStatusProdutivo")]
         public async Task<IActionResult> AtualizarStatusProdutivo()
         {
@@ -311,6 +323,8 @@ namespace MilkApi.Controllers
             await conn.OpenAsync();
 
             var vacas = new List<Gado>();
+
+            // 1️⃣ — Buscar todas as vacas
             using (var cmd = new SqlCommand("SELECT * FROM Gado", conn))
             using (var reader = await cmd.ExecuteReaderAsync())
             {
@@ -329,43 +343,50 @@ namespace MilkApi.Controllers
                         StatusProdutivo = reader["StatusProdutivo"]?.ToString()
                     });
                 }
-            }   
+            }
 
+            // 2️⃣ — Agora processa cada vaca separadamente (nova conexão)
             foreach (var vaca in vacas)
             {
                 var prenhezes = new List<Prenhez>();
-                using (var cmd = new SqlCommand("SELECT * FROM Prenhez WHERE ID_Gado = @ID_Gado", conn))
+                using (var conn2 = new SqlConnection(ConnectionString))
                 {
-                    cmd.Parameters.AddWithValue("@ID_Gado", vaca.Id);
-                    using var reader = await cmd.ExecuteReaderAsync();
-                    while (await reader.ReadAsync())
+                    await conn2.OpenAsync();
+
+                    using (var cmdPrenhez = new SqlCommand("SELECT * FROM Prenhez WHERE ID_Gado = @ID_Gado", conn2))
                     {
-                        prenhezes.Add(new Prenhez
+                        cmdPrenhez.Parameters.AddWithValue("@ID_Gado", vaca.Id);
+                        using var reader = await cmdPrenhez.ExecuteReaderAsync();
+                        while (await reader.ReadAsync())
                         {
-                            Id = Convert.ToInt32(reader["Id"]),
-                            ID_Gado = vaca.Id,
-                            Data_Prenhez = Convert.ToDateTime(reader["Data_Prenhez"]),
-                            Data_Termino = reader["Data_Termino"] as DateTime?,
-                            Data_Esperada = reader["Data_Esperada"] as DateTime?,
-                            Status = reader["Status"]?.ToString(),
-                            ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
-                        });
+                            prenhezes.Add(new Prenhez
+                            {
+                                Id = Convert.ToInt32(reader["Id"]),
+                                ID_Gado = vaca.Id,
+                                Data_Prenhez = Convert.ToDateTime(reader["Data_Prenhez"]),
+                                Data_Termino = reader["Data_Termino"] as DateTime?,
+                                Data_Esperada = reader["Data_Esperada"] as DateTime?,
+                                Status = reader["Status"]?.ToString(),
+                                ID_Usuario = Convert.ToInt32(reader["ID_Usuario"])
+                            });
+                        }
                     }
-                }
 
-                var status = CalcularStatusProdutivo(vaca, prenhezes);
+                    var status = CalcularStatusProdutivo(vaca, prenhezes);
 
-                using (var cmd = new SqlCommand(
-                    "UPDATE Gado SET StatusProdutivo = @StatusProdutivo WHERE Id = @Id", conn))
-                {
-                    cmd.Parameters.AddWithValue("@StatusProdutivo", status);
-                    cmd.Parameters.AddWithValue("@Id", vaca.Id);
-                    await cmd.ExecuteNonQueryAsync();
+                    using (var cmdUpdate = new SqlCommand(
+                        "UPDATE Gado SET StatusProdutivo = @StatusProdutivo WHERE Id = @Id", conn2))
+                    {
+                        cmdUpdate.Parameters.AddWithValue("@StatusProdutivo", status);
+                        cmdUpdate.Parameters.AddWithValue("@Id", vaca.Id);
+                        await cmdUpdate.ExecuteNonQueryAsync();
+                    }
                 }
             }
 
             return Ok("Status produtivo atualizado com sucesso!");
         }
+
 
     }
 }
