@@ -47,7 +47,6 @@
 
         <div class="listaCards"></div>
 
-        <!-- Modal -->
         <div id="modal" class="modal">
             <div class="modal-content form-modal">
                 <span class="close" onclick="fecharModal()">&times;</span>
@@ -73,7 +72,7 @@
     <script>
 const apiBase = "https://localhost:7092";
 let tipoAtual = "";
-let editId = null; // Id do registro sendo editado
+let editId = null; 
 
 function abrirModal(tipo, dados = null) {
     tipoAtual = tipo;
@@ -93,7 +92,7 @@ function abrirModal(tipo, dados = null) {
     }
 
     document.getElementById("campos-especificos").innerHTML = camposHTML;
-    editId = dados ? dados.id : null; // se houver dados, é edição
+    editId = dados ? dados.id : null; 
 }
 
 function fecharModal() {
@@ -101,7 +100,6 @@ function fecharModal() {
     editId = null;
 }
 
-// Carregar registros de leite
 async function carregarLeite() {
     const usuarioId = localStorage.getItem("userId");
     if (!usuarioId) return;
@@ -158,7 +156,6 @@ async function carregarLeite() {
     }
 }
 
-// Excluir registro de leite
 async function excluirLeite(id) {
     if (!confirm("Tem certeza que deseja excluir este registro?")) return;
 
@@ -176,7 +173,6 @@ async function excluirLeite(id) {
     }
 }
 
-// Formulário de salvar (novo ou editar)
 document.getElementById("modal-form").addEventListener("submit", async function (e) {
     e.preventDefault();
 
@@ -202,7 +198,7 @@ document.getElementById("modal-form").addEventListener("submit", async function 
             let url = `${apiBase}/leite`;
             let method = "POST";
 
-            if (editId) { // se for edição
+            if (editId) { 
                 url = `${apiBase}/leite/${editId}`;
                 method = "PUT";
             }

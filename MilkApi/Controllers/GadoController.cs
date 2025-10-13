@@ -16,10 +16,11 @@ namespace MilkApi.Controllers
             _logger = logger;
         }
 
-        // Função privada para calcular StatusProdutivo
-        private string CalcularStatusProdutivo(Gado vaca, List<Prenhez> prenhezes)
+        private string CalcularStatusProdutivo(Gado vaca, List<Prenhez> prenhezes, List<Leite> historicoLeite)
         {
             if (vaca.StatusManual) return vaca.StatusProdutivo ?? "Novilha";
+
+            bool temLeite = historicoLeite.Any(l => l.ID_Gado == vaca.Id);
 
             var ultimoParto = prenhezes
                 .Where(p => p.Data_Termino.HasValue)
@@ -31,16 +32,16 @@ namespace MilkApi.Controllers
             if (ultimoParto == null)
             {
                 if (prenhezAtiva != null)
-                    return "Gestante";
+                    return temLeite ? "Lactante Gestante" : "Gestante";
                 else
-                    return "Novilha";
+                    return temLeite ? "Lactante Vazia" : "Novilha";
             }
 
             var diasPosParto = (DateTime.Now - ultimoParto.Data_Termino.Value).TotalDays;
 
             if (prenhezAtiva != null)
             {
-                if (diasPosParto <= 305)
+                if (temLeite || diasPosParto <= 305)
                     return "Lactante Gestante";
 
                 if (prenhezAtiva.Data_Esperada.HasValue &&
@@ -51,15 +52,13 @@ namespace MilkApi.Controllers
             }
             else
             {
-                if (diasPosParto <= 305)
+                if (temLeite || diasPosParto <= 305)
                     return "Lactante Vazia";
                 else
                     return "Vazia Não Lactante";
             }
         }
 
-
-        // GET geral
         [HttpGet]
         public IEnumerable<Gado> Get([FromQuery] int? usuarioId)
         {
@@ -96,7 +95,6 @@ namespace MilkApi.Controllers
             return lista;
         }
 
-        // GET por ID
         [HttpGet("{id}")]
         public ActionResult GetById(int id)
         {
@@ -127,7 +125,6 @@ namespace MilkApi.Controllers
             return NotFound();
         }
 
-        // POST
         [HttpPost]
         public ActionResult Create(Gado gado)
         {
@@ -136,7 +133,6 @@ namespace MilkApi.Controllers
                           (ID_Usuario, Data_Nasc, Raca, Peso, Sexo, Brinco, Observacao, StatusProdutivo)
                           VALUES (@ID_Usuario, @Data_Nasc, @Raca, @Peso, @Sexo, @Brinco, @Observacao, @StatusProdutivo)";
 
-            // status inicial Novilha
             var status = "Novilha";
 
             var cmd = new SqlCommand(query, conn);
@@ -154,13 +150,11 @@ namespace MilkApi.Controllers
             return rows > 0 ? Ok() : BadRequest();
         }
 
-        // PUT
         [HttpPut("{id}")]
         public ActionResult Update(int id, [FromBody] Gado gado)
         {
             using var conn = new SqlConnection(ConnectionString);
 
-            // Calcular status antes de atualizar
             var prenhezes = new List<Prenhez>();
             using (var cmdPrenhez = new SqlCommand("SELECT * FROM Prenhez WHERE ID_Gado = @ID_Gado", conn))
             {
@@ -183,7 +177,26 @@ namespace MilkApi.Controllers
                 reader.Close();
             }
 
-            var statusCalculado = CalcularStatusProdutivo(gado, prenhezes);
+            var historicoLeite = new List<Leite>();
+            using (var cmdLeite = new SqlCommand("SELECT * FROM Leite WHERE ID_Gado = @ID_Gado", conn))
+            {
+                cmdLeite.Parameters.AddWithValue("@ID_Gado", id);
+                var readerLeite = cmdLeite.ExecuteReader();
+                while (readerLeite.Read())
+                {
+                    historicoLeite.Add(new Leite
+                    {
+                        Id = Convert.ToInt32(readerLeite["Id"]),
+                        ID_Gado = id,
+                        Data = Convert.ToDateTime(readerLeite["Data"]),
+                        Litros = Convert.ToDecimal(readerLeite["Litros"]),
+                        ID_Usuario = Convert.ToInt32(readerLeite["ID_Usuario"])
+                    });
+                }
+                readerLeite.Close();
+            }
+
+            var statusCalculado = CalcularStatusProdutivo(gado, prenhezes, historicoLeite);
 
             var query = @"UPDATE Gado SET 
                           ID_Usuario = @ID_Usuario, Data_Nasc = @Data_Nasc, Raca = @Raca,
@@ -207,7 +220,6 @@ namespace MilkApi.Controllers
             return rows > 0 ? Ok() : NotFound();
         }
 
-        // DELETE
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {
@@ -219,7 +231,6 @@ namespace MilkApi.Controllers
             return rows > 0 ? Ok() : NotFound();
         }
 
-        // GET por Brinco
         [HttpGet("por-brinco")]
         public ActionResult GetByBrinco([FromQuery] int brinco, [FromQuery] int usuarioId)
         {
@@ -259,7 +270,6 @@ namespace MilkApi.Controllers
             }
         }
 
-        // GET Resumo por usuário
         [HttpGet("Resumo/{userId}")]
         public async Task<IActionResult> ObterResumoVacasDoUsuario(int userId)
         {
@@ -323,8 +333,6 @@ namespace MilkApi.Controllers
             await conn.OpenAsync();
 
             var vacas = new List<Gado>();
-
-            // 1️⃣ — Buscar todas as vacas
             using (var cmd = new SqlCommand("SELECT * FROM Gado", conn))
             using (var reader = await cmd.ExecuteReaderAsync())
             {
@@ -345,7 +353,6 @@ namespace MilkApi.Controllers
                 }
             }
 
-            // 2️⃣ — Agora processa cada vaca separadamente (nova conexão)
             foreach (var vaca in vacas)
             {
                 var prenhezes = new List<Prenhez>();
@@ -372,7 +379,25 @@ namespace MilkApi.Controllers
                         }
                     }
 
-                    var status = CalcularStatusProdutivo(vaca, prenhezes);
+                    var historicoLeite = new List<Leite>();
+                    using (var cmdLeite = new SqlCommand("SELECT * FROM Leite WHERE ID_Gado = @ID_GADO", conn2))
+                    {
+                        cmdLeite.Parameters.AddWithValue("@ID_GADO", vaca.Id);
+                        using var readerLeite = await cmdLeite.ExecuteReaderAsync();
+                        while (await readerLeite.ReadAsync())
+                        {
+                            historicoLeite.Add(new Leite
+                            {
+                                Id = Convert.ToInt32(readerLeite["Id"]),
+                                ID_Gado = vaca.Id,
+                                Data = Convert.ToDateTime(readerLeite["Data"]),
+                                Litros = Convert.ToDecimal(readerLeite["Litros"]),
+                                ID_Usuario = Convert.ToInt32(readerLeite["ID_Usuario"])
+                            });
+                        }
+                    }
+
+                    var status = CalcularStatusProdutivo(vaca, prenhezes, historicoLeite);
 
                     using (var cmdUpdate = new SqlCommand(
                         "UPDATE Gado SET StatusProdutivo = @StatusProdutivo WHERE Id = @Id", conn2))
@@ -386,7 +411,5 @@ namespace MilkApi.Controllers
 
             return Ok("Status produtivo atualizado com sucesso!");
         }
-
-
     }
 }

@@ -45,7 +45,6 @@
 
     <div class="listaCards" id="gado-list"></div>
 
-    <!-- Modal -->
     <div id="modal" class="modal">
       <div class="modal-content form-modal">
         <span class="close" onclick="fecharModal()">&times;</span>
@@ -102,7 +101,7 @@
   </content>
 
   <script>
-    const apiBase = "https://localhost:7092/Gado"; // sua API
+    const apiBase = "https://localhost:7092/Gado";
     let editando = false;
 
     async function carregarGados() {
@@ -128,9 +127,7 @@
         gados.forEach(g => {
           const card = document.createElement("div");
           card.className = "card";
-
-          // cor do status: você pode mapear os status para cores
-          let statusCor = "gray"; // padrão
+          let statusCor = "gray"; 
           switch ((g.statusProdutivo || "").toLowerCase()) {
             case "gravida":
             case "lactante gestante":
@@ -273,16 +270,15 @@
         const res = await fetch("https://localhost:7092/Gado/AtualizarStatusProdutivo");
         if (!res.ok) throw new Error("Erro ao atualizar status produtivo");
         const msg = await res.text();
-        console.log(msg); // mensagem do backend
+        console.log(msg); 
       } catch (error) {
         console.error("Falha ao atualizar status produtivo:", error);
       }
     }
 
-    // Chame ao carregar a página
     window.addEventListener("load", async () => {
       await atualizarStatusProdutivo();
-      carregarGados(); // depois atualiza a lista de vacas
+      carregarGados(); 
     });
 
 

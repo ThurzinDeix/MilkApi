@@ -56,7 +56,6 @@
 
         <div id="listaRemedios" class="listaCards"></div>
 
-        <!-- Modal -->
         <div id="modal" class="modal">
             <div class="modal-content form-modal">
                 <span class="close" onclick="fecharModal()">&times;</span>
@@ -154,7 +153,6 @@
                         if (resGado.ok) gado = await resGado.json();
                     } catch { }
 
-                    // 🔹 Buscar status das doses
                     let tratamentos = [];
                     try {
                         const resTrat = await fetch(`${apiBase}/remedio/tratamentos/${r.iD_Gado}`);
@@ -170,7 +168,6 @@
                     const progresso = Math.round((dosesAplicadas / totalDoses) * 100);
                     const statusTratamento = progresso > 99 ? "Encerrado" : "Ativo";
 
-                    // 🔹 Próxima dose
                     const inicio = new Date(r.date);
                     const proximaDose = new Date(inicio.getTime() + dosesAplicadas * r.intervalo * 60 * 60 * 1000);
                     const proximaDoseStr = proximaDose.toLocaleString("pt-BR", {

@@ -40,7 +40,6 @@
 
         <div class="listaCards" id="listaSuplementos"></div>
 
-        <!-- Modal -->
         <div id="modal" class="modal">
             <div class="modal-content form-modal">
                 <span class="close" onclick="fecharModal()">&times;</span>
@@ -68,7 +67,6 @@
 const apiBase = "https://localhost:7092";
 let tipoAtual = "";
 
-// Abrir modal (novo ou edição)
 function abrirModal(tipo, dados = null) {
     tipoAtual = tipo;
     document.getElementById("modal").style.display = "block";
@@ -96,7 +94,6 @@ function fecharModal() {
     document.getElementById("campos-especificos").innerHTML = "";
 }
 
-// Carregar suplementos
 async function carregarSuplementos() {
     const usuarioId = localStorage.getItem("userId");
     if (!usuarioId) return;
@@ -149,7 +146,6 @@ async function carregarSuplementos() {
     }
 }
 
-// Excluir suplemento
 async function excluirSuplemento(id) {
     if (!confirm("Deseja excluir este suplemento?")) return;
     try {
@@ -165,7 +161,6 @@ async function excluirSuplemento(id) {
     }
 }
 
-// Submit do form
 document.getElementById("modal-form").addEventListener("submit", async function(e) {
     e.preventDefault();
 

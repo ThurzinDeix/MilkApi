@@ -69,14 +69,13 @@
   <script src="app.js"></script>
   <script>
     async function carregarVacas() {
-      // Defina o usuário fixo para teste
       const usuarioId = localStorage.getItem("userId");
 
       try {
         const resp = await fetch(`https://localhost:7092/Vaca/ResumoUsuario/${usuarioId}`);
         const vacas = await resp.json();
 
-        console.log("Dados recebidos da API:", vacas); // debug
+        console.log("Dados recebidos da API:", vacas); 
 
         const container = document.getElementById("listaVacas");
         container.innerHTML = "";
@@ -98,7 +97,7 @@
           if (vaca.temReproducao) icones.push(`<span class="reproducao"><i class="ph ph-heartbeat"></i></span>`);
           if (vaca.temSuplemento) icones.push(`<span class="suplemento"><i class="ph ph-pill"></i></span>`);
           if (vaca.temLote) icones.push(`<span class="lote"><i class="ph ph-package"></i></span>`);
-          if (vaca.temQualidade) icones.push(`<span class="qualidade"><i class="ph ph-drop"></i></span>`); // ✅ ícone de Qualidade adicionado
+          if (vaca.temQualidade) icones.push(`<span class="qualidade"><i class="ph ph-drop"></i></span>`);  
 
           card.innerHTML = `
             <div class="setinha">

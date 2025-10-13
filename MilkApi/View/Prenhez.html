@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <title>Vacas Prenhas</title>
 
-    <!-- Seus estilos principais -->
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" type="text/css"
@@ -14,7 +13,7 @@
         href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
     <link rel="stylesheet" type="text/css"
         href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css" />
-    <!-- Estilo específico desta página (select + pequenos ajustes) -->
+    
 
 </head>
 
@@ -56,12 +55,10 @@
             </div>
         </div>
 
-        <!-- Container que usa a sua classe padrão de cards -->
         <div class="listaCards">
             <p>Carregando vacas...</p>
         </div>
 
-        <!-- Modal de Status -->
         <div id="modalStatus" class="modal">
             <div class="modal-content form-modal">
                 <span class="close" onclick="fecharModal()">&times;</span>
@@ -113,16 +110,14 @@
                     if (resGado.ok) gado = await resGado.json();
 
                     const card = document.createElement("div");
-                    card.className = "card gestacao"; // usa .card do seu CSS principal
+                    card.className = "card gestacao"; 
 
-                    // Determinar classe e texto do badge
                     let statusTexto = p.status || '-';
                     let statusClasse = '';
                     if (statusTexto.toLowerCase() === 'prenha') statusClasse = 'status-prenha';
                     else if (statusTexto.toLowerCase() === 'pariu') statusClasse = 'status-pariu';
                     else if (statusTexto.toLowerCase() === 'aborto') statusClasse = 'status-aborto';
 
-                    // Conteúdo do card
                     card.innerHTML = `
                         <p class="brinco"> <strong>Brinco:</strong> ${gado.brinco || '-'}
                             <span class="badge-status ${statusClasse}">${statusTexto}</span>
@@ -162,12 +157,11 @@
             if (!prenhezSelecionada) return;
 
             try {
-                // Buscar dados atuais da prenhez para enviar no PUT
+                
                 const resAtual = await fetch(`${apiBase}/prenhez/${prenhezSelecionada}`);
                 if (!resAtual.ok) throw new Error("Erro ao buscar dados da prenhez");
                 const prenhez = await resAtual.json();
 
-                // Atualizar apenas o status e manter os outros dados (atenção ao nome da propriedade exigida pela API)
                 prenhez.Status = novoStatus;
 
                 const res = await fetch(`${apiBase}/prenhez/${prenhezSelecionada}`, {
@@ -194,7 +188,6 @@
 
         window.onload = carregarVacasPrenhas;
 
-        // Fecha modal ao clicar fora (melhoria UX)
         window.onclick = function (event) {
             const modal = document.getElementById("modalStatus");
             if (event.target === modal) fecharModal();

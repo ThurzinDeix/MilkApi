@@ -45,7 +45,6 @@
 
     <div class="listaCards"></div>
 
-    <!-- Modal de Reprodução -->
     <div id="modal" class="modal">
       <div class="modal-content form-modal">
         <span class="close" onclick="fecharModal()">&times;</span>
@@ -63,7 +62,6 @@
       </div>
     </div>
 
-    <!-- Modal de Prenhez -->
     <div id="modalPrenhez" class="modal">
       <div class="modal-content form-modal">
         <span class="close" onclick="fecharModalPrenhez()">&times;</span>
@@ -239,7 +237,6 @@
       const usuarioId = localStorage.getItem("userId");
 
       try {
-        // 1️⃣ Verifica se o gado existe
         const resGado = await fetch(`${apiBase}/gado/por-brinco?brinco=${brinco}&usuarioId=${usuarioId}`);
         if (!resGado.ok) {
           alert("Gado não encontrado. Verifique o brinco informado.");
@@ -248,7 +245,6 @@
 
         const gado = await resGado.json();
 
-        // 2️⃣ Verifica se já está prenha
         const resPrenha = await fetch(`${apiBase}/reproducao/verificar-prenha?brinco=${brinco}&usuarioId=${usuarioId}`);
         if (resPrenha.ok) {
           const dataPrenha = await resPrenha.json();
@@ -258,7 +254,6 @@
           }
         }
 
-        // 3️⃣ Monta o objeto para envio
         const novaReproducao = {
           ID_Gado: gado.id,
           Tipo: tipo,
@@ -267,7 +262,6 @@
           ID_Usuario: usuarioId
         };
 
-        // 4️⃣ Decide entre criar ou atualizar
         if (reproducaoId) {
           const res = await fetch(`${apiBase}/reproducao/${reproducaoId}`, {
             method: "PUT",

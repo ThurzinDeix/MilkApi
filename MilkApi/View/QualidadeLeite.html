@@ -54,7 +54,6 @@
 
 
 
-        <!-- Modal Leite -->
         <div id="leiteModal" class="modal-leite">
             <div class="modal-content-leite">
                 <span class="close-leite"
@@ -78,7 +77,6 @@
         </div>
 
 
-        <!-- Modal de Qualidade -->
         <div id="qualidadeModal" class="modal-leite">
             <div class="modal-content-qualidade">
                 <h3>Adicionar Qualidade</h3>
@@ -93,26 +91,25 @@
     </content>
 
     <script>
-        const API_BASE = 'https://localhost:7092'; // Substitua pela URL da sua API
+        const API_BASE = 'https://localhost:7092';
 
         const lotesContainer = document.getElementById("lotes");
         const leitesContainer = document.getElementById("leites");
         const novoLoteBtn = document.getElementById("novoLoteBtn");
-        const criarLoteBtn = document.getElementById("criarLoteBtn-leite"); // corrigido
+        const criarLoteBtn = document.getElementById("criarLoteBtn-leite"); 
         const qualidadeModal = document.getElementById("qualidadeModal");
         const salvarQualidadeBtn = document.getElementById("salvarQualidadeBtn");
         const ccsInput = document.getElementById("ccsInput");
         const proteinaInput = document.getElementById("proteinaInput");
         const gorduraInput = document.getElementById("gorduraInput");
         const numLoteInput = document.getElementById("numLoteInput");
-        const leiteModal = document.getElementById("leiteModal"); // corrigido
+        const leiteModal = document.getElementById("leiteModal"); 
 
         let leites = [];
         let lotes = [];
         let selecionados = [];
         let loteSelecionadoParaQualidade = null;
 
-        // Buscar lotes
         async function buscarLotes() {
             try {
                 const res = await fetch(`${API_BASE}/lote`);
@@ -125,7 +122,6 @@
             }
         }
 
-        // Buscar leites
         async function buscarLeites() {
 
             try {
@@ -139,8 +135,6 @@
             }
         }
 
-        // Criar lote com leites
-        // Criar lote com leites (versão com alerts de debug)
         const criarLoteAPI = async (leitesSelecionados, numLote) => {
 
 
@@ -194,11 +188,8 @@
 
 
 
-        // Render lotes
-
-        // Render lotes (versão robusta: lida com lote.leites sendo objetos ou apenas ids; faz cache de leite/gado)
         async function renderLotes() {
-            // manter estilo semelhante à Gestão de Reprodução
+
             lotesContainer.className = "listaCards";
             lotesContainer.innerHTML = '';
 
@@ -209,16 +200,13 @@
                 let totalLitros = 0;
                 let registrosHTML = '';
 
-                // percorre os "leites" do lote (pode ser array de objetos ou array de ids/referências)
                 if (Array.isArray(lote.leites) && lote.leites.length > 0) {
                     for (const leiteRef of lote.leites) {
-                        // obtém o objeto completo do leite (se já vier completo) ou busca pela API
                         let leiteObj = null;
 
                         if (leiteRef && typeof leiteRef === 'object' && (leiteRef.litros !== undefined || leiteRef.iD_Gado !== undefined || leiteRef.id !== undefined)) {
                             leiteObj = leiteRef;
                         } else {
-                            // pode ser um id simples (ex: 123) ou objeto { id: 123 }
                             const id = leiteRef?.id ?? leiteRef;
                             if (!id) continue;
 
@@ -231,7 +219,6 @@
                                         leiteObj = await res.json();
                                         leiteCache.set(id, leiteObj);
                                     } else {
-                                        // falha ao buscar -> cria objeto mínimo
                                         leiteObj = { id };
                                     }
                                 } catch (err) {
@@ -241,11 +228,9 @@
                             }
                         }
 
-                        // pega litros (tenta várias chaves possíveis)
                         const litros = Number(leiteObj.litros ?? leiteObj.Litros ?? leiteObj.Litro ?? 0);
                         totalLitros += isNaN(litros) ? 0 : litros;
 
-                        // pega id do gado (tenta várias formas)
                         const gadoId = leiteObj.iD_Gado ?? leiteObj.ID_Gado ?? leiteObj.gadoId ?? leiteObj.gado?.id ?? null;
                         let brinco = 'N/A';
 
@@ -270,7 +255,6 @@
                     }
                 }
 
-                // formata data (se existir)
                 const dataStr = lote.data ? new Date(lote.data).toLocaleDateString('pt-BR') : (lote.dataCriacao ? new Date(lote.dataCriacao).toLocaleDateString('pt-BR') : '');
 
                 const loteNumero = lote.num ?? lote.Num ?? lote.Numero ?? lote.id ?? '';
@@ -327,7 +311,6 @@
         }
 
 
-        // Render leites
         function renderLeites() {
             leitesContainer.innerHTML = '';
             leites.forEach(leite => {
@@ -370,7 +353,6 @@
             qualidadeModal.style.display = 'flex';
         }
 
-        // Eventos
         novoLoteBtn.addEventListener('click', async () => {
             leiteModal.style.display = 'flex';
             selecionados = [];
@@ -413,17 +395,16 @@
                 ID_Usuario: userId
             };
 
-            // pega a qualidade existente do lote (se houver)
             let qualidadeExistente = lotes.find(l => l.id === loteSelecionadoParaQualidade)?.qualidade;
 
             let url, metodo;
             if (qualidadeExistente && (qualidadeExistente.id || qualidadeExistente.Id)) {
-                // já existe qualidade → atualizar com PUT
+                
                 const idQualidade = qualidadeExistente.id ?? qualidadeExistente.Id;
                 url = `${API_BASE}/Qualidade/${idQualidade}`;
                 metodo = 'PUT';
             } else {
-                // não existe qualidade → criar nova com POST
+                
                 url = `${API_BASE}/Qualidade`;
                 metodo = 'POST';
             }
@@ -451,7 +432,6 @@
         });
 
 
-        // Excluir lote
         async function excluirLote(id) {
             if (!confirm("Tem certeza que deseja excluir este lote?")) return;
 
@@ -467,7 +447,7 @@
                     return;
                 }
 
-                await buscarLotes(); // recarrega a lista
+                await buscarLotes(); 
             } catch (err) {
                 alert(`Erro ao excluir lote: ${err.message}`);
                 console.error("Erro ao excluir lote:", err);
@@ -475,7 +455,6 @@
         }
 
 
-        // Fechar modais clicando fora
         qualidadeModal.addEventListener('click', (e) => {
             if (e.target === qualidadeModal) qualidadeModal.style.display = 'none';
         });
@@ -483,7 +462,6 @@
             if (e.target === leiteModal) leiteModal.style.display = 'none';
         });
 
-        // Inicial
         buscarLotes();
     </script>
     <script src="app.js"></script>

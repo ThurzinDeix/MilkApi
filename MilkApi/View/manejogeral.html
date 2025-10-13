@@ -45,7 +45,6 @@
 
         <div class="listaCards"></div>
 
-        <!-- Modal -->
         <div id="modal" class="modal">
             <div class="modal-content form-modal">
                 <span class="close" onclick="fecharModal()">&times;</span>
@@ -61,8 +60,7 @@
                         </div>
                     </div>
 
-                    <!-- Aqui os campos específicos (data, tipo, observações) serão inseridos via JS -->
-                    <div id="campos-especificos"></div>
+                   <div id="campos-especificos"></div>
 
                     <div class="modal-actions">
                         <button type="button" class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
@@ -78,7 +76,6 @@
         const apiBase = "https://localhost:7092";
         let tipoAtual = "";
 
-        // Abrir modal para criar ou editar manejo
         function abrirModal(tipo, dados = null) {
             tipoAtual = tipo;
             document.getElementById("modal").style.display = "block";
@@ -116,7 +113,6 @@
             document.getElementById("campos-especificos").innerHTML = "";
         }
 
-        // Carregar registros do manejo
         async function carregarManejo() {
             const usuarioId = localStorage.getItem("userId");
             if (!usuarioId) return;
@@ -167,7 +163,6 @@
             }
         }
 
-        // Excluir manejo
         async function excluirManejo(id) {
             if (!confirm("Deseja excluir este manejo?")) return;
             try {
@@ -183,7 +178,6 @@
             }
         }
 
-        // Submit do form (criação ou edição)
         document.getElementById("modal-form").addEventListener("submit", async function (e) {
             e.preventDefault();
 

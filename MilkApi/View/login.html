@@ -106,7 +106,7 @@
   </div>
 
   <script>
-    const apiUrl = "https://localhost:7092/Usuario"; // Altere se necessário
+    const apiUrl = "https://localhost:7092/Usuario"; 
 
     function mostrarAba(aba) {
       const loginForm = document.getElementById("loginForm");
@@ -142,7 +142,6 @@
       alert("Login bem-sucedido! Bem-vindo, " + user.nome);
       localStorage.setItem('userId', user.id);
       
-      // Novo alert mostrando o ID armazenado
       alert("ID do usuário armazenado no localStorage: " + user.id);
 
       localStorage.setItem('authenticated', 'true');

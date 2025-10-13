@@ -6,12 +6,10 @@
   <title>Monitoramento de Gado</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" type="text/css"
-    href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
-  <link rel="stylesheet" type="text/css"
-    href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
-  <link rel="stylesheet" type="text/css"
-    href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css" />
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -35,17 +33,13 @@
     </div>
   </nav>
 
-  <!-- Conteúdo principal -->
   <div class="content">
     <div class="dashboard-dados">
       <div class="card-dados">
         <div class="linha-card-dados">
           <p class="tit-card-dados">Total Animais</p>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-            stroke="#5a3c2d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-            class="lucide lucide-activity-icon lucide-activity">
-            <path
-              d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" />
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="#5a3c2d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" />
           </svg>
         </div>
         <p class="Numero-card-dados" id="totalAnimais"></p>
@@ -53,12 +47,9 @@
       <div class="card-dados">
         <div class="linha-card-dados">
           <p class="tit-card-dados">Produção Hoje</p>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-            stroke="#5a3c2d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-            class="lucide lucide-milk-icon lucide-milk">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="#5a3c2d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M8 2h8" />
-            <path
-              d="M9 2v2.789a4 4 0 0 1-.672 2.219l-.656.984A4 4 0 0 0 7 10.212V20a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-9.789a4 4 0 0 0-.672-2.219l-.656-.984A4 4 0 0 1 15 4.788V2" />
+            <path d="M9 2v2.789a4 4 0 0 1-.672 2.219l-.656.984A4 4 0 0 0 7 10.212V20a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-9.789a4 4 0 0 0-.672-2.219l-.656-.984A4 4 0 0 1 15 4.788V2" />
             <path d="M7 15a6.472 6.472 0 0 1 5 0 6.47 6.47 0 0 0 5 0" />
           </svg>
         </div>
@@ -74,9 +65,7 @@
       <div class="card-dados">
         <div class="linha-card-dados">
           <p class="tit-card-dados">Média de produção Mensal</p>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-            stroke="#5a3c2d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-            class="lucide lucide-chart-no-axes-combined-icon lucide-chart-no-axes-combined">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="#5a3c2d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 16v5" />
             <path d="M16 14v7" />
             <path d="M20 10v11" />
@@ -94,58 +83,122 @@
         <p class="num-not" id="numNotificacao"></p>
         <p class="text-not">Notificações pendentes</p>
       </div>
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5a3c2d"
-        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bell-icon lucide-bell">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="#5a3c2d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M10.268 21a2 2 0 0 0 3.464 0" />
-        <path
-          d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" />
+        <path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" />
       </svg>
     </div>
 
-
+    <section id="grafico">
+      <h1>Produção de Leite Semanal</h2>
+      <canvas id="graficoLeite" width="400" height="200"></canvas>
+    </section>
   </div>
+
   <script>
-    const apiBase = "https://localhost:7092";
+    const apiBase = "https://localhost:7092"
     const usuarioId = localStorage.getItem("userId")
 
     async function carregarDashboard() {
       try {
-        const res = await fetch(`${apiBase}/Alerta/${usuarioId}`);
-        if (!res.ok) throw new Error("Erro ao buscar dados do servidor");
-        const data = await res.json();
+        const res = await fetch(`${apiBase}/Alerta/${usuarioId}`)
+        if (!res.ok) throw new Error("Erro ao buscar dados do servidor")
+        const data = await res.json()
 
-        document.getElementById("totalAnimais").textContent = data.estatisticas.numeroDeVacas;
-        document.getElementById("producaoDiaria").textContent = `${data.estatisticas.producaoTotalDiaria} L`;
-        document.getElementById("taxaNatalidade").textContent = `${data.estatisticas.taxaNatalidade}%`;
-        document.getElementById("mediaMensal").textContent = `${data.estatisticas.mediaMensalPorVaca} L / Vaca`;
-
-        document.getElementById("numNotificacao").textContent = data.totalAlertas;
-
-
-        localStorage.setItem("alertas", JSON.stringify(data.alertas));
+        document.getElementById("totalAnimais").textContent = data.estatisticas.numeroDeVacas
+        document.getElementById("producaoDiaria").textContent = `${data.estatisticas.producaoTotalDiaria} L`
+        document.getElementById("taxaNatalidade").textContent = `${data.estatisticas.taxaNatalidade}%`
+        document.getElementById("mediaMensal").textContent = `${data.estatisticas.mediaMensalPorVaca} L / Vaca`
+        document.getElementById("numNotificacao").textContent = data.totalAlertas
+        localStorage.setItem("alertas", JSON.stringify(data.alertas))
       } catch (erro) {
-        console.error("Erro ao carregar dados:", erro);
+        console.error("Erro ao carregar dados:", erro)
       }
     }
 
+    async function carregarGraficoLeite() {
+      try {
+        const res = await fetch(`${apiBase}/Dashboard/${usuarioId}`)
+        if (!res.ok) throw new Error("Erro ao buscar dados do gráfico")
+        const json = await res.json()
+        const dados = json.producao["1Semana"];
+
+        const labels = dados.map(d => d.label)
+        const totalLeite = dados.map(d => d.totalLeite)
+        const mediaVaca = dados.map(d => d.mediaVaca)
+
+        const ctx = document.getElementById("graficoLeite").getContext("2d")
+        new Chart(ctx, {
+          type: "line",
+          data: {
+            labels,
+            datasets: [
+              {
+                label: "Total de Leite (L)",
+                data: totalLeite,
+                borderColor: "#5a3c2d",
+                backgroundColor: "#5a3c2d",
+                borderWidth: 2,
+                fill: false,
+                tension: 0.3,
+                pointRadius: 4
+              },
+              {
+                label: "Média por Vaca (L)",
+                data: mediaVaca,
+                borderColor: "#555",
+                backgroundColor: "#555",
+                borderWidth: 2,
+                fill: false,
+                tension: 0.3,
+                pointRadius: 4
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: { display: true, text: "Litros" }
+              },
+              x: {
+                title: { display: true, text: "Dia" }
+              }
+            },
+            plugins: {
+              legend: {
+                position: "bottom",
+                labels: {
+                  padding: 30,
+                  boxWidth: 20, 
+                  boxHeight: 20, 
+                  color: "#333", 
+                  font: { size: 14, weight: "thin" },
+                  usePointStyle: true
+                }
+              },
+              tooltip: { mode: "index", intersect: false }
+            },
+            
+          }
+        })
+      } catch (erro) {
+        console.error("Erro ao carregar gráfico:", erro)
+      }
+    }
 
     function abrirAlertas() {
-      window.location.href = "alertas.html";
+      window.location.href = "alertas.html"
     }
-
 
     if (window.location.pathname.includes("dashboard.html")) {
-      carregarDashboard();
+      carregarDashboard()
+      carregarGraficoLeite()
     }
-    if (window.location.pathname.includes("alertas.html")) {
-      carregarAlertas();
-    }
-
   </script>
-
-
 
   <script src="app.js"></script>
 </body>
-
 </html>

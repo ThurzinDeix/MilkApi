@@ -3,96 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard de Estatísticas do Rebanho</title>
+<title>Estatísticas do Rebanho</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f5f0e6;
-        margin: 0;
-        padding: 0;
-    }
-    header {
-        padding: 20px;
-        background-color: #f2e8dc;
-        font-size: 24px;
-        font-weight: bold;
-    }
-    .tabs {
-        display: flex;
-        gap: 15px;
-        padding: 10px 20px;
-        background-color: #fff5e6;
-    }
-    .tab {
-        padding: 10px 15px;
-        cursor: pointer;
-        border-radius: 8px;
-    }
-    .tab.active {
-        background-color: #e0c8a0;
-        font-weight: bold;
-    }
-    .tab-content {
-        display: none;
-        padding: 20px;
-    }
-    .tab-content.active {
-        display: block;
-    }
-    .stats-cards {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 15px;
-        margin-bottom: 20px;
-    }
-    .card {
-        background-color: #fff;
-        flex: 1 1 200px;
-        padding: 15px;
-        border-radius: 12px;
-    }
-    .card h2 {
-        margin: 0;
-        font-size: 20px;
-    }
-    .card p {
-        margin: 5px 0 0 0;
-        color: #555;
-    }
-    .charts-row {
-        display: flex;
-        gap: 15px;
-        flex-wrap: wrap;
-        margin-bottom: 20px;
-    }
-    .chart-container {
-        flex: 1 1 48%;
-        background-color: #fff;
-        padding: 10px;
-        border-radius: 12px;
-    }
-    .chart-full {
-        width: 100%;
-        background-color: #fff;
-        padding: 10px;
-        border-radius: 12px;
-        margin-bottom: 20px;
-    }
-    select {
-        margin-left: 20px;
-        padding: 5px 10px;
-        border-radius: 6px;
-    }
-</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css" />
 </head>
+
 <body>
     <nav>
         <div class="nav1">
           <div class="logo">Cownt</div>
           <div class="menu">
             <a href="dashboard.html"><i class="ph-bold ph-house-line"></i> Dashboard</a>
-            <a href="estatisticas.html" class="active"><i class="ph-bold ph-chart-line"></i> Estatísticas</a>
+            <a href="estatisticas.html"><i class="ph-bold ph-chart-line"></i> Estatísticas</a>
             <a href="addgado.html" ><i class="ph ph-cow"></i> Gerenciar Gados</a>
             <a href="registro.html"><i class="ph ph-cow"></i> Registros</a>
             <a href="ocorrenciadiaria.html"><i class="ph-bold ph-calendar-dots"></i> Ocorrências Diárias</a>
@@ -107,9 +36,10 @@
         </div>
       </nav>
 
-<header>
+<div class="content">
+<header class="dashboard-header">
     Estatísticas do Rebanho
-    <select id="periodo">
+    <select id="periodo" class="select-filtro">
         <option>1 Semana</option>
         <option selected>1 Mês</option>
         <option>6 Meses</option>
@@ -119,113 +49,114 @@
     </select>
 </header>
 
-<div class="tabs">
+<div class="tabs tab-container">
     <div class="tab active" data-tab="producao">Produção de Leite</div>
     <div class="tab" data-tab="saude">Saúde / Remédios</div>
     <div class="tab" data-tab="reproducao">Reprodução</div>
 </div>
 
-<div class="tab-content active" id="producao">
-    <div class="stats-cards">
-        <div class="card">
-            <h2 id="totalLeite">0L</h2>
-            <p>Total Produzido Hoje</p>
+<div class="tab-content active tab-dados" id="producao">
+    <div class="card-container stats-cards">
+        <div class="card card-dados">
+            <h2 id="totalLeite" class="brinco">0L</h2>
+            <p class="descricao">Total Produzido Hoje</p>
         </div>
-        <div class="card">
-            <h2 id="mediaVacaCard">0L</h2>
-            <p>Média por Vaca</p>
+        <div class="card card-dados">
+            <h2 id="mediaVacaCard" class="brinco">0L</h2>
+            <p class="descricao">Média por Vaca</p>
         </div>
-        <div class="card">
-            <h2 id="percentualAbaixoMedia">0%</h2>
-            <p>% Abaixo da Média</p>
+        <div class="card card-dados">
+            <h2 id="percentualAbaixoMedia" class="brinco">0%</h2>
+            <p class="descricao">% Abaixo da Média</p>
         </div>
-        <div class="card">
-            <h2 id="ultimaColeta">--</h2>
-            <p>Última Coleta</p>
+        <div class="card card-dados">
+            <h2 id="ultimaColeta" class="brinco">--</h2>
+            <p class="descricao">Última Coleta</p>
         </div>
     </div>
 
     <div class="charts-row">
-        <div class="chart-container">
+        <div class="chart-container card-dados">
             <canvas id="producaoMes"></canvas>
         </div>
-        <div class="chart-container">
+        <div class="chart-container card-dados">
             <canvas id="mediaVaca"></canvas>
         </div>
     </div>
-    <div class="chart-full">
+    <div class="chart-full card-dados">
         <canvas id="qualidadeLeite"></canvas>
     </div>
 </div>
 
-<div class="tab-content" id="saude">
-    <div class="stats-cards">
-        <div class="card">
-            <h2 id="vacinasVencendo">0</h2>
-            <p>Vacinas Vencendo</p>
+<div class="tab-content tab-dados" id="saude">
+    <div class="card-container stats-cards">
+        <div class="card card-dados">
+            <h2 id="vacinasVencendo" class="brinco">0</h2>
+            <p class="descricao">Vacinas Vencendo</p>
         </div>
-        <div class="card">
-            <h2 id="vacinacaoDia">0</h2>
-            <p>Vacinação em Dia</p>
+        <div class="card card-dados">
+            <h2 id="vacinacaoDia" class="brinco">0</h2>
+            <p class="descricao">Vacinação em Dia</p>
         </div>
-        <div class="card">
-            <h2 id="alertasAtivos">0</h2>
-            <p>Alertas Ativos</p>
+        <div class="card card-dados">
+            <h2 id="alertasAtivos" class="brinco">0</h2>
+            <p class="descricao">Alertas Ativos</p>
         </div>
-        <div class="card">
-            <h2 id="medicamentosUsados">0</h2>
-            <p>Medicamentos Usados</p>
+        <div class="card card-dados">
+            <h2 id="medicamentosUsados" class="brinco">0</h2>
+            <p class="descricao">Medicamentos Usados</p>
         </div>
     </div>
 
     <div class="charts-row">
-        <div class="chart-container">
+        <div class="chart-container card-dados">
             <canvas id="vacinacaoTipo"></canvas>
         </div>
-        <div class="chart-container">
+        <div class="chart-container card-dados">
             <canvas id="consumoMedicamentos"></canvas>
         </div>
     </div>
-    <div class="chart-full">
+    <div class="chart-full card-dados">
         <canvas id="casosDoencas"></canvas>
     </div>
 </div>
 
-<div class="tab-content" id="reproducao">
-    <div class="stats-cards">
-        <div class="card">
-            <h2 id="vacasPrenhas">0</h2>
-            <p>Vacas Prenhas</p>
+<div class="tab-content tab-dados" id="reproducao">
+    <div class="card-container stats-cards">
+        <div class="card card-dados">
+            <h2 id="vacasPrenhas" class="brinco">0</h2>
+            <p class="descricao">Vacas Prenhas</p>
         </div>
-        <div class="card">
-            <h2 id="proximosPartos">0</h2>
-            <p>Próximos Partos</p>
+        <div class="card card-dados">
+            <h2 id="proximosPartos" class="brinco">0</h2>
+            <p class="descricao">Próximos Partos</p>
         </div>
-        <div class="card">
-            <h2 id="taxaSucesso">0%</h2>
-            <p>Taxa de Sucesso</p>
+        <div class="card card-dados">
+            <h2 id="taxaSucesso" class="brinco">0%</h2>
+            <p class="descricao">Taxa de Sucesso</p>
         </div>
-        <div class="card">
-            <h2 id="intervaloMedio">0</h2>
-            <p>Intervalo Médio</p>
+        <div class="card card-dados">
+            <h2 id="intervaloMedio" class="brinco">0</h2>
+            <p class="descricao">Intervalo Médio</p>
         </div>
     </div>
 
     <div class="charts-row">
-        <div class="chart-container">
+        <div class="chart-container card-dados">
             <canvas id="taxaPrenhez"></canvas>
         </div>
-        <div class="chart-container">
+        <div class="chart-container card-dados">
             <canvas id="intervaloPartos"></canvas>
         </div>
     </div>
-    <div class="chart-full">
+    <div class="chart-full card-dados">
         <canvas id="inseminacao"></canvas>
     </div>
 </div>
+</div>
 
 <script>
-const usuarioId = 1; // alterar conforme necessário
+const usuarioId = localStorage.getItem("userId");
 const API_URL = `https://localhost:7092/Vaca/ResumoUsuario/${usuarioId}`;
 
 
@@ -233,7 +164,6 @@ async function loadDashboard() {
     const res = await fetch(`${API_URL}${usuarioId}`);
     const vacas = await res.json();
 
-    // --- PRODUÇÃO DE LEITE ---
     const hoje = new Date().toISOString().split('T')[0];
     let totalLeiteHoje = 0;
     let ultimaColeta = null;
@@ -255,7 +185,6 @@ async function loadDashboard() {
 
     mediaVacas = mediaIndividual.reduce((a,b)=>a+b,0)/vacas.length;
 
-    // % abaixo da média
     const abaixoMedia = mediaIndividual.filter(m=>m < mediaVacas).length;
     const percAbaixoMedia = ((abaixoMedia / vacas.length)*100).toFixed(1);
 
@@ -264,7 +193,6 @@ async function loadDashboard() {
     document.getElementById("percentualAbaixoMedia").innerText = percAbaixoMedia + "%";
     document.getElementById("ultimaColeta").innerText = ultimaColeta ? new Date(ultimaColeta).toLocaleString() : "--";
 
-    // Qualidade do leite
     vacas.forEach(vaca => {
         vaca.Lotes?.forEach(lote => {
             if (lote.qualidade) {
@@ -287,7 +215,7 @@ async function loadDashboard() {
         options:{ scales: { y:{position:'left'}, y1:{position:'right'} } }
     });
 
-    // --- SAÚDE / REMÉDIOS ---
+   
     const vacinasVencendo = vacas.reduce((acc,v)=> acc + (v.TemRemedio?1:0),0);
     const vacinacaoDia = vacas.reduce((acc,v)=> acc + (v.TemLeite?1:0),0);
     const alertasAtivos = vacas.reduce((acc,v)=> acc + (v.TemAlerta?1:0),0);
@@ -298,7 +226,6 @@ async function loadDashboard() {
     document.getElementById("alertasAtivos").innerText = alertasAtivos;
     document.getElementById("medicamentosUsados").innerText = medicamentosUsados;
 
-    // --- REPRODUÇÃO ---
     const vacasPrenhas = vacas.filter(v=>v.TemPrenhez).length;
     const proximosPartos = vacas.reduce((acc,v)=>{
         v.Prenhezes?.forEach(p=>{
@@ -324,7 +251,6 @@ async function loadDashboard() {
     document.getElementById("taxaSucesso").innerText = taxaSucesso + "%";
     document.getElementById("intervaloMedio").innerText = Math.round(intervaloMedio);
 
-    // Gráficos de reprodução
     const meses = ["Jan","Fev","Mar","Abr","Mai","Jun"];
     new Chart(document.getElementById('taxaPrenhez'), {
         type:'line',
