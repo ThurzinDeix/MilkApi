@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <title>Login e Cadastro</title>
+  <link rel="stylesheet" href="style.css">
   <style>
     body {
       font-family: Arial, sans-serif;
       background-color: #F5EBE0;
       display: flex;
-      justify-content: center;
+      justify-content: flex-end;
       align-items: center;
       height: 100vh;
     }
@@ -19,6 +20,7 @@
       border-radius: 8px;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
       width: 350px;
+      margin-right: 10%;
     }
 
     h2 {
@@ -79,31 +81,35 @@
   </style>
 </head>
 <body>
-
-  <div class="container">
-    <h2 id="formTitle">Login</h2>
-
-    <div class="tabs">
-      <div class="tab active" onclick="mostrarAba('login')">Entrar</div>
-      <div class="tab" onclick="mostrarAba('cadastro')">Cadastrar</div>
+    <div class="img-login">
+      
     </div>
+    
+    <div class="container">
+      <h2 id="formTitle">Login</h2>
 
-    <div id="loginForm">
-      <input type="email" id="loginEmail" placeholder="Email" required>
-      <input type="password" id="loginSenha" placeholder="Senha" required>
-      <button onclick="login()">Entrar</button>
-    </div>
+      <div class="tabs">
+        <div class="tab active" onclick="mostrarAba('login')">Entrar</div>
+        <div class="tab" onclick="mostrarAba('cadastro')">Cadastrar</div>
+      </div>
 
-    <div id="cadastroForm" style="display: none;">
-      <input type="text" id="cadNome" placeholder="Nome" required>
-      <input type="email" id="cadEmail" placeholder="Email" required>
-      <input type="password" id="cadSenha" placeholder="Senha" required>
-      <input type="password" id="cadConfSenha" placeholder="Confirme sua senha" required>
-      <input type="date" id="cadDataNasc" required>
-      <input type="text" id="cadCPF" placeholder="CPF" required>
-      <button onclick="cadastrar()">Cadastrar</button>
+      <div id="loginForm">
+        <input type="email" id="loginEmail" placeholder="Email" required>
+        <input type="password" id="loginSenha" placeholder="Senha" required>
+        <button onclick="login()">Entrar</button>
+      </div>
+
+      <div id="cadastroForm" style="display: none;">
+        <input type="text" id="cadNome" placeholder="Nome" required>
+        <input type="email" id="cadEmail" placeholder="Email" required>
+        <input type="password" id="cadSenha" placeholder="Senha" required>
+        <input type="password" id="cadConfSenha" placeholder="Confirme sua senha" required>
+        <input type="date" id="cadDataNasc" required>
+        <input type="text" id="cadCPF" placeholder="CPF" required>
+        <button onclick="cadastrar()">Cadastrar</button>
+      </div>
     </div>
-  </div>
+  
 
   <script>
     const apiUrl = "https://localhost:7092/Usuario"; 

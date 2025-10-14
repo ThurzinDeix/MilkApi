@@ -1467,3 +1467,19 @@ span i {
     margin-right: 10px;
 }
 
+.content-login{
+    display: flex;
+    align-items: center;
+}
+
+.img-login{
+    width: 600px;
+    height: 600px;
+  background-image: url('img/vetorizadoback.png');
+  background-size: cover; 
+  background-position: center;
+  background-repeat: no-repeat;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+}
