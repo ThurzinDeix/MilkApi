@@ -8,7 +8,6 @@
         public string Sexo { get; set; } = string.Empty;
         public int TotalRegistros { get; set; }
 
-        // opcional → ajuda o front a mostrar os ícones corretos
         public bool TemLeite { get; set; }
         public bool TemManejo { get; set; }
         public bool TemPrenhez { get; set; }

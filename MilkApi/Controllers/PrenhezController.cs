@@ -156,7 +156,6 @@ namespace MilkApi.Controllers
             return NotFound();
         }
 
-        // GET /prenhez/por-usuario?usuarioId=123
         [HttpGet("por-usuario")]
         public IEnumerable<Prenhez> GetByUsuario(int usuarioId)
         {

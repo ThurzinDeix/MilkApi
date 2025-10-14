@@ -156,7 +156,6 @@ namespace MilkApi.Controllers
             return NotFound();
         }
 
-        // NOVO ENDPOINT: GET por usuário
         [HttpGet("por-usuario")]
         public IEnumerable<Suplemento> GetByUsuario(int usuarioId)
         {

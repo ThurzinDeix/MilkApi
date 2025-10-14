@@ -168,7 +168,6 @@ namespace MilkApi.Controllers
         }
     }
 
-    // Modelo usado pelo controller
     public class HistoricoVacina
     {
         public int Id { get; set; }

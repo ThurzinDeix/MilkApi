@@ -24,7 +24,6 @@ namespace MilkApi.Controllers
             {
                 await conn.OpenAsync();
 
-                // 1️⃣ Informações do gado
                 var queryGado = "SELECT Id, Brinco, Raca FROM Gado WHERE Id = @Id";
                 using (var cmd = new SqlCommand(queryGado, conn))
                 {
@@ -38,7 +37,6 @@ namespace MilkApi.Controllers
                     reader.Close();
                 }
 
-                // 2️⃣ Leites
                 var queryLeite = "SELECT * FROM Leite WHERE ID_Gado = @Id";
                 using (var cmd = new SqlCommand(queryLeite, conn))
                 {
@@ -58,7 +56,6 @@ namespace MilkApi.Controllers
                     reader.Close();
                 }
 
-                // 3️⃣ ManejoGeral
                 var queryManejo = "SELECT * FROM ManejoGeral WHERE ID_Gado = @Id";
                 using (var cmd = new SqlCommand(queryManejo, conn))
                 {
@@ -79,7 +76,6 @@ namespace MilkApi.Controllers
                     reader.Close();
                 }
 
-                // 4️⃣ Prenhez
                 var queryPrenhez = "SELECT * FROM Prenhez WHERE ID_Gado = @Id";
                 using (var cmd = new SqlCommand(queryPrenhez, conn))
                 {
@@ -101,7 +97,6 @@ namespace MilkApi.Controllers
                     reader.Close();
                 }
 
-                // 5️⃣ Remedio
                 var queryRemedio = "SELECT * FROM Remedio WHERE ID_Gado = @Id";
                 using (var cmd = new SqlCommand(queryRemedio, conn))
                 {
@@ -124,7 +119,6 @@ namespace MilkApi.Controllers
                     reader.Close();
                 }
 
-                // 6️⃣ Reproducao
                 var queryRepro = "SELECT * FROM Reproducao WHERE ID_Gado = @Id";
                 using (var cmd = new SqlCommand(queryRepro, conn))
                 {
@@ -145,7 +139,6 @@ namespace MilkApi.Controllers
                     reader.Close();
                 }
 
-                // 7️⃣ Suplemento
                 var querySup = "SELECT * FROM Suplemento WHERE ID_Gado = @Id";
                 using (var cmd = new SqlCommand(querySup, conn))
                 {
@@ -167,7 +160,6 @@ namespace MilkApi.Controllers
                     reader.Close();
                 }
 
-                // 8️⃣ Alertas
                 var queryAlertas = "SELECT * FROM Alertas WHERE ID_Gado = @Id";
                 using (var cmd = new SqlCommand(queryAlertas, conn))
                 {
@@ -187,29 +179,28 @@ namespace MilkApi.Controllers
                     reader.Close();
                 }
 
-                // 9️⃣ Lotes + Qualidade
                 var queryLotes = @"
-    SELECT 
-        l.Id AS LoteId,
-        l.Num,
-        l.ID_Usuario,
+                SELECT 
+                    l.Id AS LoteId,
+                    l.Num,
+                    l.ID_Usuario,
         
-        ll.ID_Leite,
+                    ll.ID_Leite,
         
-        le.Litros,
-        le.Data,
-        le.ID_Gado AS LeiteGadoId,
+                    le.Litros,
+                    le.Data,
+                    le.ID_Gado AS LeiteGadoId,
         
-        q.Id AS QualidadeId,
-        q.CCS,
-        q.Gordura,
-        q.Proteina
-    FROM Lote l
-    LEFT JOIN LoteLeite ll ON l.Id = ll.ID_Lote
-    LEFT JOIN Leite le ON ll.ID_Leite = le.Id
-    LEFT JOIN Qualidade q ON l.Id = q.ID_Lote
-    WHERE le.ID_Gado = @Id 
-       OR l.ID_Usuario = (SELECT ID_Usuario FROM Gado WHERE Id = @Id)";
+                    q.Id AS QualidadeId,
+                    q.CCS,
+                    q.Gordura,
+                    q.Proteina
+                FROM Lote l
+                LEFT JOIN LoteLeite ll ON l.Id = ll.ID_Lote
+                LEFT JOIN Leite le ON ll.ID_Leite = le.Id
+                LEFT JOIN Qualidade q ON l.Id = q.ID_Lote
+                WHERE le.ID_Gado = @Id 
+                   OR l.ID_Usuario = (SELECT ID_Usuario FROM Gado WHERE Id = @Id)";
 
                 using (var cmd = new SqlCommand(queryLotes, conn))
                 {
@@ -235,7 +226,6 @@ namespace MilkApi.Controllers
 
                         var lote = lotesDict[loteId];
 
-                        // Leite (se houver)
                         if (reader["ID_Leite"] != DBNull.Value)
                         {
                             lote.leites.Add(new Leite
@@ -248,7 +238,6 @@ namespace MilkApi.Controllers
                             });
                         }
 
-                        // Qualidade (somente 1 por lote)
                         if (reader["QualidadeId"] != DBNull.Value && lote.qualidade == null)
                         {
                             lote.qualidade = new Qualidade

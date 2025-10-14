@@ -16,7 +16,6 @@ namespace MilkApi.Controllers
             _logger = logger;
         }
 
-        // ====================== CRUD existente ======================
         [HttpGet]
         public IEnumerable<Remedio> Get()
         {
@@ -174,9 +173,6 @@ namespace MilkApi.Controllers
             return lista;
         }
 
-        // ====================== NOVOS MÉTODOS ======================
-
-        // GET /remedio/tratamentos/{idGado} -> lista tratamentos com doses aplicadas e próxima dose
         [HttpGet("tratamentos/{idGado}")]
         public IActionResult GetTratamentosPorGado(int idGado)
         {
@@ -230,7 +226,6 @@ namespace MilkApi.Controllers
             }
         }
 
-        // POST /remedio/aplicar/{idRemedio}/{idGado}/{idUsuario}
         [HttpPost("aplicar/{idRemedio}/{idGado}/{idUsuario}")]
         public IActionResult AplicarDose(int idRemedio, int idGado, int idUsuario)
         {
@@ -257,7 +252,6 @@ namespace MilkApi.Controllers
             }
         }
 
-        // PATCH /remedio/encerrar/{idRemedio} -> encerra tratamento
         [HttpPatch("encerrar/{idRemedio}")]
         public IActionResult EncerrarTratamento(int idRemedio)
         {

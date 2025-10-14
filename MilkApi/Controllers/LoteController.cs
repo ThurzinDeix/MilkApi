@@ -24,7 +24,6 @@ namespace MilkApi.Controllers
             {
                 await conn.OpenAsync();
 
-                // 1) Pega todos os lotes
                 string queryLotes = "SELECT * FROM Lote";
                 SqlCommand cmdLotes = new SqlCommand(queryLotes, conn);
                 SqlDataReader readerLotes = await cmdLotes.ExecuteReaderAsync();
@@ -37,12 +36,11 @@ namespace MilkApi.Controllers
                         Num = Convert.ToInt32(readerLotes["Num"]),
                         ID_Usuario = Convert.ToInt32(readerLotes["ID_Usuario"]),
                         leites = new List<Leite>(),
-                        qualidade = null // inicializa como null
+                        qualidade = null 
                     });
                 }
                 readerLotes.Close();
 
-                // 2) Pega todos os leites associados a cada lote
                 string queryLeites = @"
             SELECT ll.ID_Lote, l.Id AS LeiteId, l.ID_Gado, l.Data, l.Litros, l.ID_Usuario
             FROM LoteLeite ll
@@ -70,7 +68,6 @@ namespace MilkApi.Controllers
                 }
                 readerLeites.Close();
 
-                // 3) Pega a qualidade de cada lote
                 string queryQualidade = "SELECT * FROM Qualidade";
                 SqlCommand cmdQualidade = new SqlCommand(queryQualidade, conn);
                 SqlDataReader readerQualidade = await cmdQualidade.ExecuteReaderAsync();
@@ -231,7 +228,6 @@ namespace MilkApi.Controllers
                 {
                     try
                     {
-                        // 1) Criar lote
                         string insertLote = "INSERT INTO Lote (Num, ID_Usuario) OUTPUT INSERTED.Id VALUES (@Num, @ID_Usuario)";
                         SqlCommand cmdLote = new SqlCommand(insertLote, conn, tran);
                         cmdLote.Parameters.AddWithValue("@Num", dto.Num);
@@ -239,14 +235,13 @@ namespace MilkApi.Controllers
 
                         int loteId = (int)await cmdLote.ExecuteScalarAsync();
 
-                        // 2) Criar relações na tabela LoteLeite
                         foreach (var idLeite in dto.IDsLeite)
                         {
                             string insertLoteLeite = "INSERT INTO LoteLeite (ID_Lote, ID_Leite, ID_Usuario) VALUES (@ID_Lote, @ID_Leite, @ID_Usuario)";
                             SqlCommand cmdLoteLeite = new SqlCommand(insertLoteLeite, conn, tran);
                             cmdLoteLeite.Parameters.AddWithValue("@ID_Lote", loteId);
                             cmdLoteLeite.Parameters.AddWithValue("@ID_Leite", idLeite);
-                            cmdLoteLeite.Parameters.AddWithValue("@ID_Usuario", dto.ID_Usuario); // ✅ adiciona aqui
+                            cmdLoteLeite.Parameters.AddWithValue("@ID_Usuario", dto.ID_Usuario);
                             await cmdLoteLeite.ExecuteNonQueryAsync();
                         }
 

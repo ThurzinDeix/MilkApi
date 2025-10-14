@@ -28,26 +28,22 @@ namespace MilkApi
         {
             var hoje = DateTime.Now;
 
-            // Verifica se existe prenhez ativa
             var prenhezAtiva = Prenhezes
                 .FirstOrDefault(p => p.Data_Termino == null);
 
-            // Se o status foi definido manualmente, retorna o valor atual
             if (StatusManual && !string.IsNullOrEmpty(StatusProdutivo))
                 return StatusProdutivo!;
 
-            // Último parto (Data_Termino de prenhez com Status = "Parto")
             var partos = Prenhezes
                 .Where(p => p.Data_Termino.HasValue && p.Status == "Parto")
                 .Select(p => p.Data_Termino.Value);
 
             DateTime? ultimoParto = partos.Any() ? partos.Max() : null;
 
-            // Lógica de decisão completa
             if (prenhezAtiva != null)
             {
                 if (ultimoParto == null)
-                    return "Novilha Gestante"; // primeira gestação
+                    return "Novilha Gestante"; 
                 else
                 {
                     if (prenhezAtiva.Data_Esperada.HasValue &&

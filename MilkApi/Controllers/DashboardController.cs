@@ -12,7 +12,6 @@ namespace MilkApi.Controllers
     [Route("[controller]")]
     public class DashboardController : Controller
     {
-        // mantenha sua forma de obter ConnectionString (ex: config.ConnectionString)
         private readonly string ConnectionString = config.ConnectionString;
         private readonly ILogger<DashboardController> _logger;
 
@@ -21,7 +20,6 @@ namespace MilkApi.Controllers
             _logger = logger;
         }
 
-        // modelos internos (fortemente tipados) para evitar problemas com dynamic/LINQ
         private class Vaca
         {
             public int Id { get; set; }
@@ -65,10 +63,9 @@ namespace MilkApi.Controllers
             public int Id { get; set; }
             public string Num { get; set; }
             public Qualidade Qualidade { get; set; }
-            public DateTime? LeiteDate { get; set; } // para poder relacionar qualidade ao tempo do leite
+            public DateTime? LeiteDate { get; set; } 
         }
 
-        // DTOs de ponto de série para retorno
         private class ProductionPoint
         {
             public string Label { get; set; }
@@ -139,7 +136,6 @@ namespace MilkApi.Controllers
 
                             var vaca = vacasDict[vacaId];
 
-                            // Leite
                             if (reader["LeiteId"] != DBNull.Value)
                             {
                                 var leite = new Leite
@@ -148,12 +144,10 @@ namespace MilkApi.Controllers
                                     Litros = reader["Litros"] != DBNull.Value ? Convert.ToDecimal(reader["Litros"]) : 0m,
                                     Data = reader["LeiteData"] != DBNull.Value ? (DateTime?)Convert.ToDateTime(reader["LeiteData"]) : null
                                 };
-                                // evitar duplicatas simples (mesmo Id)
                                 if (!vaca.Leites.Any(x => x.Id == leite.Id))
                                     vaca.Leites.Add(leite);
                             }
 
-                            // Prenhez
                             if (reader["PrenhezId"] != DBNull.Value)
                             {
                                 var pr = new Prenhez
@@ -166,19 +160,16 @@ namespace MilkApi.Controllers
                                 vaca.Prenhezes.Add(pr);
                             }
 
-                            // Reprodução
                             if (reader["ReproducaoId"] != DBNull.Value)
                             {
                                 var r = new Reproducao
                                 {
                                     Tipo = reader["ReproTipo"] != DBNull.Value ? reader["ReproTipo"].ToString() : null
                                 };
-                                // evitar duplicatas simples
                                 if (!vaca.Reproducoes.Any(x => x.Tipo == r.Tipo))
                                     vaca.Reproducoes.Add(r);
                             }
 
-                            // Lote + Qualidade (associamos a data do leite para poder filtrar por intervalo)
                             if (reader["LoteId"] != DBNull.Value)
                             {
                                 int loteId = Convert.ToInt32(reader["LoteId"]);
@@ -198,15 +189,14 @@ namespace MilkApi.Controllers
                                 if (!vaca.Lotes.Any(x => x.Id == lote.Id))
                                     vaca.Lotes.Add(lote);
                             }
-                        } // while reader
-                    } // using reader
-                } // using cmd
-            } // using conn
+                        } 
+                    } 
+                } 
+            } 
 
             var vacas = vacasDict.Values.ToList();
             DateTime hoje = DateTime.Now.Date;
 
-            // se não houver leite, definimos um início padrão (5 anos atrás) para 'Total'
             DateTime earliestLeite = vacas
                 .SelectMany(v => v.Leites)
                 .Where(l => l.Data.HasValue)
@@ -285,7 +275,6 @@ namespace MilkApi.Controllers
                     else if (tipoEixo == "semestre") proximo = cursor.AddMonths(6);
                     else proximo = cursor.AddMonths(1);
 
-                    // Produção no intervalo
                     var leitesIntervalo = vacas
                         .SelectMany(v => v.Leites)
                         .Where(l => l.Data.HasValue && l.Data.Value >= cursor && l.Data.Value < proximo)
@@ -310,7 +299,6 @@ namespace MilkApi.Controllers
                         MediaVaca = decimal.Round(mediaVacaPeriodo, 2)
                     });
 
-                    // Qualidade no intervalo (filtrada pela data do leite associada ao lote)
                     var qualList = vacas
                         .SelectMany(v => v.Lotes)
                         .Where(l => l.Qualidade != null && l.LeiteDate.HasValue && l.LeiteDate.Value >= cursor && l.LeiteDate.Value < proximo)
@@ -329,7 +317,6 @@ namespace MilkApi.Controllers
                         MediaProteina = decimal.Round(mediaProteina, 2)
                     });
 
-                    // Reprodução no intervalo (baseado em datas de prenhez)
                     int vacasPrenhas = vacas.Count(v => v.Prenhezes.Any(pr =>
                         pr.DataPrenhez.HasValue &&
                         pr.DataPrenhez.Value >= cursor &&
@@ -337,7 +324,6 @@ namespace MilkApi.Controllers
                         pr.Status?.Equals("Gestante", StringComparison.OrdinalIgnoreCase) == true
                     ));
 
-                    // intervalo médio de prenhez registrados dentro do intervalo
                     var intervalosDias = vacas
                         .SelectMany(v => v.Prenhezes)
                         .Where(pr => pr.DataPrenhez.HasValue
@@ -349,7 +335,6 @@ namespace MilkApi.Controllers
 
                     double intervaloMedio = intervalosDias.Any() ? intervalosDias.Average() : 0.0;
 
-                    // Contagem de tipos de reprodução: aproximamos contando as reproduções das vacas que tiveram prenhez no intervalo
                     int inseminacaoIA = 0;
                     int inseminacaoMonta = 0;
 
@@ -380,12 +365,12 @@ namespace MilkApi.Controllers
                     });
 
                     cursor = proximo;
-                } // enquanto cursor <= hoje
+                } 
 
                 producaoPorPeriodo[periodoNome] = pontosProducao;
                 qualidadePorPeriodo[periodoNome] = pontosQualidade;
                 reproducaoPorPeriodo[periodoNome] = pontosReproducao;
-            } // foreach periodo
+            } 
 
             return Ok(new
             {

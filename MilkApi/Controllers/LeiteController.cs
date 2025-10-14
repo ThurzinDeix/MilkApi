@@ -15,7 +15,6 @@ namespace MilkApi.Controllers
             _logger = logger;
         }
 
-        // 🔹 Ajustado para filtrar opcionalmente pelo usuarioId
         [HttpGet]
         public IEnumerable<Leite> Get([FromQuery] int? usuarioId)
         {
@@ -145,13 +144,11 @@ namespace MilkApi.Controllers
                 {
                     try
                     {
-                        // 1) Deleta registros dependentes em LoteLeite
                         string deleteLoteLeite = "DELETE FROM LoteLeite WHERE ID_Leite = @Id";
                         SqlCommand cmdLL = new SqlCommand(deleteLoteLeite, conn, tran);
                         cmdLL.Parameters.AddWithValue("@Id", id);
                         await cmdLL.ExecuteNonQueryAsync();
 
-                        // 2) Deleta o leite
                         string deleteLeite = "DELETE FROM Leite WHERE Id = @Id";
                         SqlCommand cmdL = new SqlCommand(deleteLeite, conn, tran);
                         cmdL.Parameters.AddWithValue("@Id", id);
@@ -182,7 +179,6 @@ namespace MilkApi.Controllers
 
                 try
                 {
-                    // 1) Inserir Leite
                     string insertLeite = "INSERT INTO Leite (ID_Gado, Data, Litros, ID_Usuario) OUTPUT INSERTED.Id VALUES (@ID_Gado, @Data, @Litros, @ID_Usuario)";
                     SqlCommand cmdLeite = new SqlCommand(insertLeite, conn, transaction);
                     cmdLeite.Parameters.AddWithValue("@ID_Gado", dto.ID_Gado);
@@ -192,7 +188,6 @@ namespace MilkApi.Controllers
 
                     int leiteId = (int)cmdLeite.ExecuteScalar();
 
-                    // 2) Inserir Lote vinculado ao Leite
                     string insertLote = "INSERT INTO Lote (ID_Leite, Num, ID_Usuario) VALUES (@ID_Leite, @Num, @ID_Usuario)";
                     SqlCommand cmdLote = new SqlCommand(insertLote, conn, transaction);
                     cmdLote.Parameters.AddWithValue("@ID_Leite", leiteId);
