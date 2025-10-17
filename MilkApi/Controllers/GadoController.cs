@@ -64,34 +64,32 @@ namespace MilkApi.Controllers
         {
             var lista = new List<Gado>();
 
-            using (var conn = new SqlConnection(ConnectionString))
+            using var conn = new SqlConnection(ConnectionString);
+            string query = "SELECT * FROM Gado";
+            if (usuarioId.HasValue) query += " WHERE ID_Usuario = @ID_Usuario";
+
+            var cmd = new SqlCommand(query, conn);
+            if (usuarioId.HasValue) cmd.Parameters.AddWithValue("@ID_Usuario", usuarioId.Value);
+
+            conn.Open();
+            var reader = cmd.ExecuteReader();
+            while (reader.Read())
             {
-                string query = "SELECT * FROM Gado";
-                if (usuarioId.HasValue) query += " WHERE ID_Usuario = @ID_Usuario";
-
-                var cmd = new SqlCommand(query, conn);
-                if (usuarioId.HasValue) cmd.Parameters.AddWithValue("@ID_Usuario", usuarioId.Value);
-
-                conn.Open();
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
+                lista.Add(new Gado
                 {
-                    lista.Add(new Gado
-                    {
-                        Id = Convert.ToInt32(reader["Id"]),
-                        ID_Usuario = Convert.ToInt32(reader["ID_Usuario"]),
-                        Data_Nasc = Convert.ToDateTime(reader["Data_Nasc"]),
-                        Raca = reader["Raca"]?.ToString(),
-                        Peso = Convert.ToSingle(reader["Peso"]),
-                        Sexo = reader["Sexo"]?.ToString(),
-                        Brinco = Convert.ToInt32(reader["Brinco"]),
-                        Observacao = reader["Observacao"]?.ToString(),
-                        StatusProdutivo = reader["StatusProdutivo"]?.ToString()
-                    });
-                }
-                reader.Close();
+                    Id = Convert.ToInt32(reader["Id"]),
+                    ID_Usuario = Convert.ToInt32(reader["ID_Usuario"]),
+                    Data_Nasc = Convert.ToDateTime(reader["Data_Nasc"]),
+                    Data_Entrada = Convert.ToDateTime(reader["Data_Entrada"]),
+                    Raca = reader["Raca"]?.ToString(),
+                    Peso = Convert.ToSingle(reader["Peso"]),
+                    Sexo = reader["Sexo"]?.ToString(),
+                    Brinco = Convert.ToInt32(reader["Brinco"]),
+                    Observacao = reader["Observacao"]?.ToString(),
+                    StatusProdutivo = reader["StatusProdutivo"]?.ToString(),
+                });
             }
-
+            reader.Close();
             return lista;
         }
 
@@ -111,12 +109,13 @@ namespace MilkApi.Controllers
                     Id = Convert.ToInt32(reader["Id"]),
                     ID_Usuario = Convert.ToInt32(reader["ID_Usuario"]),
                     Data_Nasc = Convert.ToDateTime(reader["Data_Nasc"]),
+                    Data_Entrada = Convert.ToDateTime(reader["Data_Entrada"]),
                     Raca = reader["Raca"]?.ToString(),
                     Peso = Convert.ToSingle(reader["Peso"]),
                     Sexo = reader["Sexo"]?.ToString(),
                     Brinco = Convert.ToInt32(reader["Brinco"]),
                     Observacao = reader["Observacao"]?.ToString(),
-                    StatusProdutivo = reader["StatusProdutivo"]?.ToString()
+                    StatusProdutivo = reader["StatusProdutivo"]?.ToString(),
                 };
                 reader.Close();
                 return Ok(gado);
@@ -130,14 +129,15 @@ namespace MilkApi.Controllers
         {
             using var conn = new SqlConnection(ConnectionString);
             var query = @"INSERT INTO Gado 
-                          (ID_Usuario, Data_Nasc, Raca, Peso, Sexo, Brinco, Observacao, StatusProdutivo)
-                          VALUES (@ID_Usuario, @Data_Nasc, @Raca, @Peso, @Sexo, @Brinco, @Observacao, @StatusProdutivo)";
+                          (ID_Usuario, Data_Nasc, Data_Entrada, Raca, Peso, Sexo, Brinco, Observacao, StatusProdutivo)
+                          VALUES (@ID_Usuario, @Data_Nasc, @Data_Entrada, @Raca, @Peso, @Sexo, @Brinco, @Observacao, @StatusProdutivo)";
 
             var status = "Novilha";
 
             var cmd = new SqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@ID_Usuario", gado.ID_Usuario);
             cmd.Parameters.AddWithValue("@Data_Nasc", gado.Data_Nasc);
+            cmd.Parameters.AddWithValue("@Data_Entrada", gado.Data_Entrada);
             cmd.Parameters.AddWithValue("@Raca", gado.Raca ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@Peso", gado.Peso);
             cmd.Parameters.AddWithValue("@Sexo", gado.Sexo ?? (object)DBNull.Value);
@@ -178,9 +178,9 @@ namespace MilkApi.Controllers
             }
 
             var historicoLeite = new List<Leite>();
-            using (var cmdLeite = new SqlCommand("SELECT * FROM Leite WHERE ID_Gado = @ID_Gado", conn))
+            using (var cmdLeite = new SqlCommand("SELECT * FROM Leite WHERE ID_Gado = @ID_GADO", conn))
             {
-                cmdLeite.Parameters.AddWithValue("@ID_Gado", id);
+                cmdLeite.Parameters.AddWithValue("@ID_GADO", id);
                 var readerLeite = cmdLeite.ExecuteReader();
                 while (readerLeite.Read())
                 {
@@ -199,21 +199,21 @@ namespace MilkApi.Controllers
             var statusCalculado = CalcularStatusProdutivo(gado, prenhezes, historicoLeite);
 
             var query = @"UPDATE Gado SET 
-                          ID_Usuario = @ID_Usuario, Data_Nasc = @Data_Nasc, Raca = @Raca,
+                          ID_Usuario = @ID_Usuario, Data_Nasc = @Data_Nasc, Data_Entrada = @Data_Entrada, Raca = @Raca,
                           Peso = @Peso, Sexo = @Sexo, Brinco = @Brinco, Observacao = @Observacao,
-                          StatusProdutivo = @StatusProdutivo, StatusManual = @StatusManual
+                          StatusProdutivo = @StatusProdutivo
                           WHERE Id = @Id";
 
             var cmd = new SqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@ID_Usuario", gado.ID_Usuario);
             cmd.Parameters.AddWithValue("@Data_Nasc", gado.Data_Nasc);
+            cmd.Parameters.AddWithValue("@Data_Entrada", gado.Data_Entrada);
             cmd.Parameters.AddWithValue("@Raca", gado.Raca ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@Peso", gado.Peso);
             cmd.Parameters.AddWithValue("@Sexo", gado.Sexo ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@Brinco", gado.Brinco);
             cmd.Parameters.AddWithValue("@Observacao", gado.Observacao ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@StatusProdutivo", statusCalculado);
-            cmd.Parameters.AddWithValue("@StatusManual", gado.StatusManual);
             cmd.Parameters.AddWithValue("@Id", id);
 
             int rows = cmd.ExecuteNonQuery();
@@ -251,6 +251,7 @@ namespace MilkApi.Controllers
                         Id = Convert.ToInt32(reader["Id"]),
                         ID_Usuario = Convert.ToInt32(reader["ID_Usuario"]),
                         Data_Nasc = Convert.ToDateTime(reader["Data_Nasc"]),
+                        Data_Entrada = Convert.ToDateTime(reader["Data_Entrada"]),
                         Raca = reader["Raca"]?.ToString(),
                         Peso = Convert.ToSingle(reader["Peso"]),
                         Sexo = reader["Sexo"]?.ToString(),

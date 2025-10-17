@@ -16,7 +16,6 @@
     <style>
         .proxima-dose {
             margin-top: 10px;
-            background-color: #f1f1f1;
             padding: 6px 10px;
             border-radius: 4px;
             font-size: 14px;
@@ -276,7 +275,8 @@
 
                 const data = document.getElementById("data").value;
                 const hora = document.getElementById("hora").value;
-                const dataHoraISO = new Date(`${data}T${hora}`).toISOString();
+                const dataHoraLocal = new Date(`${data}T${hora}`);
+                const dataHoraISO = new Date(dataHoraLocal.getTime() - dataHoraLocal.getTimezoneOffset() * 60000).toISOString();
 
                 const payload = {
                     ID_Gado: gado.id,

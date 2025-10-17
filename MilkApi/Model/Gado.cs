@@ -6,7 +6,8 @@ namespace MilkApi
 
         public int ID_Usuario { get; set; } 
 
-        public DateTime Data_Nasc {get; set; }  
+        public DateTime Data_Nasc {get; set; }
+        public DateTime Data_Entrada { get; set; }
 
         public string? Raca { get; set; }
 
@@ -18,6 +19,7 @@ namespace MilkApi
         public string? Observacao { get; set; }
 
         public string? StatusProdutivo { get; set; }
+        
        
         public DateTime? UltimoParto { get; set; }
         public List<Prenhez> Prenhezes { get; set; } = new();

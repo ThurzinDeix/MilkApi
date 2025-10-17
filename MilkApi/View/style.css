@@ -230,7 +230,7 @@ p {
 .cardoc {
     background: #f8f2ec;
     border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0px 5px rgba(0, 0, 0, 0.2);
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     display: flex;
@@ -1637,4 +1637,59 @@ p a{
 .content3{
     margin-left: 3%;
     margin-right: 3%;
+}
+
+.center-select{
+    transition: 0.4s;
+}
+
+.center-select:hover{
+    background-color: #5a3c2d;
+    border-radius: 0px;
+    color: white;
+}
+
+.info-cards-container{
+    display: flex;
+    justify-content: space-between;
+}
+
+.info-cards *{
+    margin: 0px;
+}
+
+.info-cards{
+    display: flex;
+    flex-direction: column;
+    background-color: #f8f2ec;
+    margin-top: 30px;
+    padding: 20px;
+    box-shadow: 0 0px 5px rgba(0, 0, 0, 0.2);
+    border-radius: 15px;
+    min-width: 20%;
+}
+
+.info-tit-icon{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.info-tit-icon i{
+    font-size: 20px;
+    color: #5a3c2d;
+}
+
+.titulo-info-cards{
+    font-size: 16px;
+    font-weight: bold;
+    color: #5a3c2d;
+    margin: 0px;
+}
+
+.info-number{
+    font-size: 28px;
+    font-weight: bold;
+    color: #5a3c2d;
+    margin-top: 10px;
 }

@@ -88,6 +88,9 @@
           <label for="dataNasc">Data de Nascimento</label>
           <input type="date" id="dataNasc" required>
 
+          <label for="dataEntrada">Data de Entrada a Fazenda</label>
+          <input type="date" id="dataEntrada" required>
+
           <label for="observacao">Observação</label>
           <textarea id="observacao" placeholder="Observações sobre o animal..."></textarea>
 
@@ -152,6 +155,8 @@
               <p><strong>Raça:</strong> ${g.raca || "Não informado"}</p>
               <p><strong>Peso:</strong> ${g.peso} kg</p>
               <p><strong>Sexo:</strong> ${g.sexo}</p>
+              <p><strong>Data de Nascimento:</strong> ${g.data_Nasc.split("T")[0]}</p>
+              <p><strong>Data de Entrada:</strong> ${g.data_Entrada.split("T")[0]}</p>
               <p><strong>Observação:</strong> ${g.observacao || "Nenhuma"}</p>
               <div class="card-actions">
                 <button class="btn-edit"><i class="fa-solid fa-pen-to-square"></i> Editar</button>
@@ -194,6 +199,7 @@
       document.getElementById("sexo").value = sexoVal;
 
       document.getElementById("dataNasc").value = gado.data_Nasc.split("T")[0];
+      document.getElementById("dataEntrada").value = gado.data_Entrada.split("T")[0];
       document.getElementById("observacao").value = gado.observacao || "";
 
       editando = true;
@@ -231,6 +237,7 @@
       const gadoData = {
         id_Usuario: parseInt(ID_Usuario),
         data_Nasc: document.getElementById("dataNasc").value,
+        data_Entrada: document.getElementById("dataEntrada").value,
         raca: document.getElementById("raca").value,
         peso: parseFloat(document.getElementById("peso").value),
         sexo: document.getElementById("sexo").value,
@@ -280,7 +287,6 @@
       await atualizarStatusProdutivo();
       carregarGados(); 
     });
-
 
     carregarGados();
   </script>

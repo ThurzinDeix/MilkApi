@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estatísticas do Rebanho</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" type="text/css"
@@ -30,8 +31,7 @@
                     <div class="user-avatar" onclick="toggleDropdown()"><i class="ph ph-user-circle"></i></div>
                     <div class="dropdown" id="dropdownMenu">
                         <a class="drop-menu" href="perfil.html"><i class="ph-bold ph-user"></i> Editar Perfil</a>
-                        <a class="drop-menu" href="#" onclick="logout()"><i class="ph-bold ph-sign-out"></i> Sair da
-                            Conta</a>
+                        <a class="drop-menu" href="#" onclick="logout()"><i class="ph-bold ph-sign-out"></i> Sair da Conta</a>
                     </div>
                 </div>
             </div>
@@ -39,17 +39,16 @@
     </nav>
 
     <div class="content3">
-
         <div class="tit-periodo">
             <div class="titulo-estatistica">
-                <h1>Estatísticas</h1>
-                <p>Análise detalhada dos dados do Rebanho</p>
+                <h1>Manejo Geral do Rebanho</h1>
+                <p>Análise detalhada do total e status das vacas</p>
             </div>
             <div class="periodo">
-                <p>Periodo:</p>
-                <select id="periodo" class="select-filtro">
+                <p>Período:</p>
+                <select id="periodoGeral" class="select-filtro">
                     <option>1 Semana</option>
-                    <option>1 Mês</option>
+                    <option selected>1 Mês</option>
                     <option>6 Meses</option>
                     <option>1 Ano</option>
                     <option>2 Anos</option>
@@ -62,7 +61,7 @@
 
         <div class="stats-select">
             <div class="stats-select1">
-                <div class="select-grafico-active">
+                <div class="select-grafico">
                     <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                         class="lucide lucide-milk-icon lucide-milk">
@@ -71,229 +70,101 @@
                             d="M9 2v2.789a4 4 0 0 1-.672 2.219l-.656.984A4 4 0 0 0 7 10.212V20a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-9.789a4 4 0 0 0-.672-2.219l-.656-.984A4 4 0 0 1 15 4.788V2" />
                         <path d="M7 15a6.472 6.472 0 0 1 5 0 6.47 6.47 0 0 0 5 0" />
                     </svg>
-                    <p class="text-select-grafico">Produção de Leite</p>
+                    <p class="text-select-grafico"><a href="estatisticasproducao.html">Produção de Leite</a></p>
+                </div>
+                <div class="select-grafico-active">
+                    <i class="ph ph-cow"></i>
+                    <p class="text-select-grafico">Manejo Geral</p>
                 </div>
                 <div class="select-grafico">
                     <i class="ph ph-heartbeat"></i>
                     <p class="text-select-grafico"><a href="estatisticasreproducao.html">Reprodução</a></p>
                 </div>
-
             </div>
         </div>
 
+        <div class="charts-container">
+            <div class="chart-card fade">
+                <h2>Total de Vacas ao Longo do Tempo</h2>
+                <canvas id="chartTotalVacas"></canvas>
+            </div>
+
+            <div class="chart-card fade">
+                <h2>Status Atual das Vacas</h2>
+                <canvas id="chartStatus"></canvas>
+            </div>
+        </div>
     </div>
-
-
 
     <script>
         document.addEventListener("DOMContentLoaded", async () => {
             const userId = localStorage.getItem("userId")
             if (!userId) return
 
-            const periodoSelect = document.getElementById("periodo")
-            const content = document.querySelector(".content3")
-
-            const container = document.createElement("div")
-            container.classList.add("charts-container")
-            container.innerHTML = `
-                <div class="chart-card fade">
-                    <h2>Produção Total de Leite</h2>
-                    <canvas id="chartTotal"></canvas>
-                </div>
-                <div class="chart-card fade">
-                    <h2>Média de Produção por Vaca</h2>
-                    <canvas id="chartMedia"></canvas>
-                </div>
-                <div class="chart-card fade">
-                    <h2>Qualidade do Leite</h2>
-                    <canvas id="chartQualidade"></canvas>
-                </div>
-            `
-            content.appendChild(container)
-
             const res = await fetch(`https://localhost:7092/Dashboard/${userId}`)
             const dados = await res.json()
 
-            const ctxTotal = document.getElementById("chartTotal")
-            const ctxMedia = document.getElementById("chartMedia")
-            const ctxQual = document.getElementById("chartQualidade")
-
-            const estiloBase = {
-                type: "line",
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    scales: {
-                        y: { beginAtZero: true, title: { display: true, text: "Litros" } },
-                        x: { title: { display: true, text: "Dia" } }
-                    },
-                    plugins: {
-                        legend: {
-                            position: "bottom",
-                            labels: {
-                                padding: 30,
-                                boxWidth: 20,
-                                boxHeight: 20,
-                                color: "#333",
-                                font: { size: 14, weight: "thin" },
-                                usePointStyle: true
-                            }
-                        },
-                        tooltip: { mode: "index", intersect: false }
-                    },
-                    animation: { duration: 800, easing: "easeInOutQuart" }
-                }
-            }
+            const periodoSelect = document.getElementById("periodoGeral")
+            const ctxTotal = document.getElementById("chartTotalVacas")
+            const ctxStatus = document.getElementById("chartStatus")
 
             const chartTotal = new Chart(ctxTotal, {
-                ...estiloBase,
-                data: {
-                    labels: [],
-                    datasets: [
-                        {
-                            label: "Total de Leite (L)",
-                            data: [],
-                            borderColor: "#5a3c2d",
-                            backgroundColor: "#5a3c2d",
-                            borderWidth: 2,
-                            fill: false,
-                            tension: 0.3,
-                            pointRadius: 4
-                        }
-                    ]
-                }
-            })
-
-            const chartMedia = new Chart(ctxMedia, {
-                ...estiloBase,
-                data: {
-                    labels: [],
-                    datasets: [
-                        {
-                            label: "Média por Vaca (L)",
-                            data: [],
-                            borderColor: "#5a3c2d",
-                            backgroundColor: "#5a3c2d",
-                            borderWidth: 2,
-                            fill: false,
-                            tension: 0.3,
-                            pointRadius: 4
-                        }
-                    ]
-                }
-            })
-
-            const chartQualidade = new Chart(ctxQual, {
-                ...estiloBase,
+                type: "line",
+                data: { labels: [], datasets: [{ label: "Total de Vacas", data: [], borderColor: "#5a3c2d", borderWidth: 2, fill: false, tension: 0.3 }] },
                 options: {
-                    ...estiloBase.options,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            position: "left",
-                            title: { display: true, text: "CCS (x1000 células/mL)" }
-                        },
-                        y1: {
-                            beginAtZero: true,
-                            position: "right",
-                            grid: { drawOnChartArea: false },
-                            title: { display: true, text: "Gordura / Proteína (%)" },
-                            min: 0,
-                            max: 14
-                        },
-                        x: { title: { display: true, text: "Mês" } }
+                    responsive: true,
+                    plugins: { legend: { position: "bottom" } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            })
+
+            const chartStatus = new Chart(ctxStatus, {
+                type: "pie",
+                data: { labels: [], datasets: [{ data: [], backgroundColor: ["#2ecc71","#3498db","#9b59b6","#f1c40f","#e67e22","#e74c3c"] }] },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: "bottom" },
+                        datalabels: {
+                            color: "#fff",
+                            formatter: (value, ctx) => {
+                                const total = ctx.chart.data.datasets[0].data.reduce((a,b)=>a+b,0)
+                                return ((value/total)*100).toFixed(1)+"%"
+                            }
+                        }
                     }
                 },
-                data: {
-                    labels: [],
-                    datasets: [
-                        {
-                            label: "CCS",
-                            data: [],
-                            borderColor: "#ef4444",
-                            backgroundColor: "#ef4444",
-                            borderWidth: 2,
-                            fill: false,
-                            tension: 0.3,
-                            pointRadius: 4,
-                            yAxisID: "y"
-                        },
-                        {
-                            label: "Gordura (%)",
-                            data: [],
-                            borderColor: "#f59e0b",
-                            backgroundColor: "#f59e0b",
-                            borderWidth: 2,
-                            fill: false,
-                            tension: 0.3,
-                            pointRadius: 4,
-                            yAxisID: "y1"
-                        },
-                        {
-                            label: "Proteína (%)",
-                            data: [],
-                            borderColor: "#3b82f6",
-                            backgroundColor: "#3b82f6",
-                            borderWidth: 2,
-                            fill: false,
-                            tension: 0.3,
-                            pointRadius: 4,
-                            yAxisID: "y1"
-                        }
-                    ]
-                }
+                plugins: [ChartDataLabels]
             })
 
-            function animarTroca() {
-                document.querySelectorAll(".chart-card").forEach(c => {
-                    c.classList.remove("show")
-                    void c.offsetWidth
-                    c.classList.add("show")
-                })
-            }
-
             function atualizarGraficos(periodo) {
-                const chave = periodo.normalize("NFD")
-                    .replace(/[\u0300-\u036f]/g, "")
-                    .replace(/\s/g, "")
+                const chave = periodo.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s/g, "")
+                const statusPeriodo = dados.status[chave] || []
 
-                const prod = dados.producao[chave] || []
-                const qual = dados.qualidade[chave] || []
-
-                chartTotal.data.labels = prod.map(p => p.label)
-                chartTotal.data.datasets[0].data = prod.map(p => p.totalLeite)
+                chartTotal.data.labels = statusPeriodo.map(p => p.label)
+                chartTotal.data.datasets[0].data = statusPeriodo.map(p => p.totalVacas || 0)
                 chartTotal.update()
 
-                chartMedia.data.labels = prod.map(p => p.label)
-                chartMedia.data.datasets[0].data = prod.map(p => p.mediaVaca)
-                chartMedia.update()
-
-                chartQualidade.data.labels = qual.map(q => q.label)
-                chartQualidade.data.datasets[0].data = qual.map(q => q.mediaCCS)
-                chartQualidade.data.datasets[1].data = qual.map(q => q.mediaGordura)
-                chartQualidade.data.datasets[2].data = qual.map(q => q.mediaProteina)
-                chartQualidade.update()
-
-                animarTroca()
+                if (statusPeriodo.length > 0) {
+                    const ultimo = statusPeriodo[statusPeriodo.length - 1]
+                    chartStatus.data.labels = ["Lactante Gestante","Gestante","Lactante Vazia","Seca","Novilha","Vazia Não Lactante"]
+                    chartStatus.data.datasets[0].data = [
+                        ultimo.lactanteGestante,
+                        ultimo.gestante,
+                        ultimo.lactanteVazia,
+                        ultimo.seca,
+                        ultimo.novilha,
+                        ultimo.vaziaNaoLactante
+                    ]
+                    chartStatus.update()
+                }
             }
 
             periodoSelect.addEventListener("change", e => atualizarGraficos(e.target.value))
             atualizarGraficos(periodoSelect.value)
         })
-
-
-        document.querySelectorAll('.select-grafico').forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                document.querySelector('.select-grafico-active').classList.add('hovered')
-            })
-            el.addEventListener('mouseleave', () => {
-                document.querySelector('.select-grafico-active').classList.remove('hovered')
-            })
-        })
-
     </script>
+
     <script src="app.js"></script>
-
 </body>
-
 </html>

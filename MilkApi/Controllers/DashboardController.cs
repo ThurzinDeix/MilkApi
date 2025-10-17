@@ -25,10 +25,23 @@ namespace MilkApi.Controllers
             public int Id { get; set; }
             public string Brinco { get; set; }
             public string Raca { get; set; }
+            public DateTime DataEntrada { get; set; }
             public List<Leite> Leites { get; } = new List<Leite>();
             public List<Prenhez> Prenhezes { get; } = new List<Prenhez>();
             public List<Reproducao> Reproducoes { get; } = new List<Reproducao>();
             public List<Lote> Lotes { get; } = new List<Lote>();
+        }
+
+        private class StatusPoint
+        {
+            public string Label { get; set; }
+            public int LactanteGestante { get; set; }
+            public int Gestante { get; set; }
+            public int LactanteVazia { get; set; }
+            public int Seca { get; set; }
+            public int Novilha { get; set; }
+            public int VaziaNaoLactante { get; set; }
+            public int TotalVacas { get; set; }
         }
 
         private class Leite
@@ -63,7 +76,7 @@ namespace MilkApi.Controllers
             public int Id { get; set; }
             public string Num { get; set; }
             public Qualidade Qualidade { get; set; }
-            public DateTime? LeiteDate { get; set; } 
+            public DateTime? LeiteDate { get; set; }
         }
 
         private class ProductionPoint
@@ -90,6 +103,40 @@ namespace MilkApi.Controllers
             public int InseminacaoMonta { get; set; }
         }
 
+        private string CalcularStatusProdutivoParaDashboard(Vaca vaca, DateTime referencia)
+        {
+            bool temLeite = vaca.Leites.Any(l => l.Data.HasValue && l.Data.Value <= referencia);
+
+            var ultimoParto = vaca.Prenhezes
+                .Where(p => p.DataTermino.HasValue && p.DataTermino.Value <= referencia)
+                .OrderByDescending(p => p.DataTermino)
+                .FirstOrDefault();
+
+            var prenhezAtiva = vaca.Prenhezes
+                .FirstOrDefault(p => !p.DataTermino.HasValue || (p.DataEsperada.HasValue && p.DataEsperada.Value > referencia));
+
+            if (ultimoParto == null)
+            {
+                if (prenhezAtiva != null) return temLeite ? "Lactante Gestante" : "Gestante";
+                return temLeite ? "Lactante Vazia" : "Novilha";
+            }
+
+            double diasPosParto = (referencia - ultimoParto.DataTermino.Value).TotalDays;
+
+            if (prenhezAtiva != null)
+            {
+                if (temLeite || diasPosParto <= 305) return "Lactante Gestante";
+                if (prenhezAtiva.DataEsperada.HasValue && (prenhezAtiva.DataEsperada.Value - referencia).TotalDays <= 60)
+                    return "Seca";
+                return "Gestante";
+            }
+            else
+            {
+                if (temLeite || diasPosParto <= 305) return "Lactante Vazia";
+                return "Vazia Não Lactante";
+            }
+        }
+
         [HttpGet("{usuarioId}")]
         public async Task<IActionResult> GetDashboard(int usuarioId)
         {
@@ -100,7 +147,7 @@ namespace MilkApi.Controllers
                 await conn.OpenAsync();
 
                 var query = @"
-                    SELECT g.Id, g.Brinco, g.Raca,
+                    SELECT g.Id, g.Brinco, g.Raca, g.Data_Entrada,
                            l.Id AS LeiteId, l.Litros, l.Data AS LeiteData,
                            p.Id AS PrenhezId, p.Data_Prenhez, p.Data_Termino, p.Data_Esperada, p.Status AS PrenhezStatus,
                            rep.Id AS ReproducaoId, rep.Tipo AS ReproTipo,
@@ -122,14 +169,15 @@ namespace MilkApi.Controllers
                     {
                         while (await reader.ReadAsync())
                         {
-                            int vacaId = reader["Id"] != DBNull.Value ? Convert.ToInt32(reader["Id"]) : 0;
+                            int vacaId = Convert.ToInt32(reader["Id"]);
                             if (!vacasDict.ContainsKey(vacaId))
                             {
                                 var v = new Vaca
                                 {
                                     Id = vacaId,
-                                    Brinco = reader["Brinco"] != DBNull.Value ? reader["Brinco"].ToString() : null,
-                                    Raca = reader["Raca"] != DBNull.Value ? reader["Raca"].ToString() : null
+                                    Brinco = reader["Brinco"].ToString(),
+                                    Raca = reader["Raca"].ToString(),
+                                    DataEntrada = Convert.ToDateTime(reader["Data_Entrada"])
                                 };
                                 vacasDict[vacaId] = v;
                             }
@@ -189,10 +237,10 @@ namespace MilkApi.Controllers
                                 if (!vaca.Lotes.Any(x => x.Id == lote.Id))
                                     vaca.Lotes.Add(lote);
                             }
-                        } 
-                    } 
-                } 
-            } 
+                        }
+                    }
+                }
+            }
 
             var vacas = vacasDict.Values.ToList();
             DateTime hoje = DateTime.Now.Date;
@@ -217,45 +265,28 @@ namespace MilkApi.Controllers
                 { "Total", null }
             };
 
-            periodos["5Anos"] = hoje.AddYears(-5);
-
             var producaoPorPeriodo = new Dictionary<string, List<ProductionPoint>>();
             var qualidadePorPeriodo = new Dictionary<string, List<QualityPoint>>();
             var reproducaoPorPeriodo = new Dictionary<string, List<ReproPoint>>();
+            var statusPorPeriodo = new Dictionary<string, List<StatusPoint>>();
 
             foreach (var p in periodos)
             {
                 string periodoNome = p.Key;
-                DateTime inicio = p.Value ?? earliestLeite; 
+                DateTime inicio = p.Value ?? earliestLeite;
 
                 string tipoEixo;
                 switch (periodoNome)
                 {
-                    case "1Semana":
-                        tipoEixo = "dia";
-                        break;
-                    case "1Mes":
-                        tipoEixo = "semana";
-                        break;
+                    case "1Semana": tipoEixo = "dia"; break;
+                    case "1Mes": tipoEixo = "semana"; break;
                     case "6Meses":
-                    case "1Ano":
-                        tipoEixo = "mes";
-                        break;
-                    case "2Anos":
-                        tipoEixo = "bimestre";
-                        break;
-                    case "3Anos":
-                        tipoEixo = "trimestre";
-                        break;
-                    case "4Anos":
-                        tipoEixo = "quadrimestre";
-                        break;
-                    case "5Anos":
-                        tipoEixo = "semestre";
-                        break;
-                    default:
-                        tipoEixo = "mes";
-                        break;
+                    case "1Ano": tipoEixo = "mes"; break;
+                    case "2Anos": tipoEixo = "bimestre"; break;
+                    case "3Anos": tipoEixo = "trimestre"; break;
+                    case "4Anos": tipoEixo = "quadrimestre"; break;
+                    case "5Anos": tipoEixo = "semestre"; break;
+                    default: tipoEixo = "mes"; break;
                 }
 
                 var pontosProducao = new List<ProductionPoint>();
@@ -364,19 +395,69 @@ namespace MilkApi.Controllers
                         InseminacaoMonta = inseminacaoMonta
                     });
 
+                    var pontosStatus = new List<StatusPoint>();
+
+                    DateTime cursorStatus = inicio.Date;
+                    while (cursorStatus <= hoje)
+                    {
+                        DateTime proximoStatus;
+                        if (tipoEixo == "dia") proximoStatus = cursorStatus.AddDays(1);
+                        else if (tipoEixo == "semana") proximoStatus = cursorStatus.AddDays(7);
+                        else if (tipoEixo == "mes") proximoStatus = cursorStatus.AddMonths(1);
+                        else if (tipoEixo == "bimestre") proximoStatus = cursorStatus.AddMonths(2);
+                        else if (tipoEixo == "trimestre") proximoStatus = cursorStatus.AddMonths(3);
+                        else if (tipoEixo == "quadrimestre") proximoStatus = cursorStatus.AddMonths(4);
+                        else if (tipoEixo == "semestre") proximoStatus = cursorStatus.AddMonths(6);
+                        else proximoStatus = cursorStatus.AddMonths(1);
+
+                        string label1;
+                        if (tipoEixo == "dia") label1 = cursorStatus.ToString("dd/MM");
+                        else if (tipoEixo == "semana")
+                        {
+                            int semanaIndex = (int)Math.Floor((cursorStatus - inicio).TotalDays / 7.0) + 1;
+                            label1 = $"Sem {semanaIndex}";
+                        }
+                        else label1 = cursorStatus.ToString("MM/yyyy");
+
+                        var statusPoint = new StatusPoint { Label = label1 };
+
+                        var vacasAtivas = vacas.Where(v => v.DataEntrada <= cursorStatus).ToList();
+                        foreach (var v in vacasAtivas)
+                        {
+                            var status = CalcularStatusProdutivoParaDashboard(v, cursorStatus);
+                            switch (status.Replace(" ", ""))
+                            {
+                                case "LactanteGestante": statusPoint.LactanteGestante++; break;
+                                case "Gestante": statusPoint.Gestante++; break;
+                                case "LactanteVazia": statusPoint.LactanteVazia++; break;
+                                case "Seca": statusPoint.Seca++; break;
+                                case "Novilha": statusPoint.Novilha++; break;
+                                case "VaziaNaoLactante": statusPoint.VaziaNaoLactante++; break;
+                            }
+                        }
+
+                        statusPoint.TotalVacas = vacasAtivas.Count;
+
+                        pontosStatus.Add(statusPoint);
+                        cursorStatus = proximoStatus;
+                    }
+
+                    statusPorPeriodo[periodoNome] = pontosStatus;
+
                     cursor = proximo;
-                } 
+                }
 
                 producaoPorPeriodo[periodoNome] = pontosProducao;
                 qualidadePorPeriodo[periodoNome] = pontosQualidade;
                 reproducaoPorPeriodo[periodoNome] = pontosReproducao;
-            } 
+            }
 
             return Ok(new
             {
                 producao = producaoPorPeriodo,
                 qualidade = qualidadePorPeriodo,
-                reproducao = reproducaoPorPeriodo
+                reproducao = reproducaoPorPeriodo,
+                status = statusPorPeriodo
             });
         }
     }
