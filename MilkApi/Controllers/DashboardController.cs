@@ -319,9 +319,9 @@ namespace MilkApi.Controllers
 
                     int vacasPrenhas = vacas.Count(v => v.Prenhezes.Any(pr =>
                         pr.DataPrenhez.HasValue &&
-                        pr.DataPrenhez.Value >= cursor &&
+                        pr.DataEsperada.HasValue &&
                         pr.DataPrenhez.Value < proximo &&
-                        pr.Status?.Equals("Gestante", StringComparison.OrdinalIgnoreCase) == true
+                        pr.DataEsperada.Value > cursor
                     ));
 
                     var intervalosDias = vacas

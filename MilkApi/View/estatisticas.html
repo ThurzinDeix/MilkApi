@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Estatísticas do Rebanho</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estatísticas do Rebanho</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" type="text/css"
         href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
@@ -18,268 +19,281 @@
 <body>
     <nav>
         <div class="nav1">
-          <div class="logo">Cownt</div>
-          <div class="menu">
-            <a href="dashboard.html"><i class="ph-bold ph-house-line"></i> Dashboard</a>
-            <a href="estatisticas.html"><i class="ph-bold ph-chart-line"></i> Estatísticas</a>
-            <a href="addgado.html" ><i class="ph ph-cow"></i> Gerenciar Gados</a>
-            <a href="registro.html"><i class="ph ph-cow"></i> Registros</a>
-            <a href="ocorrenciadiaria.html"><i class="ph-bold ph-calendar-dots"></i> Ocorrências Diárias</a>
-            <div class="user-menu">
-              <div class="user-avatar" onclick="toggleDropdown()"><i class="ph ph-user-circle"></i></div>
-              <div class="dropdown" id="dropdownMenu">
-                <a class="drop-menu" href="perfil.html"><i class="ph-bold ph-user"></i> Editar Perfil</a>
-                <a class="drop-menu" href="#" onclick="logout()"><i class="ph-bold ph-sign-out"></i> Sair da Conta</a>
-              </div>
+            <div class="logo">Cownt</div>
+            <div class="menu">
+                <a href="dashboard.html"><i class="ph-bold ph-house-line"></i> Dashboard</a>
+                <a href="estatisticas.html" class="active"><i class="ph-bold ph-chart-line"></i> Estatísticas</a>
+                <a href="addgado.html"><i class="ph ph-cow"></i> Gerenciar Gados</a>
+                <a href="registro.html"><i class="ph ph-cow"></i> Registros</a>
+                <a href="ocorrenciadiaria.html"><i class="ph-bold ph-calendar-dots"></i> Ocorrências Diárias</a>
+                <div class="user-menu">
+                    <div class="user-avatar" onclick="toggleDropdown()"><i class="ph ph-user-circle"></i></div>
+                    <div class="dropdown" id="dropdownMenu">
+                        <a class="drop-menu" href="perfil.html"><i class="ph-bold ph-user"></i> Editar Perfil</a>
+                        <a class="drop-menu" href="#" onclick="logout()"><i class="ph-bold ph-sign-out"></i> Sair da
+                            Conta</a>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </nav>
+    </nav>
 
-<div class="content">
-<header class="dashboard-header">
-    Estatísticas do Rebanho
-    <select id="periodo" class="select-filtro">
-        <option>1 Semana</option>
-        <option selected>1 Mês</option>
-        <option>6 Meses</option>
-        <option>1 Ano</option>
-        <option>1 Ano e 6 Meses</option>
-        <option>2 Anos</option>
-    </select>
-</header>
+    <div class="content3">
 
-<div class="tabs tab-container">
-    <div class="tab active" data-tab="producao">Produção de Leite</div>
-    <div class="tab" data-tab="saude">Saúde / Remédios</div>
-    <div class="tab" data-tab="reproducao">Reprodução</div>
-</div>
+        <div class="tit-periodo">
+            <div class="titulo-estatistica">
+                <h1>Estatísticas</h1>
+                <p>Análise detalhada dos dados do Rebanho</p>
+            </div>
+            <div class="periodo">
+                <p>Periodo:</p>
+                <select id="periodo" class="select-filtro">
+                    <option>1 Semana</option>
+                    <option>1 Mês</option>
+                    <option>6 Meses</option>
+                    <option>1 Ano</option>
+                    <option>2 Anos</option>
+                    <option>3 Anos</option>
+                    <option>4 Anos</option>
+                    <option>5 Anos</option>
+                </select>
+            </div>
+        </div>
 
-<div class="tab-content active tab-dados" id="producao">
-    <div class="card-container stats-cards">
-        <div class="card card-dados">
-            <h2 id="totalLeite" class="brinco">0L</h2>
-            <p class="descricao">Total Produzido Hoje</p>
+        <div class="stats-select">
+            <div class="stats-select1">
+                <div class="select-grafico-active">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-milk-icon lucide-milk">
+                        <path d="M8 2h8" />
+                        <path
+                            d="M9 2v2.789a4 4 0 0 1-.672 2.219l-.656.984A4 4 0 0 0 7 10.212V20a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-9.789a4 4 0 0 0-.672-2.219l-.656-.984A4 4 0 0 1 15 4.788V2" />
+                        <path d="M7 15a6.472 6.472 0 0 1 5 0 6.47 6.47 0 0 0 5 0" />
+                    </svg>
+                    <p class="text-select-grafico">Produção de Leite</p>
+                </div>
+                <div class="select-grafico">
+                    <i class="ph ph-heartbeat"></i>
+                    <p class="text-select-grafico"><a href="estatisticasreproducao.html">Reprodução</a></p>
+                </div>
+
+            </div>
         </div>
-        <div class="card card-dados">
-            <h2 id="mediaVacaCard" class="brinco">0L</h2>
-            <p class="descricao">Média por Vaca</p>
-        </div>
-        <div class="card card-dados">
-            <h2 id="percentualAbaixoMedia" class="brinco">0%</h2>
-            <p class="descricao">% Abaixo da Média</p>
-        </div>
-        <div class="card card-dados">
-            <h2 id="ultimaColeta" class="brinco">--</h2>
-            <p class="descricao">Última Coleta</p>
-        </div>
+
     </div>
 
-    <div class="charts-row">
-        <div class="chart-container card-dados">
-            <canvas id="producaoMes"></canvas>
-        </div>
-        <div class="chart-container card-dados">
-            <canvas id="mediaVaca"></canvas>
-        </div>
-    </div>
-    <div class="chart-full card-dados">
-        <canvas id="qualidadeLeite"></canvas>
-    </div>
-</div>
-
-<div class="tab-content tab-dados" id="saude">
-    <div class="card-container stats-cards">
-        <div class="card card-dados">
-            <h2 id="vacinasVencendo" class="brinco">0</h2>
-            <p class="descricao">Vacinas Vencendo</p>
-        </div>
-        <div class="card card-dados">
-            <h2 id="vacinacaoDia" class="brinco">0</h2>
-            <p class="descricao">Vacinação em Dia</p>
-        </div>
-        <div class="card card-dados">
-            <h2 id="alertasAtivos" class="brinco">0</h2>
-            <p class="descricao">Alertas Ativos</p>
-        </div>
-        <div class="card card-dados">
-            <h2 id="medicamentosUsados" class="brinco">0</h2>
-            <p class="descricao">Medicamentos Usados</p>
-        </div>
-    </div>
-
-    <div class="charts-row">
-        <div class="chart-container card-dados">
-            <canvas id="vacinacaoTipo"></canvas>
-        </div>
-        <div class="chart-container card-dados">
-            <canvas id="consumoMedicamentos"></canvas>
-        </div>
-    </div>
-    <div class="chart-full card-dados">
-        <canvas id="casosDoencas"></canvas>
-    </div>
-</div>
-
-<div class="tab-content tab-dados" id="reproducao">
-    <div class="card-container stats-cards">
-        <div class="card card-dados">
-            <h2 id="vacasPrenhas" class="brinco">0</h2>
-            <p class="descricao">Vacas Prenhas</p>
-        </div>
-        <div class="card card-dados">
-            <h2 id="proximosPartos" class="brinco">0</h2>
-            <p class="descricao">Próximos Partos</p>
-        </div>
-        <div class="card card-dados">
-            <h2 id="taxaSucesso" class="brinco">0%</h2>
-            <p class="descricao">Taxa de Sucesso</p>
-        </div>
-        <div class="card card-dados">
-            <h2 id="intervaloMedio" class="brinco">0</h2>
-            <p class="descricao">Intervalo Médio</p>
-        </div>
-    </div>
-
-    <div class="charts-row">
-        <div class="chart-container card-dados">
-            <canvas id="taxaPrenhez"></canvas>
-        </div>
-        <div class="chart-container card-dados">
-            <canvas id="intervaloPartos"></canvas>
-        </div>
-    </div>
-    <div class="chart-full card-dados">
-        <canvas id="inseminacao"></canvas>
-    </div>
-</div>
-</div>
-
-<script>
-const usuarioId = localStorage.getItem("userId");
-const API_URL = `https://localhost:7092/Vaca/ResumoUsuario/${usuarioId}`;
 
 
-async function loadDashboard() {
-    const res = await fetch(`${API_URL}${usuarioId}`);
-    const vacas = await res.json();
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const userId = localStorage.getItem("userId")
+            if (!userId) return
 
-    const hoje = new Date().toISOString().split('T')[0];
-    let totalLeiteHoje = 0;
-    let ultimaColeta = null;
-    let mediaVacas = 0;
-    let mediaIndividual = [];
+            const periodoSelect = document.getElementById("periodo")
+            const content = document.querySelector(".content3")
 
-    let ccsData = [], gorduraData = [], proteinaData = [], labelsQualidade = [];
+            const container = document.createElement("div")
+            container.classList.add("charts-container")
+            container.innerHTML = `
+                <div class="chart-card fade">
+                    <h2>Produção Total de Leite</h2>
+                    <canvas id="chartTotal"></canvas>
+                </div>
+                <div class="chart-card fade">
+                    <h2>Média de Produção por Vaca</h2>
+                    <canvas id="chartMedia"></canvas>
+                </div>
+                <div class="chart-card fade">
+                    <h2>Qualidade do Leite</h2>
+                    <canvas id="chartQualidade"></canvas>
+                </div>
+            `
+            content.appendChild(container)
 
-    vacas.forEach(vaca => {
-        let somaLeite = 0;
-        vaca.Leites?.forEach(l => {
-            const dataLeite = new Date(l.Data);
-            somaLeite += l.Litros;
-            if (!ultimaColeta || dataLeite > new Date(ultimaColeta)) ultimaColeta = l.Data;
-            if (dataLeite.toISOString().split('T')[0] === hoje) totalLeiteHoje += l.Litros;
-        });
-        mediaIndividual.push(somaLeite);
-    });
+            const res = await fetch(`https://localhost:7092/Dashboard/${userId}`)
+            const dados = await res.json()
 
-    mediaVacas = mediaIndividual.reduce((a,b)=>a+b,0)/vacas.length;
+            const ctxTotal = document.getElementById("chartTotal")
+            const ctxMedia = document.getElementById("chartMedia")
+            const ctxQual = document.getElementById("chartQualidade")
 
-    const abaixoMedia = mediaIndividual.filter(m=>m < mediaVacas).length;
-    const percAbaixoMedia = ((abaixoMedia / vacas.length)*100).toFixed(1);
-
-    document.getElementById("totalLeite").innerText = totalLeiteHoje.toFixed(1) + "L";
-    document.getElementById("mediaVacaCard").innerText = mediaVacas.toFixed(1) + "L";
-    document.getElementById("percentualAbaixoMedia").innerText = percAbaixoMedia + "%";
-    document.getElementById("ultimaColeta").innerText = ultimaColeta ? new Date(ultimaColeta).toLocaleString() : "--";
-
-    vacas.forEach(vaca => {
-        vaca.Lotes?.forEach(lote => {
-            if (lote.qualidade) {
-                const leiteData = lote.leites.length > 0 ? new Date(lote.leites[0].Data) : null;
-                labelsQualidade.push(leiteData ? leiteData.toLocaleDateString() : "Sem Data");
-                ccsData.push(lote.qualidade.CCS);
-                gorduraData.push(lote.qualidade.Gordura);
-                proteinaData.push(lote.qualidade.Proteina);
+            const estiloBase = {
+                type: "line",
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        y: { beginAtZero: true, title: { display: true, text: "Litros" } },
+                        x: { title: { display: true, text: "Dia" } }
+                    },
+                    plugins: {
+                        legend: {
+                            position: "bottom",
+                            labels: {
+                                padding: 30,
+                                boxWidth: 20,
+                                boxHeight: 20,
+                                color: "#333",
+                                font: { size: 14, weight: "thin" },
+                                usePointStyle: true
+                            }
+                        },
+                        tooltip: { mode: "index", intersect: false }
+                    },
+                    animation: { duration: 800, easing: "easeInOutQuart" }
+                }
             }
-        });
-    });
 
-    new Chart(document.getElementById('qualidadeLeite'), {
-        type:'line',
-        data:{ labels: labelsQualidade, datasets:[
-            {label:'CCS', data: ccsData, borderColor:'#e06666', fill:false, yAxisID:'y'},
-            {label:'Gordura %', data: gorduraData, borderColor:'#8c6b4f', fill:false, yAxisID:'y1'},
-            {label:'Proteína %', data: proteinaData, borderColor:'#b28b71', fill:false, yAxisID:'y1'}
-        ]},
-        options:{ scales: { y:{position:'left'}, y1:{position:'right'} } }
-    });
+            const chartTotal = new Chart(ctxTotal, {
+                ...estiloBase,
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: "Total de Leite (L)",
+                            data: [],
+                            borderColor: "#5a3c2d",
+                            backgroundColor: "#5a3c2d",
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0.3,
+                            pointRadius: 4
+                        }
+                    ]
+                }
+            })
 
-   
-    const vacinasVencendo = vacas.reduce((acc,v)=> acc + (v.TemRemedio?1:0),0);
-    const vacinacaoDia = vacas.reduce((acc,v)=> acc + (v.TemLeite?1:0),0);
-    const alertasAtivos = vacas.reduce((acc,v)=> acc + (v.TemAlerta?1:0),0);
-    const medicamentosUsados = vacas.reduce((acc,v)=> acc + (v.TemRemedio?1:0),0);
+            const chartMedia = new Chart(ctxMedia, {
+                ...estiloBase,
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: "Média por Vaca (L)",
+                            data: [],
+                            borderColor: "#5a3c2d",
+                            backgroundColor: "#5a3c2d",
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0.3,
+                            pointRadius: 4
+                        }
+                    ]
+                }
+            })
 
-    document.getElementById("vacinasVencendo").innerText = vacinasVencendo;
-    document.getElementById("vacinacaoDia").innerText = vacinacaoDia;
-    document.getElementById("alertasAtivos").innerText = alertasAtivos;
-    document.getElementById("medicamentosUsados").innerText = medicamentosUsados;
+            const chartQualidade = new Chart(ctxQual, {
+                ...estiloBase,
+                options: {
+                    ...estiloBase.options,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            position: "left",
+                            title: { display: true, text: "CCS (x1000 células/mL)" }
+                        },
+                        y1: {
+                            beginAtZero: true,
+                            position: "right",
+                            grid: { drawOnChartArea: false },
+                            title: { display: true, text: "Gordura / Proteína (%)" },
+                            min: 0,
+                            max: 14
+                        },
+                        x: { title: { display: true, text: "Mês" } }
+                    }
+                },
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: "CCS",
+                            data: [],
+                            borderColor: "#ef4444",
+                            backgroundColor: "#ef4444",
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0.3,
+                            pointRadius: 4,
+                            yAxisID: "y"
+                        },
+                        {
+                            label: "Gordura (%)",
+                            data: [],
+                            borderColor: "#f59e0b",
+                            backgroundColor: "#f59e0b",
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0.3,
+                            pointRadius: 4,
+                            yAxisID: "y1"
+                        },
+                        {
+                            label: "Proteína (%)",
+                            data: [],
+                            borderColor: "#3b82f6",
+                            backgroundColor: "#3b82f6",
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0.3,
+                            pointRadius: 4,
+                            yAxisID: "y1"
+                        }
+                    ]
+                }
+            })
 
-    const vacasPrenhas = vacas.filter(v=>v.TemPrenhez).length;
-    const proximosPartos = vacas.reduce((acc,v)=>{
-        v.Prenhezes?.forEach(p=>{
-            if (p.Data_Esperada) {
-                const dias = (new Date(p.Data_Esperada) - new Date())/86400000;
-                if(dias>=0 && dias<=30) acc++;
+            function animarTroca() {
+                document.querySelectorAll(".chart-card").forEach(c => {
+                    c.classList.remove("show")
+                    void c.offsetWidth
+                    c.classList.add("show")
+                })
             }
-        });
-        return acc;
-    },0);
-    const taxaSucesso = vacasPrenhas > 0 ? Math.round((vacasPrenhas/vacas.length)*100) : 0;
-    const intervaloMedio = vacas.reduce((acc,v)=>{
-        v.Prenhezes?.forEach(p=>{
-            if (p.Data_Termino && p.Data_Prenhez) {
-                acc.push((new Date(p.Data_Termino)-new Date(p.Data_Prenhez))/86400000);
+
+            function atualizarGraficos(periodo) {
+                const chave = periodo.normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .replace(/\s/g, "")
+
+                const prod = dados.producao[chave] || []
+                const qual = dados.qualidade[chave] || []
+
+                chartTotal.data.labels = prod.map(p => p.label)
+                chartTotal.data.datasets[0].data = prod.map(p => p.totalLeite)
+                chartTotal.update()
+
+                chartMedia.data.labels = prod.map(p => p.label)
+                chartMedia.data.datasets[0].data = prod.map(p => p.mediaVaca)
+                chartMedia.update()
+
+                chartQualidade.data.labels = qual.map(q => q.label)
+                chartQualidade.data.datasets[0].data = qual.map(q => q.mediaCCS)
+                chartQualidade.data.datasets[1].data = qual.map(q => q.mediaGordura)
+                chartQualidade.data.datasets[2].data = qual.map(q => q.mediaProteina)
+                chartQualidade.update()
+
+                animarTroca()
             }
-        });
-        return acc;
-    },[]).reduce((a,b)=>a+b,0)/vacas.length || 0;
 
-    document.getElementById("vacasPrenhas").innerText = vacasPrenhas;
-    document.getElementById("proximosPartos").innerText = proximosPartos;
-    document.getElementById("taxaSucesso").innerText = taxaSucesso + "%";
-    document.getElementById("intervaloMedio").innerText = Math.round(intervaloMedio);
+            periodoSelect.addEventListener("change", e => atualizarGraficos(e.target.value))
+            atualizarGraficos(periodoSelect.value)
+        })
 
-    const meses = ["Jan","Fev","Mar","Abr","Mai","Jun"];
-    new Chart(document.getElementById('taxaPrenhez'), {
-        type:'line',
-        data:{ labels: meses, datasets:[{label:'Taxa de Prenhez %', data: meses.map(()=> taxaSucesso), borderColor:'#7a5c3a', fill:false}] }
-    });
 
-    new Chart(document.getElementById('intervaloPartos'), {
-        type:'line',
-        data:{ labels: meses, datasets:[{label:'Intervalo entre Partos', data: meses.map(()=> Math.round(intervaloMedio)), borderColor:'#a67c52', fill:false}] }
-    });
+        document.querySelectorAll('.select-grafico').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                document.querySelector('.select-grafico-active').classList.add('hovered')
+            })
+            el.addEventListener('mouseleave', () => {
+                document.querySelector('.select-grafico-active').classList.remove('hovered')
+            })
+        })
 
-    const inseminacaoIA = vacas.reduce((acc,v)=>{
-        v.Reproducoes?.forEach(r=>{ if(r.Tipo === "IA") acc++; });
-        return acc;
-    },0);
-    const inseminacaoMonta = vacas.reduce((acc,v)=>{
-        v.Reproducoes?.forEach(r=>{ if(r.Tipo === "Monta") acc++; });
-        return acc;
-    },0);
-
-    new Chart(document.getElementById('inseminacao'), {
-        type:'doughnut',
-        data:{ labels:['Inseminação Artificial','Monta Natural'], datasets:[{data:[inseminacaoIA, inseminacaoMonta], backgroundColor:['#5c3a21','#c9a78d']}] }
-    });
-}
-
-loadDashboard();
-</script>
-<script src="app.js"></script>
+    </script>
+    <script src="app.js"></script>
 
 </body>
+
 </html>
