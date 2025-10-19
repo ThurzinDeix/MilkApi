@@ -23,3 +23,9 @@ window.onclick = function (e) {
     document.getElementById("dropdownMenu").classList.remove("show");
   }
 }
+
+function toggleMenu() {
+  const menu = document.getElementById("menu")
+  menu.classList.toggle("show")
+}
+

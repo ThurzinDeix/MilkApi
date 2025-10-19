@@ -64,7 +64,7 @@
 
         <div class="stats-select">
             <div class="stats-select1">
-                <div class="select-grafico">
+                <div class="select-grafico" onclick="window.location.href='estatisticasproducao.html'">
                     <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                         class="lucide lucide-milk-icon lucide-milk">
@@ -75,7 +75,7 @@
                     </svg>
                     <p class="text-select-grafico"><a href="estatisticasproducao.html">Produção de Leite</a></p>
                 </div>
-                <div class="select-grafico">
+                <div class="select-grafico" onclick="window.location.href='estatisticas.html'">
                     <i class="ph ph-cow"></i>
                     <p class="text-select-grafico"><a href="estatisticas.html">Manejo Geral</a></p>
                 </div>
@@ -92,7 +92,7 @@
                     <p class="titulo-info-cards">Vacas Gestantes</p>
                     <i class="ph-bold ph-heartbeat"></i>
                 </div>
-                <h2 class="info-number">50</h2>
+                <h2 class="info-number">0</h2>
                 <p></p>
             </div>
             <div class="info-cards">
@@ -100,14 +100,14 @@
                     <p class="titulo-info-cards">Próximos Partos</p>
                     <i class="ph-bold ph-calendar-dots"></i>                
                 </div>
-                <h2 class="info-number">50</h2>
+                <h2 class="info-number">0</h2>
                 <p></p>
             </div>
             <div class="info-cards">
                 <div class="info-tit-icon">
                     <p class="titulo-info-cards">Taxas de Sucesso</p>
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5a3c2d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up-icon lucide-trending-up"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg>                </div>
-                <h2 class="info-number">50</h2>
+                <h2 class="info-number">0</h2>
                 <p></p>
             </div>
             <div class="info-cards">
@@ -115,7 +115,7 @@
                     <p class="titulo-info-cards">Intervalo Médio</p>
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5a3c2d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-icon lucide-calendar"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h48"/></svg>
                 </div>
-                <h2 class="info-number">50</h2>
+                <h2 class="info-number">0</h2>
                 <p></p>
             </div>
         </div>
@@ -149,7 +149,7 @@
                 type: "line",
                 options: {
                     responsive: true,
-                    maintainAspectRatio: true,
+                    maintainAspectRatio: false,
                     scales: {
                         y: { beginAtZero: true },
                         x: {}
@@ -180,6 +180,7 @@
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     cutout: "65%",
                     plugins: {
                         legend: {

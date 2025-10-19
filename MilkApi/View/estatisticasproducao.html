@@ -73,11 +73,11 @@
                     </svg>
                     <p class="text-select-grafico">Produção de Leite</p>
                 </div>
-                <div class="select-grafico">
+                <div class="select-grafico" onclick="window.location.href='estatisticas.html'">
                     <i class="ph ph-cow"></i>
                     <p class="text-select-grafico"><a href="estatisticas.html">Manejo Geral</a></p>
                 </div>
-                <div class="select-grafico">
+                <div class="select-grafico" onclick="window.location.href='estatisticasreproducao.html'">
                     <i class="ph ph-heartbeat"></i>
                     <p class="text-select-grafico"><a href="estatisticasreproducao.html">Reprodução</a></p>
                 </div>
@@ -98,7 +98,7 @@
                         <path d="M7 15a6.472 6.472 0 0 1 5 0 6.47 6.47 0 0 0 5 0" />
                     </svg>
                 </div>
-                <h2 class="info-number">50</h2>
+                <h2 class="info-number">0</h2>
                 <p></p>
             </div>
             <div class="info-cards">
@@ -111,7 +111,7 @@
                         <path d="m22 7-8.5 8.5-5-5L2 17" />
                     </svg>
                 </div>
-                <h2 class="info-number">50</h2>
+                <h2 class="info-number">0</h2>
                 <p></p>
             </div>
             <div class="info-cards">
@@ -125,7 +125,7 @@
                         <path d="M12 17h.01" />
                     </svg>
                 </div>
-                <h2 class="info-number">50</h2>
+                <h2 class="info-number">0</h2>
                 <p></p>
             </div>
             <div class="info-cards">
@@ -140,7 +140,7 @@
                         <path d="M3 10h48" />
                     </svg>
                 </div>
-                <h2 class="info-number">50</h2>
+                <h2 class="info-number">0</h2>
                 <p></p>
             </div>
         </div>
@@ -197,7 +197,7 @@
                 type: "line",
                 options: {
                     responsive: true,
-                    maintainAspectRatio: true,
+                    maintainAspectRatio: false,
                     scales: {
                         y: { beginAtZero: true, title: { display: true, text: "Litros" } },
                         x: { title: { display: true, text: "Dia" } }
