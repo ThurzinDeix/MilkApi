@@ -18,18 +18,23 @@ namespace MilkApi.Controllers
 
         private string CalcularStatusProdutivo(Gado vaca, List<Prenhez> prenhezes, List<Leite> historicoLeite)
         {
-            if (vaca.StatusManual) return vaca.StatusProdutivo ?? "Novilha";
+            if (vaca.StatusManual)
+                return vaca.StatusProdutivo ?? "Novilha";
 
             bool temLeite = historicoLeite.Any(l => l.ID_Gado == vaca.Id);
 
-            var ultimoParto = prenhezes
+            var ultimaPrenhezFinalizada = prenhezes
                 .Where(p => p.Data_Termino.HasValue)
                 .OrderByDescending(p => p.Data_Termino)
                 .FirstOrDefault();
 
-            var prenhezAtiva = prenhezes.FirstOrDefault(p => !p.Data_Termino.HasValue);
+            var prenhezAtiva = prenhezes.FirstOrDefault(p =>
+                !p.Data_Termino.HasValue &&
+                p.Status != null &&
+                p.Status.Equals("Prenha", StringComparison.OrdinalIgnoreCase)
+            );
 
-            if (ultimoParto == null)
+            if (ultimaPrenhezFinalizada == null)
             {
                 if (prenhezAtiva != null)
                     return temLeite ? "Lactante Gestante" : "Gestante";
@@ -37,27 +42,56 @@ namespace MilkApi.Controllers
                     return temLeite ? "Lactante Vazia" : "Novilha";
             }
 
-            var diasPosParto = (DateTime.Now - ultimoParto.Data_Termino.Value).TotalDays;
+            var diasPosParto = (DateTime.Now - ultimaPrenhezFinalizada.Data_Termino.Value).TotalDays;
+            var statusUltimaPrenhez = ultimaPrenhezFinalizada.Status?.ToLower();
 
-            if (prenhezAtiva != null)
+            if (statusUltimaPrenhez == "pariu")
             {
-                if (temLeite || diasPosParto <= 305)
-                    return "Lactante Gestante";
-
-                if (prenhezAtiva.Data_Esperada.HasValue &&
-                    (prenhezAtiva.Data_Esperada.Value - DateTime.Now).TotalDays <= 60)
-                    return "Seca";
-
-                return "Gestante";
+                if (prenhezAtiva != null)
+                {
+                    if (temLeite || diasPosParto <= 305)
+                        return "Lactante Gestante";
+                    else
+                        return "Gestante";
+                }
+                else
+                {
+                    if (temLeite || diasPosParto <= 305)
+                        return "Lactante Vazia";
+                    else
+                        return "Vazia Não Lactante";
+                }
+            }
+            else if (statusUltimaPrenhez == "aborto")
+            {
+                if (prenhezAtiva != null)
+                    return "Gestante";
+                else
+                    return temLeite ? "Lactante Vazia" : "Vazia Não Lactante";
             }
             else
             {
-                if (temLeite || diasPosParto <= 305)
-                    return "Lactante Vazia";
+                if (prenhezAtiva != null)
+                {
+                    if (temLeite || diasPosParto <= 305)
+                        return "Lactante Gestante";
+
+                    if (prenhezAtiva.Data_Esperada.HasValue &&
+                        (prenhezAtiva.Data_Esperada.Value - DateTime.Now).TotalDays <= 60)
+                        return "Seca";
+
+                    return "Gestante";
+                }
                 else
-                    return "Vazia Não Lactante";
+                {
+                    if (temLeite || diasPosParto <= 305)
+                        return "Lactante Vazia";
+                    else
+                        return "Vazia Não Lactante";
+                }
             }
         }
+
 
         [HttpGet]
         public IEnumerable<Gado> Get([FromQuery] int? usuarioId)

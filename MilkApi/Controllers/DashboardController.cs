@@ -103,37 +103,76 @@ namespace MilkApi.Controllers
             public int InseminacaoMonta { get; set; }
         }
 
-        private string CalcularStatusProdutivoParaDashboard(Vaca vaca, DateTime referencia)
+        private string CalcularStatusProdutivoComData(Vaca vaca, DateTime referencia)
         {
             bool temLeite = vaca.Leites.Any(l => l.Data.HasValue && l.Data.Value <= referencia);
 
-            var ultimoParto = vaca.Prenhezes
+            var ultimaPrenhezFinalizada = vaca.Prenhezes
                 .Where(p => p.DataTermino.HasValue && p.DataTermino.Value <= referencia)
                 .OrderByDescending(p => p.DataTermino)
                 .FirstOrDefault();
 
-            var prenhezAtiva = vaca.Prenhezes
-                .FirstOrDefault(p => !p.DataTermino.HasValue || (p.DataEsperada.HasValue && p.DataEsperada.Value > referencia));
+            var prenhezAtiva = vaca.Prenhezes.FirstOrDefault(p =>
+                (!p.DataTermino.HasValue || p.DataTermino.Value > referencia) &&
+                p.Status != null &&
+                p.Status.Equals("Prenha", StringComparison.OrdinalIgnoreCase)
+            );
 
-            if (ultimoParto == null)
+            if (ultimaPrenhezFinalizada == null)
             {
-                if (prenhezAtiva != null) return temLeite ? "Lactante Gestante" : "Gestante";
-                return temLeite ? "Lactante Vazia" : "Novilha";
+                if (prenhezAtiva != null)
+                    return temLeite ? "Lactante Gestante" : "Gestante";
+                else
+                    return temLeite ? "Lactante Vazia" : "Novilha";
             }
 
-            double diasPosParto = (referencia - ultimoParto.DataTermino.Value).TotalDays;
+            var diasPosParto = (referencia - ultimaPrenhezFinalizada.DataTermino.Value).TotalDays;
+            var statusUltimaPrenhez = ultimaPrenhezFinalizada.Status?.ToLower();
 
-            if (prenhezAtiva != null)
+            if (statusUltimaPrenhez == "pariu")
             {
-                if (temLeite || diasPosParto <= 305) return "Lactante Gestante";
-                if (prenhezAtiva.DataEsperada.HasValue && (prenhezAtiva.DataEsperada.Value - referencia).TotalDays <= 60)
-                    return "Seca";
-                return "Gestante";
+                if (prenhezAtiva != null)
+                {
+                    if (temLeite || diasPosParto <= 305)
+                        return "Lactante Gestante";
+                    else
+                        return "Gestante";
+                }
+                else
+                {
+                    if (temLeite || diasPosParto <= 305)
+                        return "Lactante Vazia";
+                    else
+                        return "Vazia Não Lactante";
+                }
+            }
+            else if (statusUltimaPrenhez == "aborto")
+            {
+                if (prenhezAtiva != null)
+                    return "Gestante";
+                else
+                    return temLeite ? "Lactante Vazia" : "Vazia Não Lactante";
             }
             else
             {
-                if (temLeite || diasPosParto <= 305) return "Lactante Vazia";
-                return "Vazia Não Lactante";
+                if (prenhezAtiva != null)
+                {
+                    if (temLeite || diasPosParto <= 305)
+                        return "Lactante Gestante";
+
+                    if (prenhezAtiva.DataEsperada.HasValue &&
+                        (prenhezAtiva.DataEsperada.Value - referencia).TotalDays <= 60)
+                        return "Seca";
+
+                    return "Gestante";
+                }
+                else
+                {
+                    if (temLeite || diasPosParto <= 305)
+                        return "Lactante Vazia";
+                    else
+                        return "Vazia Não Lactante";
+                }
             }
         }
 
@@ -424,7 +463,7 @@ namespace MilkApi.Controllers
                         var vacasAtivas = vacas.Where(v => v.DataEntrada <= cursorStatus).ToList();
                         foreach (var v in vacasAtivas)
                         {
-                            var status = CalcularStatusProdutivoParaDashboard(v, cursorStatus);
+                            var status = CalcularStatusProdutivoComData(v, cursorStatus);
                             switch (status.Replace(" ", ""))
                             {
                                 case "LactanteGestante": statusPoint.LactanteGestante++; break;
