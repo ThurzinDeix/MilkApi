@@ -1689,35 +1689,99 @@ p a {
 
 @media (max-width: 1000px) {
 
-    .nav1 {
-        flex-wrap: wrap;
-        justify-content: space-between;
-        padding: 10px 20px;
-    }
-
-    .menu {
-        display: none;
+    body.menu-lateral .menu {
+        position: fixed;
+        top: 0;
+        left: -250px; /* inicia escondido */
+        width: 250px;
+        height: 100vh;
         flex-direction: column;
+        background-color: #5a3c2d;
+        padding-top: 60px;
+        transition: left 0.3s ease;
+        z-index: 999;
+    }
+    
+    body.menu-lateral .menu.show {
+        left: 0; /* aparece */
+    }
+    
+    /* overlay */
+    body.menu-lateral #menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
         width: 100%;
-        background-color: #3b2a20;
-        border-top: 1px solid #5a3c2d;
+        height: 100vh;
+        background-color: rgba(0,0,0,0.4);
+        display: none;
+        z-index: 998;
     }
-
-    .menu a {
-        padding: 12px 20px;
-        text-align: left;
-    }
-
-    .menu.show {
-        display: flex;
-    }
-
-    .hamburger {
+    
+    body.menu-lateral #menu-overlay.show {
         display: block;
     }
 
+    .nav1 {
+        justify-content: space-between;
+        padding: 10px 20px;
+    }
+  
+    .menu {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 50%;
+        height: 100vh;
+        background-color: #f6ede5 ;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 80px;
+        gap: 10px;
+        transition: left 0.3s ease;
+        z-index: 999;
+    }
+  
+    .menu.show {
+        left: 0;
+    }
+
+  
+    .menu a {
+        padding: 15px 25px;
+        text-align: left;
+        border-radius: 0;
+        font-size: 18px;
+    }
+
+    .menu a .active {
+       background-color: #00000000;
+    }
+  
+    .menu a:hover {
+        background-color: #d9cbbf;
+        color: #5a3c2d;
+    }
+  
+    .hamburger {
+        display: block;
+        font-size: 1.8rem;
+        color: white;
+        cursor: pointer;
+        z-index: 1000;
+    }
+  
     .user-menu {
-        margin: 10px 0;
+        margin-top: auto;
+        width: 100%;
+        border-top: 1px solid rgba(255,255,255,0.2);
+        padding: 15px 25px;
+    }
+  
+    .dropdown {
+        position:initial;
+        box-shadow: none;
     }
 
     .dashboard-dados {
