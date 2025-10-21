@@ -141,8 +141,10 @@
 
         async function buscarLeites() {
 
+            const usuarioId = localStorage.getItem("userId");
+
             try {
-                const res = await fetch(`${API_BASE}/leite`);
+                const res = await fetch(`${API_BASE}/leite/por-usuario?usuarioId=${usuarioId}`);
                 if (!res.ok) throw new Error(`Erro ${res.status}: ${res.statusText}`);
                 leites = await res.json();
                 renderLeites();
@@ -520,11 +522,10 @@
             } else {
                 lote.leites.forEach(l => {
                     const litros = l.litros ?? l.Litros ?? 0;
-                    const gado = l.iD_Gado ?? l.ID_Gado ?? 'N/A';
+                    const gado = l.brico ?? l.ID_Gado ?? 'N/A';
                     const data = l.data ? new Date(l.data).toLocaleDateString('pt-BR') : '-';
                     registrosContainer.innerHTML += `
                 <div class="registro-leite">
-                    <strong>ID Leite:</strong> ${l.id} — 
                     <strong>ID Gado:</strong> ${gado} — 
                     <strong>Litros:</strong> ${litros}L — 
                     <strong>Data:</strong> ${data}

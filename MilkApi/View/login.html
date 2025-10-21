@@ -17,6 +17,7 @@
       height: 100vh;
     }
 
+
     .container {
       background: #f8f2ec;
       padding: 30px;
@@ -25,6 +26,11 @@
       width: 350px;
       margin-right: 10%;
     }
+
+      h1 {
+          font-family: "Ultra", serif;
+          text-align: center;
+      }
 
     h2 {
       text-align: center;
@@ -91,7 +97,8 @@
     </div>
     
     <div class="container">
-      <h2 id="formTitle">Login</h2>
+        <h1>COWNT</h1>
+      <h2 id="formTitle"></h2>
 
       <div class="tabs">
         <div class="tab active" onclick="mostrarAba('login')">Entrar</div>
@@ -130,12 +137,12 @@
       if (aba === "login") {
         loginForm.style.display = "block";
         cadastroForm.style.display = "none";
-        formTitle.textContent = "Login";
+        formTitle.textContent = "";
         tabs[0].classList.add("active");
       } else {
         loginForm.style.display = "none";
         cadastroForm.style.display = "block";
-        formTitle.textContent = "Cadastro";
+        formTitle.textContent = "";
         tabs[1].classList.add("active");
       }
     }
