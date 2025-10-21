@@ -295,6 +295,93 @@ namespace MilkApi.Controllers
             return Ok(lista);
         }
 
+        [HttpGet("usuario/{idUsuario}")]
+        public async Task<ActionResult<IEnumerable<Lote>>> GetLotesPorUsuario(int idUsuario)
+        {
+            var lotes = new List<Lote>();
+
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                string queryLotes = "SELECT * FROM Lote WHERE ID_Usuario = @ID_Usuario";
+                SqlCommand cmdLotes = new SqlCommand(queryLotes, conn);
+                cmdLotes.Parameters.AddWithValue("@ID_Usuario", idUsuario);
+                SqlDataReader readerLotes = await cmdLotes.ExecuteReaderAsync();
+
+                while (await readerLotes.ReadAsync())
+                {
+                    lotes.Add(new Lote
+                    {
+                        Id = Convert.ToInt32(readerLotes["Id"]),
+                        Num = Convert.ToInt32(readerLotes["Num"]),
+                        ID_Usuario = Convert.ToInt32(readerLotes["ID_Usuario"]),
+                        leites = new List<Leite>(),
+                        qualidade = null
+                    });
+                }
+                readerLotes.Close();
+
+                if (lotes.Count == 0)
+                    return NotFound("Nenhum lote encontrado para este usuário.");
+
+                string queryLeites = @"
+            SELECT ll.ID_Lote, l.Id AS LeiteId, l.ID_Gado, l.Data, l.Litros, l.ID_Usuario
+            FROM LoteLeite ll
+            INNER JOIN Leite l ON ll.ID_Leite = l.Id
+            WHERE ll.ID_Lote IN (SELECT Id FROM Lote WHERE ID_Usuario = @ID_Usuario)";
+                SqlCommand cmdLeites = new SqlCommand(queryLeites, conn);
+                cmdLeites.Parameters.AddWithValue("@ID_Usuario", idUsuario);
+                SqlDataReader readerLeites = await cmdLeites.ExecuteReaderAsync();
+
+                while (await readerLeites.ReadAsync())
+                {
+                    int loteId = Convert.ToInt32(readerLeites["ID_Lote"]);
+                    var leite = new Leite
+                    {
+                        Id = Convert.ToInt32(readerLeites["LeiteId"]),
+                        ID_Gado = Convert.ToInt32(readerLeites["ID_Gado"]),
+                        Data = Convert.ToDateTime(readerLeites["Data"]),
+                        Litros = Convert.ToDecimal(readerLeites["Litros"]),
+                        ID_Usuario = Convert.ToInt32(readerLeites["ID_Usuario"])
+                    };
+
+                    var lote = lotes.FirstOrDefault(l => l.Id == loteId);
+                    if (lote != null)
+                        lote.leites.Add(leite);
+                }
+                readerLeites.Close();
+
+                string queryQualidade = @"
+                    SELECT * FROM Qualidade 
+                    WHERE ID_Lote IN (SELECT Id FROM Lote WHERE ID_Usuario = @ID_Usuario)";
+                SqlCommand cmdQualidade = new SqlCommand(queryQualidade, conn);
+                cmdQualidade.Parameters.AddWithValue("@ID_Usuario", idUsuario);
+                SqlDataReader readerQualidade = await cmdQualidade.ExecuteReaderAsync();
+
+                while (await readerQualidade.ReadAsync())
+                {
+                    int loteId = Convert.ToInt32(readerQualidade["ID_Lote"]);
+                    var qualidade = new Qualidade
+                    {
+                        Id = Convert.ToInt32(readerQualidade["Id"]),
+                        ID_Lote = loteId,
+                        CCS = Convert.ToInt32(readerQualidade["CCS"]),
+                        Gordura = Convert.ToDecimal(readerQualidade["Gordura"]),
+                        Proteina = Convert.ToDecimal(readerQualidade["Proteina"]),
+                        ID_Usuario = Convert.ToInt32(readerQualidade["ID_Usuario"])
+                    };
+
+                    var lote = lotes.FirstOrDefault(l => l.Id == loteId);
+                    if (lote != null)
+                        lote.qualidade = qualidade;
+                }
+                readerQualidade.Close();
+            }
+
+            return Ok(lotes);
+        }
+
 
 
     }

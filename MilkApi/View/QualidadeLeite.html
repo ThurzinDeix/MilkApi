@@ -128,9 +128,18 @@
         let loteSelecionadoParaQualidade = null;
 
         async function buscarLotes() {
+            const usuarioId = localStorage.getItem("userId");
+
+            if (!usuarioId) {
+                alert("Usuário não encontrado. Faça login novamente.");
+                window.location.href = "login.html";
+                return;
+            }
+
             try {
-                const res = await fetch(`${API_BASE}/lote`);
+                const res = await fetch(`${API_BASE}/lote/usuario/${usuarioId}`);
                 if (!res.ok) throw new Error(`Erro ${res.status}: ${res.statusText}`);
+
                 lotes = await res.json();
                 renderLotes();
             } catch (err) {
@@ -138,6 +147,7 @@
                 alert(`Erro ao buscar lotes: ${err.message}`);
             }
         }
+
 
         async function buscarLeites() {
 
