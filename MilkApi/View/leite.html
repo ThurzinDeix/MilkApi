@@ -44,12 +44,19 @@
     <content>
         <div class="card-container">
             <h1>Gestão de Ordenha</h1>
-            <div class="btn-add" onclick="abrirModal('leite')"><svg xmlns="http://www.w3.org/2000/svg" width="24"
-                    height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-icon lucide-plus">
+            <div class="btn-add" onclick="abrirModal('leite')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                     height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-icon lucide-plus">
                     <path d="M5 12h14" />
                     <path d="M12 5v14" />
-                </svg>Adicionar Ordenha</div>
+                </svg>Adicionar Ordenha
+            </div>
+        </div>
+
+        <div class="text-input-pesquisa1">
+            <p><i class="ph ph-magnifying-glass"></i> Brinco do gado:</p>
+            <input class="input-lote" type="number" id="pesquisaBrinco" placeholder="Pesquisar por Brinco" oninput="carregarLeite()">
         </div>
 
         <div class="listaCards"></div>
@@ -114,13 +121,17 @@
             const lista = document.getElementsByClassName("listaCards")[0];
             lista.innerHTML = "<p>Carregando...</p>";
 
+            const filtroBrinco = document.getElementById("pesquisaBrinco")?.value.trim();
+
             try {
                 const resp = await fetch(`${apiBase}/leite/por-usuario?usuarioId=${usuarioId}`);
                 if (!resp.ok) throw new Error("Erro ao buscar leite");
-                const dados = await resp.json();
+                let dados = await resp.json();
 
+                dados.sort((a, b) => new Date(b.data) - new Date(a.data));
 
                 lista.innerHTML = "";
+
                 if (dados.length === 0) {
                     lista.innerHTML = "<p>Nenhum registro encontrado.</p>";
                     return;
@@ -136,28 +147,45 @@
                         if (resGado.ok) gado = await resGado.json();
                         else throw new Error(`Gado com ID ${l.iD_Gado} não encontrado`);
 
+                        if (filtroBrinco && !gado.brinco.toString().includes(filtroBrinco)) {
+                            continue;
+                        }
+
                         div.innerHTML = `
-                            <p class="brinco"><strong>Brinco:</strong> ${gado.brinco || 'N/A'}</p>
-                            <p class="data"><strong>Data:</strong> ${new Date(l.data).toLocaleDateString("pt-BR")}</p>
-                            <p><strong>Produção:</strong><br><span class="litros">${l.litros}L</span></p>
-                            <div class="card-actions">
-                                <button class="btn-edit" onclick='abrirModal("leite", ${JSON.stringify(l)})'>
-                                    <i class="fa-solid fa-pen-to-square"></i> Editar
-                                </button>
-                                <button class="btn-delete" onclick="excluirLeite(${l.id})">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                                </button>
-                            </div>
-                        `;
+                    <p class="brinco"><strong>Brinco:</strong> ${gado.brinco || 'N/A'}</p>
+                    <p class="data"><strong>Data:</strong> ${new Date(l.data).toLocaleDateString("pt-BR")}</p>
+                    <p><strong>Produção:</strong><br><span class="litros">${l.litros}L</span></p>
+                    <div class="card-actions">
+                        <button class="btn-edit" onclick='abrirModal("leite", ${JSON.stringify(l)})'>
+                            <i class="fa-solid fa-pen-to-square"></i> Editar
+                        </button>
+                        <button class="btn-delete" onclick="excluirLeite(${l.id})">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="lucide lucide-trash2-icon lucide-trash-2">
+                                <path d="M10 11v6"/>
+                                <path d="M14 11v6"/>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+                                <path d="M3 6h18"/>
+                                <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                        </button>
+                    </div>
+                `;
                     } catch (err) {
                         div.innerHTML = `<p><strong>Data:</strong> ${new Date(l.data).toLocaleDateString("pt-BR")}</p>
-                         <p><strong>Produção:</strong> ${l.litros}L</p>
-                         <em>Erro ao carregar dados do gado</em>`;
-                        alert(`Erro ao carregar gado com ID ${l.iD_Gado}.\nMensagem: ${err.message}`);
+                    <p><strong>Produção:</strong> ${l.litros}L</p>
+                    <em>Erro ao carregar dados do gado</em>`;
                         console.error(err);
                     }
 
                     lista.appendChild(div);
+                }
+
+                if (!lista.hasChildNodes()) {
+                    lista.innerHTML = "<p>Nenhum gado encontrado com esse brinco.</p>";
                 }
 
             } catch (err) {
@@ -165,6 +193,8 @@
                 console.error(err);
             }
         }
+
+
 
         async function excluirLeite(id) {
             if (!confirm("Tem certeza que deseja excluir este registro?")) return;

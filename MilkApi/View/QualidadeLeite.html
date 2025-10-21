@@ -64,7 +64,7 @@
         <div id="leiteModal" class="modal-leite">
             <div class="modal-content-leite">
                 <span class="close-leite"
-                    onclick="document.getElementById('leiteModal').style.display='none'">&times;</span>
+                      onclick="document.getElementById('leiteModal').style.display='none'">&times;</span>
 
                 <h2>Criar Novo Lote</h2>
                 <p>Selecione os registros de leite e defina a qualidade do lote.</p>
@@ -74,8 +74,14 @@
 
 
                 <hr>
+                <div class="space-between-modal">
+                    <p>Selecione os registros de leite para o lote:</p>
 
-                <p>Selecione os registros de leite para o lote:</p>
+                    <div class="text-input-pesquisa">
+                        <p><i class="ph ph-magnifying-glass"></i> Brinco do gado:</p>
+                        <input class="input-lote" type="text" id="pesquisaBrinco" placeholder="Digite o brinco..." oninput="filtrarLeitesPorBrinco()">
+                    </div>  
+                </div>
 
                 <div id="leites" class="cards-leite"></div>
 
@@ -126,6 +132,8 @@
         let lotes = [];
         let selecionados = [];
         let loteSelecionadoParaQualidade = null;
+
+
 
         async function buscarLotes() {
             const usuarioId = localStorage.getItem("userId");
@@ -522,7 +530,7 @@
             if (e.target === leiteModal) leiteModal.style.display = 'none';
         });
 
-        function verRegistros(loteId) {
+        async function verRegistros(loteId) {
             const lote = lotes.find(l => l.id === loteId);
             const registrosContainer = document.getElementById("registrosContainer");
             registrosContainer.innerHTML = "";
@@ -530,25 +538,50 @@
             if (!lote || !Array.isArray(lote.leites) || lote.leites.length === 0) {
                 registrosContainer.innerHTML = "<p>Nenhum registro de leite neste lote.</p>";
             } else {
-                lote.leites.forEach(l => {
+                for (const l of lote.leites) {
                     const litros = l.litros ?? l.Litros ?? 0;
-                    const gado = l.brico ?? l.ID_Gado ?? 'N/A';
+                    const gadoId = l.iD_Gado ?? l.ID_Gado ?? null;
                     const data = l.data ? new Date(l.data).toLocaleDateString('pt-BR') : '-';
+                    let brinco = 'N/A';
+
+                    if (gadoId) {
+                        try {
+                            const res = await fetch(`${API_BASE}/gado/${gadoId}`);
+                            if (res.ok) {
+                                const gado = await res.json();
+                                brinco = gado.brinco ?? 'N/A';
+                            }
+                        } catch (err) {
+                            console.error("Erro ao buscar gado:", err);
+                        }
+                    }
+
                     registrosContainer.innerHTML += `
                 <div class="registro-leite">
-                    <strong>ID Gado:</strong> ${gado} — 
+                    <strong>Brinco:</strong> ${brinco} — 
                     <strong>Litros:</strong> ${litros}L — 
                     <strong>Data:</strong> ${data}
                 </div>
                 <hr style="border:none; border-top:1px solid #ddd;">
             `;
-                });
+                }
             }
 
             document.getElementById("registrosModal").style.display = "flex";
         }
 
+
         buscarLotes();
+
+        function filtrarLeitesPorBrinco() {
+            const termo = document.getElementById("pesquisaBrinco").value.toLowerCase().trim();
+            const cards = document.querySelectorAll("#leites .card-leite");
+
+            cards.forEach(card => {
+                const brincoTexto = card.querySelector(".brinco-vaca")?.textContent.toLowerCase() || "";
+                card.style.display = brincoTexto.includes(termo) ? "block" : "none";
+            });
+        }
     </script>
     <script src="app.js"></script>
 

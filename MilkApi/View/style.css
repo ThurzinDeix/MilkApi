@@ -753,6 +753,41 @@ textarea:focus {
     box-sizing: border-box;
 }
 
+.text-input-pesquisa{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: flex-end; 
+}
+
+.text-input-pesquisa1 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+
+}
+
+.text-input-pesquisa1 p{
+    margin: 0px;
+}
+
+.space-between-modal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.space-between-modal p{
+   margin: 0px;
+}
+
+.text-input-pesquisa p {
+    margin: 0px;
+    padding: 0px;
+}
+
 
 .form-modal textarea {
     resize: none;

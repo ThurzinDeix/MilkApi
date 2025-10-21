@@ -195,12 +195,11 @@ namespace MilkApi.Controllers
                     q.CCS,
                     q.Gordura,
                     q.Proteina
-                FROM Lote l
-                LEFT JOIN LoteLeite ll ON l.Id = ll.ID_Lote
-                LEFT JOIN Leite le ON ll.ID_Leite = le.Id
-                LEFT JOIN Qualidade q ON l.Id = q.ID_Lote
-                WHERE le.ID_Gado = @Id 
-                   OR l.ID_Usuario = (SELECT ID_Usuario FROM Gado WHERE Id = @Id)";
+                    FROM Lote l
+                    LEFT JOIN LoteLeite ll ON l.Id = ll.ID_Lote
+                    LEFT JOIN Leite le ON ll.ID_Leite = le.Id
+                    LEFT JOIN Qualidade q ON l.Id = q.ID_Lote
+                    WHERE le.ID_Gado = @Id ";
 
                 using (var cmd = new SqlCommand(queryLotes, conn))
                 {
