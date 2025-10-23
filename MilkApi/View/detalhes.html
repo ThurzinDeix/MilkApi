@@ -54,189 +54,265 @@
 <body>
     <nav>
         <div class="nav1">
-          <div class="logo">Cownt</div>
-          <div class="hamburger" onclick="toggleMenu()">
-            <i class="fa-solid fa-bars"></i>
-          </div>
-          <div class="menu" id="menu">
-            <a href="dashboard.html"><i class="ph-bold ph-house-line"></i> Dashboard</a>
-            <a href="estatisticas.html"><i class="ph-bold ph-chart-line"></i> Estatísticas</a>
-            <a href="addgado.html"><i class="ph ph-cow"></i> Gerenciar Gados</a>
-            <a href="registro.html"><i class="ph ph-cow"></i> Registros</a>
-            <a href="ocorrenciadiaria.html"><i class="ph-bold ph-calendar-dots"></i> Ocorrências Diárias</a>
-            <div class="user-menu">
-              <div class="user-avatar" onclick="toggleDropdown()"><i class="ph ph-user-circle"></i></div>
-              <div class="dropdown" id="dropdownMenu">
-                <a class="drop-menu" href="perfil.html"><i class="ph-bold ph-user"></i> Editar Perfil</a>
-                <a class="drop-menu" href="#" onclick="logout()"><i class="ph-bold ph-sign-out"></i> Sair da Conta</a>
-              </div>
+            <div class="logo">Cownt</div>
+            <div class="hamburger" onclick="toggleMenu()">
+                <i class="fa-solid fa-bars"></i>
             </div>
-          </div>
+            <div class="menu" id="menu">
+                <a href="dashboard.html"><i class="ph-bold ph-house-line"></i> Dashboard</a>
+                <a href="estatisticas.html"><i class="ph-bold ph-chart-line"></i> Estatísticas</a>
+                <a href="addgado.html"><i class="ph ph-cow"></i> Gerenciar Gados</a>
+                <a href="registro.html"><i class="ph ph-cow"></i> Registros</a>
+                <a href="ocorrenciadiaria.html"><i class="ph-bold ph-calendar-dots"></i> Ocorrências Diárias</a>
+                <div class="user-menu">
+                    <div class="user-avatar" onclick="toggleDropdown()"><i class="ph ph-user-circle"></i></div>
+                    <div class="dropdown" id="dropdownMenu">
+                        <a class="drop-menu" href="perfil.html"><i class="ph-bold ph-user"></i> Editar Perfil</a>
+                        <a class="drop-menu" href="#" onclick="logout()"><i class="ph-bold ph-sign-out"></i> Sair da Conta</a>
+                    </div>
+                </div>
+            </div>
         </div>
-      </nav>
+    </nav>
 
     <div class="content">
         <h1 class="tit-registro">Registros por Vaca <a href="registro.html" class="btn-add">⬅ Voltar</a></h1>
         <p>Visualize todos os registros organizados por animal</p>
         <div id="infoVaca"></div>
         <div id="registrosWrapper"></div>
+
+        <div class="tit-periodo">
+            <div class="titulo-estatistica">
+                <h1>Estatísticas de Produção</h1>
+                <p>Análise detalhada da produção e qualidade do leite</p>
+            </div>
+            <div class="periodo">
+                <p>Período:</p>
+                <select id="periodo" class="select-filtro">
+                    <option>1 Semana</option>
+                    <option selected>1 Mês</option>
+                    <option>6 Meses</option>
+                    <option>1 Ano</option>
+                    <option>2 Anos</option>
+                    <option>3 Anos</option>
+                    <option>4 Anos</option>
+                    <option>5 Anos</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="charts-container">
+            <div class="chart-card fade">
+                <h2>Produção Total de Leite</h2>
+                <canvas id="chartTotal"></canvas>
+            </div>
+            <div class="chart-card fade">
+                <h2>Qualidade do Leite</h2>
+                <canvas id="chartQualidade"></canvas>
+            </div>
+        </div>f
     </div>
 
-    <script src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         async function carregarDetalhes() {
-    const vacaId = localStorage.getItem("vacaSelecionada");
-    if (!vacaId) {
-        document.getElementById("infoVaca").innerHTML = "<p>Nenhum animal selecionado.</p>";
-        return;
-    }
-
-    try {
-        const resp = await fetch(`https://localhost:7092/Vaca/ResumoVaca/${vacaId}`);
-        const resumo = await resp.json();
-
-        document.getElementById("infoVaca").innerHTML = `
-            <p class="brinco">Brinco: ${resumo.brinco}</p>
-            <p class="perfil-subtitle">Raça: ${resumo.raca}</p>
-        `;
-
-        const wrapper = document.getElementById("registrosWrapper");
-        wrapper.innerHTML = "";
-
-        function criarBloco(titulo, registros, renderItem, tipoClasse, icone) {
-            const bloco = document.createElement("div");
-            bloco.className = `registro-bloco ${tipoClasse}`;
-
-            const header = document.createElement("div");
-            header.className = "registro-header";
-            header.innerHTML = `
-                <div class="iconregistro">
-                    <div class="registro-icone">${icone}</div>
-                    <div class="registro-titulo">${titulo} <span class="badge-status1">${registros?.length || 0} ${registros?.length === 1 ? "registro" : "registros"}</span></div>
-                </div>
-                <div class="setinha"><svg width="24" height="24" viewBox="0 0 24 24"><path fill="#777" d="M7 10l5 5 5-5H7z"/></svg></div>
-            `;
-
-            const lista = document.createElement("div");
-            lista.className = "registro-lista";
-            lista.style.display = "none";
-
-            if (!registros || registros.length === 0) {
-                lista.innerHTML = "<p>Nenhum registro.</p>";
-            } else {
-                registros.forEach(item => {
-                    const card = document.createElement("div");
-                    card.className = "card registro-card";
-
-                    card.innerHTML = `<div class="card-content">${renderItem(item)}</div>
-                                      <div class="card-actions">
-                                        <button class="btn-edit"><i class="fa-solid fa-pen-to-square"></i></button>
-                                        <button class="btn-delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
-                                      </div>`;
-
-                    card.querySelector(".btn-edit").addEventListener("click", () => {
-                        alert(`Editar registro: ${JSON.stringify(item)}`);
-                    });
-
-                    card.querySelector(".btn-delete").addEventListener("click", async () => {
-                        if (!confirm("Deseja realmente excluir este registro?")) return;
-
-                        try {
-                            let endpoint = "";
-                            switch (tipoClasse) {
-                                case "leite": endpoint = `Leite/${item.id}`; break;
-                                case "remedio": endpoint = `Remedio/${item.id}`; break;
-                                case "manejo": endpoint = `Manejo/${item.id}`; break;
-                                case "prenhez": endpoint = `Prenhez/${item.id}`; break;
-                                case "reproducao": endpoint = `Reproducao/${item.id}`; break;
-                                case "suplemento": endpoint = `Suplemento/${item.id}`; break;
-                                case "lote": endpoint = `Lote/${item.id}`; break;
-                                default: alert("Tipo de registro desconhecido"); return;
-                            }
-
-                            const resp = await fetch(`https://localhost:7092/${endpoint}`, { method: "DELETE" });
-                            if (resp.ok) {
-                                alert("Registro excluído com sucesso!");
-                                card.remove();
-                            } else {
-                                alert("Erro ao excluir registro.");
-                            }
-                        } catch (err) {
-                            console.error(err);
-                            alert("Erro ao excluir registro.");
-                        }
-                    });
-
-                    lista.appendChild(card);
-                });
+            const vacaId = localStorage.getItem("vacaSelecionada");
+            if (!vacaId) {
+                document.getElementById("infoVaca").innerHTML = "<p>Nenhum animal selecionado.</p>";
+                return;
             }
 
-            header.addEventListener("click", () => {
-                lista.style.display = lista.style.display === "none" ? "flex" : "none";
-            });
+            try {
+                const resp = await fetch(`https://localhost:7092/Vaca/ResumoVaca/${vacaId}`);
+                const resumo = await resp.json();
 
-            bloco.appendChild(header);
-            bloco.appendChild(lista);
-            wrapper.appendChild(bloco);
+                document.getElementById("infoVaca").innerHTML = `
+                <p class="brinco">Brinco: ${resumo.brinco}</p>
+                <p class="perfil-subtitle">Raça: ${resumo.raca}</p>
+            `;
+
+                const wrapper = document.getElementById("registrosWrapper");
+                wrapper.innerHTML = "";
+
+                function criarBloco(titulo, registros, renderItem, tipoClasse, icone) {
+                    const bloco = document.createElement("div");
+                    bloco.className = `registro-bloco ${tipoClasse}`;
+
+                    const header = document.createElement("div");
+                    header.className = "registro-header";
+                    header.innerHTML = `
+                    <div class="iconregistro">
+                        <div class="registro-icone">${icone}</div>
+                        <div class="registro-titulo">${titulo} <span class="badge-status1">${registros?.length || 0} ${registros?.length === 1 ? "registro" : "registros"}</span></div>
+                    </div>
+                    <div class="setinha"><svg width="24" height="24" viewBox="0 0 24 24"><path fill="#777" d="M7 10l5 5 5-5H7z"/></svg></div>
+                `;
+
+                    const lista = document.createElement("div");
+                    lista.className = "registro-lista";
+                    lista.style.display = "none";
+
+                    if (!registros || registros.length === 0) {
+                        lista.innerHTML = "<p>Nenhum registro.</p>";
+                    } else {
+                        registros.forEach(item => {
+                            const card = document.createElement("div");
+                            card.className = "card registro-card";
+
+                            card.innerHTML = `<div class="card-content">${renderItem(item)}</div>
+                                          <div class="card-actions">
+                                            <button class="btn-edit"><i class="fa-solid fa-pen-to-square"></i></button>
+                                            <button class="btn-delete"><i class="fa-solid fa-trash"></i></button>
+                                          </div>`;
+
+                            lista.appendChild(card);
+                        });
+                    }
+
+                    header.addEventListener("click", () => {
+                        lista.style.display = lista.style.display === "none" ? "flex" : "none";
+                    });
+
+                    bloco.appendChild(header);
+                    bloco.appendChild(lista);
+                    wrapper.appendChild(bloco);
+                }
+
+                // Criar blocos
+                criarBloco("Produção de Leite", resumo.leites, l => `
+                <p>Data: ${new Date(l.data).toLocaleDateString()}</p>
+                <p>Litros: ${l.litros} L</p>
+            `, "leite", `<span class="leite"><i class="ph ph-milk"></i></span>`);
+
+                criarBloco("Medicamentos", resumo.remedios, r => `
+                <p>Nome: ${r.nome}</p>
+                <p>Doses: ${r.doses}</p>
+                <p>Via: ${r.via}</p>
+                <p>Data: ${new Date(r.date).toLocaleDateString()}</p>
+            `, "remedio", `<span class="remedio"><i class="ph ph-syringe"></i></span>`);
+
+                criarBloco("Manejos", resumo.manejos, m => `
+                <p>Tipo: ${m.tipo_Manejo}</p>
+                <p>Data: ${new Date(m.data_Manejo).toLocaleDateString()}</p>
+                <p>Observações: ${m.observacoes}</p>
+            `, "manejo", `<span class="manejo"><i class="ph ph-cow"></i></span>`);
+
+                criarBloco("Prenhezes", resumo.prenhezes, p => `
+                <p>Data: ${new Date(p.data_Prenhez).toLocaleDateString()}</p>
+                <p>Status: ${p.status}</p>
+                <p>Data Esperada: ${p.data_Esperada ? new Date(p.data_Esperada).toLocaleDateString() : "-"}</p>
+            `, "prenhez", `<span class="prenhez"><i class="ph ph-first-aid"></i></span>`);
+
+                criarBloco("Reproduções", resumo.reproducoes, rep => `
+                <p>Tipo: ${rep.tipo}</p>
+                <p>Data: ${new Date(rep.data).toLocaleDateString()}</p>
+                <p>Observação: ${rep.observacao}</p>
+            `, "reproducao", `<span class="reproducao"><i class="ph ph-heartbeat"></i></span>`);
+
+                criarBloco("Suplementos", resumo.suplementos, s => `
+                <p>Tipo: ${s.tipo}</p>
+                <p>Nome: ${s.nome}</p>
+                <p>Data: ${new Date(s.date).toLocaleDateString()}</p>
+            `, "suplemento", `<span class="suplemento"><i class="ph ph-pill"></i></span>`);
+
+                criarBloco("Lotes e Qualidade", resumo.lotes, l => `
+                <p>Lote #: ${l.num}</p>
+                <p>Leite: ${l.leites.map(le => le.litros + " L").join(", ") || '-'}</p>
+                <p>Qualidade:</p>
+                <p>  CCS: ${l.qualidade?.ccs || '-'}</p>
+                <p>  Gordura: ${l.qualidade?.gordura || '-'}</p>
+                <p>  Proteína: ${l.qualidade?.proteina || '-'}</p>
+            `, "lote", `<span class="lote"><i class="ph ph-stack"></i></span>`);
+
+                const res = await fetch(`https://localhost:7092/Dashboard/PorGado/${vacaId}`);
+                const dados = await res.json();
+
+                const periodoSelect = document.getElementById("periodo");
+                const ctxTotal = document.getElementById("chartTotal").getContext("2d");
+                const ctxQualidade = document.getElementById("chartQualidade").getContext("2d");
+
+                const estiloBase = {
+                    type: "line",
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: { beginAtZero: true, title: { display: true, text: "Litros" } },
+                            x: {
+                                title: { display: true, text: "Dia" },
+                                ticks: {
+                                    maxTicksLimit: 8 
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: { position: "bottom" },
+                            tooltip: { mode: "index", intersect: false }
+                        },
+                        animation: { duration: 800, easing: "easeInOutQuart" }
+                    }
+                };
+
+                const chartTotal = new Chart(ctxTotal, {
+                    ...estiloBase,
+                    data: { labels: [], datasets: [{ label: "Total de Leite (L)", data: [], borderColor: "#5a3c2d", backgroundColor: "#5a3c2d", borderWidth: 2, fill: false, tension: 0.3, pointRadius: 4 }] }
+                });
+
+
+                const chartQualidade = new Chart(ctxQualidade, {
+                    ...estiloBase,
+                    options: {
+                        ...estiloBase.options,
+                        scales: {
+                            y: { beginAtZero: true, position: "left", title: { display: true, text: "CCS (x1000 células/mL)" } },
+                            y1: { beginAtZero: true, position: "right", grid: { drawOnChartArea: false }, title: { display: true, text: "Gordura / Proteína (%)" }, min: 0, max: 14 },
+                            x: {
+                                title: { display: true, text: "Mês" },
+                                ticks: {
+                                    maxTicksLimit: 8 
+                                }
+                            }
+                        }
+                    },
+                    data: {
+                        labels: [],
+                        datasets: [
+                            { label: "CCS", data: [], borderColor: "#ef4444", backgroundColor: "#ef4444", borderWidth: 2, fill: false, tension: 0.3, pointRadius: 4, yAxisID: "y" },
+                            { label: "Gordura (%)", data: [], borderColor: "#f59e0b", backgroundColor: "#f59e0b", borderWidth: 2, fill: false, tension: 0.3, pointRadius: 4, yAxisID: "y1" },
+                            { label: "Proteína (%)", data: [], borderColor: "#3b82f6", backgroundColor: "#3b82f6", borderWidth: 2, fill: false, tension: 0.3, pointRadius: 4, yAxisID: "y1" }
+                        ]
+                    }
+                });
+
+                function atualizarGraficos(periodo) {
+                    const chave = periodo.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s/g, "");
+                    const prod = dados.producao[chave] || [];
+                    const qual = dados.qualidade[chave] || [];
+
+                    chartTotal.data.labels = prod.map(p => p.label);
+                    chartTotal.data.datasets[0].data = prod.map(p => p.totalLeite);
+                    chartTotal.update();
+
+                    chartQualidade.data.labels = qual.map(q => q.label);
+                    chartQualidade.data.datasets[0].data = qual.map(q => q.mediaCCS);
+                    chartQualidade.data.datasets[1].data = qual.map(q => q.mediaGordura);
+                    chartQualidade.data.datasets[2].data = qual.map(q => q.mediaProteina);
+                    chartQualidade.update();
+                }
+
+                periodoSelect.addEventListener("change", e => atualizarGraficos(e.target.value));
+                atualizarGraficos(periodoSelect.value);
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById("registrosWrapper").innerHTML = "<p>Erro ao carregar registros.</p>";
+            }
         }
 
-        // Criar todos os blocos
-        criarBloco("Produção de Leite", resumo.leites, l => `
-            <p>Data: ${new Date(l.data).toLocaleDateString()}</p>
-            <p>Litros: ${l.litros} L</p>
-        `, "leite", `<span class="leite"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4DA6FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-milk-icon lucide-milk"><path d="M8 2h8"/><path d="M9 2v2.789a4 4 0 0 1-.672 2.219l-.656.984A4 4 0 0 0 7 10.212V20a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-9.789a4 4 0 0 0-.672-2.219l-.656-.984A4 4 0 0 1 15 4.788V2"/><path d="M7 15a6.472 6.472 0 0 1 5 0 6.47 6.47 0 0 0 5 0"/></svg>`);
-
-        criarBloco("Medicamentos", resumo.remedios, r => `
-            <p>Nome: ${r.nome}</p>
-            <p>Doses: ${r.doses}</p>
-            <p>Via: ${r.via}</p>
-            <p>Data: ${new Date(r.date).toLocaleDateString()}</p>
-        `, "remedio", `<span class="remedio"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#14ca66" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-syringe-icon lucide-syringe"><path d="m18 2 4 4"/><path d="m17 7 3-3"/><path d="M19 9 8.7 19.3c-1 1-2.5 1-3.4 0l-.6-.6c-1-1-1-2.5 0-3.4L15 5"/><path d="m9 11 4 4"/><path d="m5 19-3 3"/><path d="m14 4 6 6"/></svg></span>`);
-
-        criarBloco("Manejos", resumo.manejos, m => `
-            <p>Tipo: ${m.tipo_Manejo}</p>
-            <p>Data: ${new Date(m.data_Manejo).toLocaleDateString()}</p>
-            <p>Observações: ${m.observacoes}</p>
-        `, "manejo", `<span class="manejo"><i class="ph ph-cow"></i></span>`);
-
-        criarBloco("Prenhezes", resumo.prenhezes, p => `
-            <p>Data: ${new Date(p.data_Prenhez).toLocaleDateString()}</p>
-            <p>Status: ${p.status}</p>
-            <p>Data Esperada: ${p.data_Esperada ? new Date(p.data_Esperada).toLocaleDateString() : "-"}</p>
-        `, "prenhez", `<span class="prenhez"><i class="ph ph-first-aid"></i></span>`);
-
-        criarBloco("Reproduções", resumo.reproducoes, rep => `
-            <p>Tipo: ${rep.tipo}</p>
-            <p>Data: ${new Date(rep.data).toLocaleDateString()}</p>
-            <p>Observação: ${rep.observacao}</p>
-        `, "reproducao", `<span class="reproducao"><i class="ph ph-heartbeat"></i></span>`);
-
-        criarBloco("Suplementos", resumo.suplementos, s => `
-            <p>Tipo: ${s.tipo}</p>
-            <p>Nome: ${s.nome}</p>
-            <p>Data: ${new Date(s.date).toLocaleDateString()}</p>
-        `, "suplemento", `<span class="suplemento"><i class="ph ph-pill"></i></span>`);
-
-        criarBloco("Lotes e Qualidade", resumo.lotes, l => `
-            <p>Lote #: ${l.num}</p>
-            <p>Leite: ${l.leites.map(le => le.litros + " L").join(", ") || '-'}</p>
-            <p>Qualidade:</p>
-            <p>  CCS: ${l.qualidade?.ccs || '-'}</p>
-            <p>  Gordura: ${l.qualidade?.gordura || '-'}</p>
-            <p>  Proteína: ${l.qualidade?.proteina || '-'}</p>
-        `, "lote", `<span class="lote"><i class="ph ph-stack"></i></span>`);
-
-    } catch (err) {
-        console.error(err);
-        document.getElementById("registrosWrapper").innerHTML = "<p>Erro ao carregar registros.</p>";
-    }
-}
-
-window.onload = carregarDetalhes;
-
+        document.addEventListener("DOMContentLoaded", carregarDetalhes);
     </script>
-    
+
 
 </body>
-
 </html>

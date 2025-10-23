@@ -34,7 +34,7 @@ namespace MilkApi.Controllers
 
     public class Alerta
     {
-        public string Tipo { get; set; }     
+        public string Tipo { get; set; }
         public string Mensagem { get; set; }
         public string Origem { get; set; }
         public int? ID_Gado { get; set; }
@@ -130,7 +130,7 @@ namespace MilkApi.Controllers
                 }
 
                 string sqlNatalidade = @"SELECT 
-                                            (SELECT COUNT(*) FROM Prenhez WHERE ID_Usuario = @id AND Status = 'Parida') * 1.0 /
+                                            (SELECT COUNT(*) FROM Prenhez WHERE ID_Usuario = @id AND Status = 'Pariu') * 1.0 /
                                             NULLIF((SELECT COUNT(*) FROM Gado WHERE ID_Usuario = @id), 0)";
                 using (var cmd = new SqlCommand(sqlNatalidade, conn))
                 {
@@ -325,7 +325,7 @@ namespace MilkApi.Controllers
                     }
                 }
 
-                string sqlPrenhez = @"SELECT ID_Gado, Data_Prenhez, Data_Esperada, Status FROM Prenhez WHERE ID_Usuario = @id";
+                string sqlPrenhez = @"SELECT p.ID_Gado, p.Data_Prenhez, p.Data_Esperada, g.StatusProdutivo, p.Status AS Status_Prenhez FROM Prenhez p LEFT JOIN Reproducao r ON p.ID_Gado = r.ID_Gado LEFT JOIN Gado g ON p.ID_Gado = g.ID WHERE p.ID_Usuario = @id AND p.ID = (SELECT MAX(ID) FROM Prenhez WHERE ID_Gado = p.ID_Gado)";
                 using (var cmd = new SqlCommand(sqlPrenhez, conn))
                 {
                     cmd.Parameters.AddWithValue("@id", usuarioId);
@@ -336,10 +336,14 @@ namespace MilkApi.Controllers
                             int idGado = reader.GetInt32(0);
                             DateTime dataPrenhez = reader.GetDateTime(1);
                             DateTime? dataEsperada = reader.IsDBNull(2) ? null : reader.GetDateTime(2);
-                            string status = reader.IsDBNull(3) ? "Aguardando Diagnóstico" : Convert.ToString(reader.GetValue(3));
+                            string statusProdutivo = reader.IsDBNull(3) ? "" : Convert.ToString(reader.GetValue(3)).Trim().ToLowerInvariant();
+                            string statusPrenhez = reader.IsDBNull(4) ? "aguardando diagnóstico" : Convert.ToString(reader.GetValue(4)).Trim().ToLowerInvariant();
                             string brinco = brincos.GetValueOrDefault(idGado, idGado.ToString());
 
-                            if (status == "Aguardando Diagnóstico" && dataEsperada.HasValue)
+                            if (!statusPrenhez.Equals("prenha", StringComparison.OrdinalIgnoreCase))
+                                continue;
+
+                            if (statusPrenhez == "aguardando diagnóstico" && dataEsperada.HasValue)
                             {
                                 if (dataEsperada.Value < DateTime.Now)
                                     alertas.Add(new Alerta { Tipo = "danger", Mensagem = $"Brinco {brinco} -> diagnóstico de prenhez atrasado", Origem = "Prenhez" });
@@ -350,7 +354,7 @@ namespace MilkApi.Controllers
                             DateTime dataParto = dataPrenhez.AddDays(280);
                             DateTime dataSecagem = dataParto.AddDays(-60);
 
-                            if (dataSecagem <= DateTime.Now.AddDays(7) && status != "Seca")
+                            if (dataSecagem <= DateTime.Now.AddDays(7) && statusProdutivo != "seca")
                             {
                                 if (dataSecagem < DateTime.Now)
                                     alertas.Add(new Alerta { Tipo = "danger", Mensagem = $"Brinco {brinco} -> já deveria estar seca", Origem = "Prenhez" });
@@ -358,7 +362,7 @@ namespace MilkApi.Controllers
                                     alertas.Add(new Alerta { Tipo = "warning", Mensagem = $"Brinco {brinco} -> deve ser seca na próxima semana", Origem = "Prenhez" });
                             }
 
-                            if (dataParto <= DateTime.Now.AddDays(7) && status != "Parida")
+                            if (dataParto <= DateTime.Now.AddDays(7) && statusPrenhez != "Pariu")
                             {
                                 if (dataParto < DateTime.Now)
                                     alertas.Add(new Alerta { Tipo = "danger", Mensagem = $"Brinco {brinco} -> já deveria ter parido", Origem = "Prenhez" });
@@ -381,3 +385,4 @@ namespace MilkApi.Controllers
         }
     }
 }
+

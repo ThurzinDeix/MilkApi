@@ -499,5 +499,243 @@ namespace MilkApi.Controllers
                 status = statusPorPeriodo
             });
         }
+
+        [HttpGet("PorGado/{gadoId}")]
+        public async Task<IActionResult> GetDashboardPorGado(int gadoId)
+        {
+            var vaca = new Vaca();
+
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                var query = @"
+            SELECT g.Id, g.Brinco, g.Raca, g.Data_Entrada,
+                   l.Id AS LeiteId, l.Litros, l.Data AS LeiteData,
+                   p.Id AS PrenhezId, p.Data_Prenhez, p.Data_Termino, p.Data_Esperada, p.Status AS PrenhezStatus,
+                   rep.Id AS ReproducaoId, rep.Tipo AS ReproTipo,
+                   ll.Id AS LoteLeiteId, lo.Id AS LoteId, lo.Num AS LoteNum,
+                   q.Id AS QualidadeId, q.CCS, q.Gordura, q.Proteina
+            FROM Gado g
+            LEFT JOIN Leite l ON l.ID_Gado = g.Id
+            LEFT JOIN Prenhez p ON p.ID_Gado = g.Id
+            LEFT JOIN Reproducao rep ON rep.ID_Gado = g.Id
+            LEFT JOIN LoteLeite ll ON ll.ID_Leite = l.Id
+            LEFT JOIN Lote lo ON lo.Id = ll.ID_Lote
+            LEFT JOIN Qualidade q ON q.ID_Lote = lo.Id
+            WHERE g.Id = @GadoId";
+
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@GadoId", gadoId);
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            if (vaca.Id == 0)
+                            {
+                                vaca.Id = Convert.ToInt32(reader["Id"]);
+                                vaca.Brinco = reader["Brinco"].ToString();
+                                vaca.Raca = reader["Raca"].ToString();
+                                vaca.DataEntrada = Convert.ToDateTime(reader["Data_Entrada"]);
+                            }
+
+                            if (reader["LeiteId"] != DBNull.Value)
+                            {
+                                var leite = new Leite
+                                {
+                                    Id = Convert.ToInt32(reader["LeiteId"]),
+                                    Litros = reader["Litros"] != DBNull.Value ? Convert.ToDecimal(reader["Litros"]) : 0m,
+                                    Data = reader["LeiteData"] != DBNull.Value ? (DateTime?)Convert.ToDateTime(reader["LeiteData"]) : null
+                                };
+                                if (!vaca.Leites.Any(x => x.Id == leite.Id))
+                                    vaca.Leites.Add(leite);
+                            }
+
+                            if (reader["PrenhezId"] != DBNull.Value)
+                            {
+                                var pr = new Prenhez
+                                {
+                                    DataPrenhez = reader["Data_Prenhez"] != DBNull.Value ? (DateTime?)Convert.ToDateTime(reader["Data_Prenhez"]) : null,
+                                    DataTermino = reader["Data_Termino"] != DBNull.Value ? (DateTime?)Convert.ToDateTime(reader["Data_Termino"]) : null,
+                                    DataEsperada = reader["Data_Esperada"] != DBNull.Value ? (DateTime?)Convert.ToDateTime(reader["Data_Esperada"]) : null,
+                                    Status = reader["PrenhezStatus"] != DBNull.Value ? reader["PrenhezStatus"].ToString() : null
+                                };
+                                vaca.Prenhezes.Add(pr);
+                            }
+
+                            if (reader["ReproducaoId"] != DBNull.Value)
+                            {
+                                var r = new Reproducao
+                                {
+                                    Tipo = reader["ReproTipo"] != DBNull.Value ? reader["ReproTipo"].ToString() : null
+                                };
+                                if (!vaca.Reproducoes.Any(x => x.Tipo == r.Tipo))
+                                    vaca.Reproducoes.Add(r);
+                            }
+
+                            if (reader["LoteId"] != DBNull.Value)
+                            {
+                                int loteId = Convert.ToInt32(reader["LoteId"]);
+                                var lote = new Lote
+                                {
+                                    Id = loteId,
+                                    Num = reader["LoteNum"] != DBNull.Value ? reader["LoteNum"].ToString() : null,
+                                    LeiteDate = reader["LeiteData"] != DBNull.Value ? (DateTime?)Convert.ToDateTime(reader["LeiteData"]) : null,
+                                    Qualidade = reader["QualidadeId"] != DBNull.Value ? new Qualidade
+                                    {
+                                        CCS = reader["CCS"] != DBNull.Value ? Convert.ToDecimal(reader["CCS"]) : 0m,
+                                        Gordura = reader["Gordura"] != DBNull.Value ? Convert.ToDecimal(reader["Gordura"]) : 0m,
+                                        Proteina = reader["Proteina"] != DBNull.Value ? Convert.ToDecimal(reader["Proteina"]) : 0m
+                                    } : null
+                                };
+                                if (!vaca.Lotes.Any(x => x.Id == lote.Id))
+                                    vaca.Lotes.Add(lote);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (vaca.Id == 0)
+                return NotFound("Gado não encontrado.");
+
+            DateTime hoje = DateTime.Now.Date;
+            DateTime earliestLeite = vaca.Leites.Where(l => l.Data.HasValue).Select(l => l.Data.Value).DefaultIfEmpty(hoje.AddYears(-2)).Min();
+
+            var periodos = new Dictionary<string, DateTime?>
+            {
+                { "1Semana", hoje.AddDays(-7) },
+                { "1Mes", hoje.AddMonths(-1) },
+                { "6Meses", hoje.AddMonths(-6) },
+                { "1Ano", hoje.AddYears(-1) },
+                { "2Anos", hoje.AddYears(-2) },
+                { "3Anos", hoje.AddYears(-3) },
+                { "4Anos", hoje.AddYears(-4) },
+                { "5Anos", hoje.AddYears(-5) },
+                { "Total", earliestLeite }
+            };
+
+
+            var producaoPorPeriodo = new Dictionary<string, List<ProductionPoint>>();
+            var qualidadePorPeriodo = new Dictionary<string, List<QualityPoint>>();
+            var reproducaoPorPeriodo = new Dictionary<string, List<ReproPoint>>();
+            var statusPorPeriodo = new Dictionary<string, List<StatusPoint>>();
+
+            foreach (var p in periodos)
+            {
+                string periodoNome = p.Key;
+                DateTime inicio = p.Value ?? earliestLeite;
+
+                string tipoEixo = periodoNome switch
+                {
+                    "1Semana" => "dia",
+                    "1Mes" => "semana",
+                    "6Meses" => "mes",
+                    "1Ano" => "mes",
+                    "2Anos" => "bimestre",
+                    "3Anos" => "trimestre",
+                    "4Anos" => "quadrimestre",
+                    "5Anos" => "semestre",
+                    "Total" => "mes",
+                    _ => "mes"
+                };
+
+                var pontosProducao = new List<ProductionPoint>();
+                var pontosQualidade = new List<QualityPoint>();
+                var pontosReproducao = new List<ReproPoint>();
+                var pontosStatus = new List<StatusPoint>();
+
+                DateTime cursor = inicio.Date;
+                while (cursor <= hoje)
+                {
+                    DateTime proximo = tipoEixo == "dia" ? cursor.AddDays(1) :
+                                       tipoEixo == "semana" ? cursor.AddDays(7) :
+                                       cursor.AddMonths(1);
+
+                    string label = tipoEixo == "dia" ? cursor.ToString("dd/MM") :
+                                   tipoEixo == "semana" ? $"Sem {(int)Math.Floor((cursor - inicio).TotalDays / 7.0) + 1}" :
+                                   cursor.ToString("MM/yyyy");
+
+                    var leitesIntervalo = vaca.Leites.Where(l => l.Data.HasValue && l.Data.Value >= cursor && l.Data.Value < proximo).ToList();
+                    decimal litrosPeriodo = leitesIntervalo.Sum(l => l.Litros);
+
+                    pontosProducao.Add(new ProductionPoint
+                    {
+                        Label = label,
+                        TotalLeite = litrosPeriodo,
+                        MediaVaca = litrosPeriodo // só 1 vaca, então média = total
+                    });
+
+                    var qualList = vaca.Lotes.Where(l => l.Qualidade != null && l.LeiteDate.HasValue && l.LeiteDate.Value >= cursor && l.LeiteDate.Value < proximo)
+                        .Select(l => l.Qualidade).ToList();
+
+                    decimal mediaCCS = qualList.Any() ? qualList.Average(q => q.CCS) : 0m;
+                    decimal mediaGordura = qualList.Any() ? qualList.Average(q => q.Gordura) : 0m;
+                    decimal mediaProteina = qualList.Any() ? qualList.Average(q => q.Proteina) : 0m;
+
+                    pontosQualidade.Add(new QualityPoint
+                    {
+                        Label = label,
+                        MediaCCS = mediaCCS,
+                        MediaGordura = mediaGordura,
+                        MediaProteina = mediaProteina
+                    });
+
+                    int vacasPrenhas = vaca.Prenhezes.Count(pr =>
+                        pr.DataPrenhez.HasValue && pr.DataEsperada.HasValue &&
+                        pr.DataPrenhez.Value < proximo && pr.DataEsperada.Value > cursor);
+
+                    double intervaloMedio = vaca.Prenhezes
+                        .Where(pr => pr.DataPrenhez.HasValue && pr.DataTermino.HasValue && pr.DataPrenhez.Value >= cursor && pr.DataPrenhez.Value < proximo)
+                        .Select(pr => (pr.DataTermino.Value - pr.DataPrenhez.Value).TotalDays)
+                        .DefaultIfEmpty(0)
+                        .Average();
+
+                    int inseminacaoIA = vaca.Reproducoes.Count(r => r.Tipo?.ToLower().Contains("insemin") == true);
+                    int inseminacaoMonta = vaca.Reproducoes.Count(r => r.Tipo?.ToLower() == "monta");
+
+                    pontosReproducao.Add(new ReproPoint
+                    {
+                        Label = label,
+                        VacasPrenhas = vacasPrenhas,
+                        IntervaloMedio = Math.Round(intervaloMedio, 2),
+                        InseminacaoIA = inseminacaoIA,
+                        InseminacaoMonta = inseminacaoMonta
+                    });
+
+                    var statusPoint = new StatusPoint { Label = label };
+                    string status = CalcularStatusProdutivoComData(vaca, cursor);
+                    switch (status.Replace(" ", ""))
+                    {
+                        case "LactanteGestante": statusPoint.LactanteGestante++; break;
+                        case "Gestante": statusPoint.Gestante++; break;
+                        case "LactanteVazia": statusPoint.LactanteVazia++; break;
+                        case "Seca": statusPoint.Seca++; break;
+                        case "Novilha": statusPoint.Novilha++; break;
+                        case "VaziaNaoLactante": statusPoint.VaziaNaoLactante++; break;
+                    }
+                    statusPoint.TotalVacas = 1;
+                    pontosStatus.Add(statusPoint);
+
+                    cursor = proximo;
+                }
+
+                producaoPorPeriodo[periodoNome] = pontosProducao;
+                qualidadePorPeriodo[periodoNome] = pontosQualidade;
+                reproducaoPorPeriodo[periodoNome] = pontosReproducao;
+                statusPorPeriodo[periodoNome] = pontosStatus;
+            }
+
+            return Ok(new
+            {
+                Gado = new { vaca.Id, vaca.Brinco, vaca.Raca },
+                producao = producaoPorPeriodo,
+                qualidade = qualidadePorPeriodo,
+                reproducao = reproducaoPorPeriodo,
+                status = statusPorPeriodo
+            });
+        }
+
     }
 }
